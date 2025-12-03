@@ -1,0 +1,20 @@
+# Binaries
+detector
+*.exe
+
+# Models (large files)
+*.onnx
+*.pt
+*.pth
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.bak
+
+# Go
+bin/
+tmp/
