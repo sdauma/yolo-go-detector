@@ -1,0 +1,26 @@
+# Binaries
+detector
+*.exe
+
+# Models (large files)
+*.onnx
+*.pt
+*.pth
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.bak
+
+# Python files
+*.py
+__pycache__/
+*.pyc
+*.pyo
+
+# Go
+bin/
+tmp/
