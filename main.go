@@ -70,6 +70,9 @@ var (
 	// ONNX Runtime 初始化状态控制（线程安全）
 	ortInitialized bool
 	ortInitMutex   sync.Mutex
+
+	//步长
+	stride = 32
 )
 
 // 定义支持的图像和视频扩展名常量，提升可维护性
@@ -783,7 +786,7 @@ func loadImageFile(filePath string) (image.Image, error) {
 // LetterBox类的rect=False模式实现（auto=False）
 // 对应Python中LetterBox的auto=False参数，用于rect=False模式（标准letterbox）
 // 保持长宽比，将图像缩放到最短边等于目标尺寸，用灰色填充
-func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInfo) {
+func resizeWithLetterboxBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
 	bounds := img.Bounds()
 	originalWidth := bounds.Dx()
 	originalHeight := bounds.Dy()
@@ -823,10 +826,34 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 	return result, scaleInfo
 }
 
+// 此模式将图像缩放到 imgsz（如 640），并填充到完整的正方形。 	官方版本
+func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInfo) {
+	bounds := img.Bounds()
+	originalWidth, originalHeight := bounds.Dx(), bounds.Dy()
+
+	// 官方逻辑：r = min(new_h / old_h, new_w / old_w)
+	scale := math.Min(float64(targetSize)/float64(originalWidth), float64(targetSize)/float64(originalHeight))
+	newWidth := int(math.Round(float64(originalWidth) * scale))
+	newHeight := int(math.Round(float64(originalHeight) * scale))
+
+	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
+	result := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
+
+	// 填充 114 灰色
+	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
+
+	// 居中计算：(total - new) / 2
+	offsetX := (targetSize - newWidth) / 2
+	offsetY := (targetSize - newHeight) / 2
+	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight), resized, image.Point{}, draw.Src)
+
+	return result, ScaleInfo{ScaleX: float32(scale), ScaleY: float32(scale), PadLeft: offsetX, PadTop: offsetY}
+}
+
 // LetterBox类的rect=True模式实现（auto=True）
 // 对应Python中LetterBox的auto=True参数，用于rect=True模式
 // 保持长宽比，同时确保尺寸能被步长(stride)整除，以提高批处理效率
-func resizeWithRectScaling(img image.Image, targetSize int) (image.Image, ScaleInfo) {
+func resizeWithRectScalingBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
 	bounds := img.Bounds()
 	originalWidth := bounds.Dx()
 	originalHeight := bounds.Dy()
@@ -862,6 +889,36 @@ func resizeWithRectScaling(img image.Image, targetSize int) (image.Image, ScaleI
 		NewHeight: newHeight,
 	}
 	return cropped, scaleInfo
+}
+
+// 官方版本：这是 dynamic=True 的精髓：不再填充到 640x640，而是填充到能被 stride（通常为 32）整除的最小矩形，从而大幅提升推理速度。
+func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.Image, ScaleInfo) {
+	bounds := img.Bounds()
+	originalWidth, originalHeight := bounds.Dx(), bounds.Dy()
+
+	// 1. 计算缩放比例
+	scale := math.Min(float64(targetSize)/float64(originalWidth), float64(targetSize)/float64(originalHeight))
+	unpadWidth := int(math.Round(float64(originalWidth) * scale))
+	unpadHeight := int(math.Round(float64(originalHeight) * scale))
+
+	// 2. 官方核心逻辑：计算最小矩形填充 (dw, dh = np.mod(dw, stride))
+	dw := targetSize - unpadWidth
+	dh := targetSize - unpadHeight
+	dw = dw % stride // 仅补充到能被 stride 整除
+	dh = dh % stride
+
+	// 3. 计算最终画布尺寸并居中
+	finalWidth := unpadWidth + dw
+	finalHeight := unpadHeight + dh
+
+	resized := resize.Resize(uint(unpadWidth), uint(unpadHeight), img, resize.Bilinear)
+	result := image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
+	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
+
+	offsetX, offsetY := dw/2, dh/2
+	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+unpadWidth, offsetY+unpadHeight), resized, image.Point{}, draw.Src)
+
+	return result, ScaleInfo{ScaleX: float32(scale), ScaleY: float32(scale), PadLeft: offsetX, PadTop: offsetY}
 }
 
 // 获取ONNX Runtime共享库路径
@@ -1014,7 +1071,7 @@ func prepareInput(pic image.Image, dst *ort.Tensor[float32]) (ScaleInfo, error) 
 	var resizedImg image.Image
 	var scaleInfo ScaleInfo
 	if *useRectScaling {
-		resizedImg, scaleInfo = resizeWithRectScaling(pic, inputSize)
+		resizedImg, scaleInfo = resizeWithRectScaling(pic, inputSize, stride)
 	} else {
 		resizedImg, scaleInfo = resizeWithLetterbox(pic, inputSize)
 	}
