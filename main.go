@@ -35,7 +35,6 @@ import (
 
 // 全局配置参数
 var (
-<<<<<<< Updated upstream
 	// 模型路径配置
 	modelPath = "./third_party/yolo11x.onnx" // YOLO模型文件路径
 	useCoreML = false                        // 是否使用CoreML加速（仅限iOS/macOS）
@@ -64,22 +63,6 @@ var (
 	workerCount = flag.Int("workers", max(1, runtime.NumCPU()/2), "并发工作协程数量")
 	queueSize   = flag.Int("queue-size", 100, "任务队列大小")
 	taskTimeout = flag.Duration("timeout", 30*time.Second, "单个任务超时时间")
-=======
-	modelPath       = "D:\\mlz\\go\\src\\yolo\\yoloe-v8l-seg-pf.onnx"
-	imagePath       = "D:\\mlz\\go\\src\\qwen\\1.jpg"
-	outputImagePath = "D:\\mlz\\go\\src\\qwen\\2.jpg"
-	useCoreML       = false
-
-	//高召回要求（如安防） 降低 conf（0.2~0.3），提高 iou（0.6~0.7）
-	confidenceThreshold = flag.Float64("conf", 0.25, "置信度阈值")
-	iouThreshold        = flag.Float64("iou", 0.7, "IOU阈值")
-	modelInputSize      = flag.Int("size", 640, "模型输入尺寸")
-	useRectScaling      = flag.Bool("rect", true, "是否使用矩形缩放（保持长宽比）") // 新增rect参数
-	// 新增：系统文本位置参数
-	systemTextLocation = flag.String("text-location", "bottom-left", "系统文本位置 (top-left, bottom-left, top-right, bottom-right)")
-	systemTextContent  = flag.String("system-text", "野外环境重点设施危险场景检测系统", "系统显示文本")
-	systemTextEnabled  = flag.Bool("enable-system-text", true, "是否显示系统文本")
->>>>>>> Stashed changes
 
 	// 中文字体变量
 	chineseFont font.Face
@@ -124,7 +107,6 @@ func main() {
 	os.Setenv("LC_ALL", "zh_CN.UTF-8")
 
 	flag.Parse()
-<<<<<<< Updated upstream
 	fmt.Printf("使用参数: conf=%.2f, iou=%.2f, size=%d, rect=%t, augment=%t, batch=%d, workers=%d\n",
 		*confidenceThreshold, *iouThreshold, *modelInputSize, *useRectScaling, *useAugment, *batchSize, *workerCount)
 
@@ -336,23 +318,12 @@ func getKeys(m map[string]bool) []string {
 
 // 计算颜色亮度的函数
 // 用于判断背景颜色深浅，从而选择合适的文本颜色
-=======
-	fmt.Printf("使用参数: conf=%.2f, iou=%.2f, size=%d, text-location=%s\n",
-		*confidenceThreshold, *iouThreshold, *modelInputSize, *systemTextLocation)
-	os.Exit(run())
-}
-
-// 新增：计算颜色亮度的函数
->>>>>>> Stashed changes
 func getLuminance(c color.RGBA) float64 {
 	return 0.299*float64(c.R) + 0.587*float64(c.G) + 0.114*float64(c.B)
 }
 
 // 新增：获取高对比度文本颜色
-<<<<<<< Updated upstream
 // 根据背景颜色自动选择黑色或白色文本，确保可读性
-=======
->>>>>>> Stashed changes
 func getContrastTextColor(backgroundColor color.RGBA) color.RGBA {
 	luminance := getLuminance(backgroundColor)
 	if luminance > 128 {
@@ -361,7 +332,6 @@ func getContrastTextColor(backgroundColor color.RGBA) color.RGBA {
 	return color.RGBA{255, 255, 255, 255} // 浅色文本（白色）
 }
 
-<<<<<<< Updated upstream
 // 检查字符串是否在数组中
 // 用于过滤特定类别的检测结果
 func checkStrIsInArray(str string, arr []string) bool {
@@ -440,9 +410,6 @@ func writeLogFile(level, message string) {
 
 // 获取区域平均颜色（用于系统文本背景）
 // 用于在不同背景上显示系统文本时提供合适的背景色
-=======
-// 新增：获取区域平均颜色（用于系统文本背景）
->>>>>>> Stashed changes
 func getAreaAverageColor(img *image.RGBA, rect image.Rectangle) color.RGBA {
 	var r, g, b, count uint32
 	count = 0
@@ -470,10 +437,7 @@ func getAreaAverageColor(img *image.RGBA, rect image.Rectangle) color.RGBA {
 }
 
 // 新增：绘制系统文本函数
-<<<<<<< Updated upstream
 // 在图像上添加系统标识文字，如监控系统名称等
-=======
->>>>>>> Stashed changes
 func drawSystemText(img *image.RGBA, location string) {
 	if !*systemTextEnabled || *systemTextContent == "" {
 		return
@@ -556,12 +520,6 @@ func drawSystemText(img *image.RGBA, location string) {
 
 	// 绘制系统文本
 	drawText(img, textX, textY, text, textColor)
-<<<<<<< Updated upstream
-=======
-
-	fmt.Printf("系统文本: %s, 位置: %s, 坐标: (%d,%d)\n",
-		text, location, textX, textY)
->>>>>>> Stashed changes
 }
 
 // initChineseFont 初始化中文字体
@@ -637,15 +595,10 @@ func getChineseLabel(englishLabel string) string {
 	return englishLabel
 }
 
-<<<<<<< Updated upstream
 // 图片检测输出结果 输入图片地址 输出检测结果中的对象描述:对象个数;描述:对象1是*,置信度;错误信息
 // 核心检测函数，执行完整的检测流程
 func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
 	os.Setenv("LC_ALL", "zh_CN.UTF-8")
-=======
-func run() int {
-	// 初始化中文字体
->>>>>>> Stashed changes
 	if err := initChineseFont(); err != nil {
 		fmt.Printf("警告: 中文字体初始化失败: %v\n", err)
 	} else {
@@ -729,7 +682,6 @@ func run() int {
 	return num, outObjectStr, nil
 }
 
-<<<<<<< Updated upstream
 // 安全的ONNX Runtime环境初始化函数
 // 确保ONNX Runtime只被初始化一次，保证线程安全
 
@@ -738,22 +690,6 @@ func initializeORTEnvironment() error {
 	defer ortInitMutex.Unlock()
 	if ortInitialized {
 		return nil
-=======
-// ensureDirForFile 确保给定文件路径的父目录存在，若不存在则创建
-func ensureDirForFile(filePath string) error {
-	dir := filepath.Dir(filePath)
-
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		err = os.MkdirAll(dir, 0755)
-		if err != nil {
-			return fmt.Errorf("无法创建目录 %s: %w", dir, err)
-		}
-		fmt.Printf("✅ 目录已创建: %s\n", dir)
-	} else if err != nil {
-		return fmt.Errorf("检查目录状态失败 %s: %w", dir, err)
-	} else {
-		fmt.Printf("📁 目录已存在: %s\n", dir)
->>>>>>> Stashed changes
 	}
 	libPath := getSharedLibPath()
 	if libPath == "" {
@@ -842,22 +778,16 @@ func loadImageFile(filePath string) (image.Image, error) {
 	return pic, nil
 }
 
-<<<<<<< Updated upstream
 // 旧函数已被替换，请使用resizeWithLetterbox函数
 
 // LetterBox类的rect=False模式实现（auto=False）
 // 对应Python中LetterBox的auto=False参数，用于rect=False模式（标准letterbox）
 // 保持长宽比，将图像缩放到最短边等于目标尺寸，用灰色填充
 func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInfo) {
-=======
-// resizeWithAspectRatio 保持长宽比的缩放（rect=True的功能）
-func resizeWithAspectRatio(img image.Image, targetWidth, targetHeight int) image.Image {
->>>>>>> Stashed changes
 	bounds := img.Bounds()
 	originalWidth := bounds.Dx()
 	originalHeight := bounds.Dy()
 
-<<<<<<< Updated upstream
 	// 计算缩放比例，保持长宽比，确保最短边适应目标尺寸
 	scale := float64(targetSize) / math.Max(float64(originalWidth), float64(originalHeight))
 	newWidth := int(float64(originalWidth) * scale)
@@ -888,12 +818,6 @@ func resizeWithAspectRatio(img image.Image, targetWidth, targetHeight int) image
 		PadTop:    offsetY,
 		NewWidth:  newWidth,
 		NewHeight: newHeight,
-=======
-	// 计算缩放比例，保持长宽比
-	scale := float64(targetWidth) / float64(originalWidth)
-	if float64(targetHeight)/float64(originalHeight) < scale {
-		scale = float64(targetHeight) / float64(originalHeight)
->>>>>>> Stashed changes
 	}
 
 	return result, scaleInfo
@@ -913,7 +837,6 @@ func resizeWithRectScaling(img image.Image, targetSize int) (image.Image, ScaleI
 
 	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
 
-<<<<<<< Updated upstream
 	// 中心裁剪成 640x640
 	startX := (newWidth - targetSize) / 2
 	startY := (newHeight - targetSize) / 2
@@ -926,16 +849,6 @@ func resizeWithRectScaling(img image.Image, targetSize int) (image.Image, ScaleI
 
 	cropped := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
 	draw.Draw(cropped, cropped.Bounds(), resized, image.Point{startX, startY}, draw.Src)
-=======
-	// 填充灰色背景（YOLO标准做法）
-	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
-
-	// 将缩放后的图像居中放置
-	offsetX := (targetWidth - newWidth) / 2
-	offsetY := (targetHeight - newHeight) / 2
-	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight),
-		resized, image.Point{}, draw.Src)
->>>>>>> Stashed changes
 
 	scaleX := float32(newWidth) / float32(originalWidth)
 	scaleY := float32(newHeight) / float32(originalHeight)
@@ -973,38 +886,12 @@ func getSharedLibPath() string {
 		}
 		return "./third_party/onnxruntime.so"
 	}
-<<<<<<< Updated upstream
 	return ""
-=======
-	panic("无法找到支持此系统的onnxruntime库版本")
-}
-
-func initializeORTEnvironment() error {
-	ortInitMutex.Lock()
-	defer ortInitMutex.Unlock()
-
-	if ortInitialized {
-		return nil // 已经初始化，直接返回
-	}
-
-	ort.SetSharedLibraryPath(getSharedLibPath())
-	err := ort.InitializeEnvironment()
-	if err != nil {
-		return fmt.Errorf("初始化ORT环境错误: %w", err)
-	}
-
-	ortInitialized = true
-	return nil
->>>>>>> Stashed changes
 }
 
 // 初始化ONNX Runtime会话
 // 创建模型推理所需的会话和张量
 func initSession() (*ModelSession, error) {
-<<<<<<< Updated upstream
-=======
-	// 先初始化ONNX Runtime环境
->>>>>>> Stashed changes
 	if err := initializeORTEnvironment(); err != nil {
 		return nil, err
 	}
@@ -1047,40 +934,11 @@ func initSession() (*ModelSession, error) {
 func processOutput(output []float32, originalWidth, originalHeight int, confThreshold, iouThresh float32, scaleInfo ScaleInfo) []boundingBox {
 	boundingBoxes := make([]boundingBox, 0, 8400)
 
-<<<<<<< Updated upstream
 	numAnchors := 8400
 	numClasses := 80
 
 	scaleX := scaleInfo.ScaleX
 	scaleY := scaleInfo.ScaleY
-=======
-	// 根据是否使用矩形缩放来计算不同的缩放参数
-	var scaleX, scaleY float32
-	var padX, padY int
-
-	if *useRectScaling {
-		// 矩形缩放：保持长宽比
-		scaleUsed := float32(640.0) / float32(originalWidth)
-		scaleH := float32(640.0) / float32(originalHeight)
-		if scaleH < scaleUsed {
-			scaleUsed = scaleH
-		}
-
-		newWidth := int(float32(originalWidth) * scaleUsed)
-		newHeight := int(float32(originalHeight) * scaleUsed)
-		padX = (640 - newWidth) / 2
-		padY = (640 - newHeight) / 2
-
-		scaleX = scaleUsed
-		scaleY = scaleUsed
-	} else {
-		// 非矩形缩放：直接拉伸，分别计算宽度和高度的缩放比例
-		scaleX = float32(640.0) / float32(originalWidth)
-		scaleY = float32(640.0) / float32(originalHeight)
-		padX = 0
-		padY = 0
-	}
->>>>>>> Stashed changes
 
 	for idx := 0; idx < numAnchors; idx++ {
 
@@ -1105,7 +963,6 @@ func processOutput(output []float32, originalWidth, originalHeight int, confThre
 			continue
 		}
 
-<<<<<<< Updated upstream
 		// 映射回原图坐标
 		origCenterX := (xc - float32(scaleInfo.PadLeft)) / scaleX
 		origCenterY := (yc - float32(scaleInfo.PadTop)) / scaleY
@@ -1116,15 +973,7 @@ func processOutput(output []float32, originalWidth, originalHeight int, confThre
 		y1 := origCenterY - origH/2
 		x2 := origCenterX + origW/2
 		y2 := origCenterY + origH/2
-=======
-		// 统一的坐标转换公式，根据缩放模式自动处理
-		x1 := (xc - w/2 - float32(padX)) / scaleX
-		y1 := (yc - h/2 - float32(padY)) / scaleY
-		x2 := (xc + w/2 - float32(padX)) / scaleX
-		y2 := (yc + h/2 - float32(padY)) / scaleY
->>>>>>> Stashed changes
 
-		// 边界约束
 		x1 = clamp(x1, 0, float32(originalWidth))
 		y1 = clamp(y1, 0, float32(originalHeight))
 		x2 = clamp(x2, 0, float32(originalWidth))
@@ -1136,22 +985,15 @@ func processOutput(output []float32, originalWidth, originalHeight int, confThre
 
 		englishLabel := yoloClasses[classID]
 		boundingBoxes = append(boundingBoxes, boundingBox{
-<<<<<<< Updated upstream
 			label:      englishLabel,
 			confidence: finalConf,
 			x1:         x1,
 			y1:         y1,
 			x2:         x2,
 			y2:         y2,
-=======
-			label:      chineseLabel,
-			confidence: maxProb,
-			x1:         x1, y1: y1, x2: x2, y2: y2,
->>>>>>> Stashed changes
 		})
 	}
 
-	// 按置信度排序
 	sort.Slice(boundingBoxes, func(i, j int) bool {
 		return boundingBoxes[i].confidence > boundingBoxes[j].confidence
 	})
@@ -1160,7 +1002,6 @@ func processOutput(output []float32, originalWidth, originalHeight int, confThre
 	return result
 }
 
-<<<<<<< Updated upstream
 // 准备输入数据
 // 将图像数据转换为模型输入所需的格式（归一化RGB张量）
 func prepareInput(pic image.Image, dst *ort.Tensor[float32]) (ScaleInfo, error) {
@@ -1195,45 +1036,6 @@ func prepareInput(pic image.Image, dst *ort.Tensor[float32]) (ScaleInfo, error) 
 }
 
 // 确保值在指定范围内
-=======
-// 同时需要修正 prepareInput 函数中的缩放逻辑
-func prepareInput(pic image.Image, dst *ort.Tensor[float32]) error {
-	data := dst.GetData()
-	inputSize := *modelInputSize
-	channelSize := inputSize * inputSize
-
-	if len(data) < (channelSize * 3) {
-		return fmt.Errorf("目标张量仅包含 %d 个浮点数，需要 %d", len(data), channelSize*3)
-	}
-
-	redChannel := data[0:channelSize]
-	greenChannel := data[channelSize : channelSize*2]
-	blueChannel := data[channelSize*2 : channelSize*3]
-
-	var resizedImg image.Image
-	if *useRectScaling {
-		// 矩形缩放：保持长宽比
-		resizedImg = resizeWithAspectRatio(pic, inputSize, inputSize)
-	} else {
-		// 非矩形缩放：直接拉伸到目标尺寸
-		resizedImg = resize.Resize(uint(inputSize), uint(inputSize), pic, resize.Bilinear)
-	}
-
-	i := 0
-	for y := 0; y < inputSize; y++ {
-		for x := 0; x < inputSize; x++ {
-			r, g, b, _ := resizedImg.At(x, y).RGBA()
-			redChannel[i] = float32(r>>8) / 255.0
-			greenChannel[i] = float32(g>>8) / 255.0
-			blueChannel[i] = float32(b>>8) / 255.0
-			i++
-		}
-	}
-	return nil
-}
-
-// 确保 clamp 函数存在
->>>>>>> Stashed changes
 func clamp(value, min, max float32) float32 {
 	if value < min {
 		return min
@@ -1244,7 +1046,6 @@ func clamp(value, min, max float32) float32 {
 	return value
 }
 
-<<<<<<< Updated upstream
 // min和max辅助函数
 func min(a, b int) int {
 	if a < b {
@@ -1326,8 +1127,6 @@ func flipBoundingBox(box boundingBox, imageWidth int) boundingBox {
 
 // 非极大值抑制(NMS)
 // 去除重复的检测框，保留置信度最高的框
-=======
->>>>>>> Stashed changes
 func nonMaxSuppression(boxes []boundingBox, iouThreshold float32) []boundingBox {
 	if len(boxes) == 0 {
 		return boxes
@@ -1366,18 +1165,13 @@ func nonMaxSuppression(boxes []boundingBox, iouThreshold float32) []boundingBox 
 	return selected
 }
 
-<<<<<<< Updated upstream
 // 绘制边界框和标签
 // 在原图上绘制检测结果，包括边界框、标签和置信度
-=======
-// 修改drawBoundingBoxesWithLabels函数，添加系统文本绘制
->>>>>>> Stashed changes
 func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPath string) error {
 	bounds := img.Bounds()
 	rgba := image.NewRGBA(bounds)
 	draw.Draw(rgba, bounds, img, image.Point{}, draw.Src)
 
-<<<<<<< Updated upstream
 	// 定义不同类别的颜色映射 - 使用更鲜明的颜色
 	var colors = map[string]color.RGBA{
 		"person":         {0, 0, 255, 255},     // 纯红色 - 人物
@@ -1387,7 +1181,7 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 		"airplane":       {255, 0, 255, 255},   // 洋红色 - 飞机
 		"bus":            {0, 255, 255, 255},   // 青色 - 巴士
 		"train":          {128, 0, 128, 255},   // 紫色 - 火车
-		"truck":          {0, 0, 255, 255},     // 纯蓝色 - 卡车
+		"truck":          {255, 0, 0, 255},     // 纯蓝色 - 卡车
 		"boat":           {0, 128, 255, 255},   // 深天蓝色 - 船
 		"traffic light":  {128, 0, 128, 255},   // 紫色 - 红绿灯
 		"fire hydrant":   {0, 0, 139, 255},     // 深蓝色 - 消防栓
@@ -1461,17 +1255,6 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 		"hair drier":     {221, 160, 221, 255}, // 蓟色 - 吹风机
 		"toothbrush":     {255, 182, 193, 255}, // 浅粉色 - 牙刷
 		"default":        {128, 128, 128, 255}, // 默认颜色(灰色)
-=======
-	// 定义不同类别的颜色映射
-	colors := map[string]color.RGBA{
-		"人员":      {255, 0, 0, 255},     // 红色
-		"汽车":      {0, 255, 0, 255},     // 绿色
-		"巴士":      {0, 0, 255, 255},     // 蓝色
-		"摩托车":     {255, 255, 0, 255},   // 黄色
-		"卡车":      {255, 0, 255, 255},   // 紫色
-		"自行车":     {0, 255, 255, 255},   // 青色
-		"default": {128, 128, 128, 255}, // 灰色(默认)
->>>>>>> Stashed changes
 	}
 
 	// 绘制每个检测框
@@ -1511,16 +1294,10 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 		drawLabel(rgba, box, boxColor)
 	}
 
-<<<<<<< Updated upstream
 	// 绘制系统文本
 	drawSystemText(rgba, *systemTextLocation)
 
 	// 保存图像
-=======
-	// 新增：绘制系统文本
-	drawSystemText(rgba, *systemTextLocation)
-
->>>>>>> Stashed changes
 	outFile, err := os.Create(outputPath)
 	if err != nil {
 		return fmt.Errorf("创建输出文件失败: %w", err)
@@ -1552,12 +1329,8 @@ func measureText(text string, face font.Face) (width, height int) {
 	return width, height
 }
 
-<<<<<<< Updated upstream
 // 修改后的drawLabel函数，支持中文标签
 // 在边界框旁边绘制类别标签和置信度
-=======
-// 修改drawLabel函数，改进文本颜色对比度
->>>>>>> Stashed changes
 func drawLabel(img *image.RGBA, box boundingBox, boxColor color.RGBA) {
 	chineseLabel := getChineseLabel(box.label)
 	labelText := fmt.Sprintf("%s(%.2f)", chineseLabel, box.confidence) // 与drawBoundingBoxesWithLabels中的格式一致
@@ -1569,21 +1342,13 @@ func drawLabel(img *image.RGBA, box boundingBox, boxColor color.RGBA) {
 	textX := rect.Min.X + 5
 	textY := rect.Min.Y - 5
 
-<<<<<<< Updated upstream
-=======
-	// 边界检查和位置调整（原有逻辑保持不变）
->>>>>>> Stashed changes
 	imgHeight := img.Bounds().Dy()
 	if textY < textHeight {
 		textY = rect.Min.Y + textHeight + 5
 	}
 	if textY > imgHeight-5 {
 		textY = rect.Min.Y - textHeight - 5
-<<<<<<< Updated upstream
 		if textY < 5 {
-=======
-		if textY < textHeight {
->>>>>>> Stashed changes
 			textY = rect.Min.Y + 10
 		}
 	}
@@ -1606,11 +1371,7 @@ func drawLabel(img *image.RGBA, box boundingBox, boxColor color.RGBA) {
 		textX = 5
 	}
 
-<<<<<<< Updated upstream
 	// 计算标签背景矩形
-=======
-	// 调整背景色块大小
->>>>>>> Stashed changes
 	bgPadding := 8
 	bgWidth := textWidth + bgPadding*2
 	bgHeight := textHeight + 4
@@ -1635,7 +1396,6 @@ func drawLabel(img *image.RGBA, box boundingBox, boxColor color.RGBA) {
 		bgY = imgHeight - bgHeight
 	}
 
-<<<<<<< Updated upstream
 	// 使用框颜色作为背景色，确保框和标签底色一致
 	// 并使用高对比度文本颜色
 	textColor := getContrastTextColor(boxColor)
@@ -1643,18 +1403,6 @@ func drawLabel(img *image.RGBA, box boundingBox, boxColor color.RGBA) {
 	// 绘制标签背景和文本
 	drawTextBackground(img, bgX, bgY, bgWidth, bgHeight, boxColor) // 使用框颜色作为背景
 	drawText(img, textX, textY, labelText, textColor)              // 使用对比色文本
-=======
-	// 修改：使用高对比度文本颜色
-	textColor := getContrastTextColor(boxColor)
-
-	// 绘制背景色块
-	drawTextBackground(img, bgX, bgY, bgWidth, bgHeight, boxColor)
-
-	// 绘制文本（使用对比色）
-	drawText(img, textX, textY, labelText, textColor)
-
-	fmt.Printf("文本: %s, 颜色对比度已优化, 位置: (%d,%d)\n", labelText, textX, textY)
->>>>>>> Stashed changes
 }
 
 // 改进的drawTextBackground函数
@@ -1701,36 +1449,22 @@ func drawText(img *image.RGBA, x, y int, text string, textColor color.RGBA) {
 	d.DrawString(text)
 }
 
-<<<<<<< Updated upstream
 // YOLO类别标签（英文原始标签）[1,2](@ref)
 // YOLOv8模型支持的80个类别
-=======
-// 更精确的字体度量函数
-func getFontMetrics(face font.Face) (ascent, descent, height int) {
-	if face == nil {
-		return 16, 4, 20 // 默认值
-	}
-
-	metrics := face.Metrics()
-	ascent = metrics.Ascent.Round()
-	descent = metrics.Descent.Round()
-	height = metrics.Height.Round()
-
-	return ascent, descent, height
-}
-
-// YOLO类别标签（英文原始标签）
->>>>>>> Stashed changes
 var yoloClasses = []string{
-	"3D CG rendering", "3D glasses", "abacus", "abalone", "monastery", "belly",
+	"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
+	"traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat", "dog", "horse",
+	"sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella", "handbag", "tie",
+	"suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat", "baseball glove",
+	"skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon",
+	"bowl", "banana", "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut",
+	"cake", "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "mouse",
+	"remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink", "refrigerator", "book",
+	"clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush",
 }
 
-<<<<<<< Updated upstream
 // 中英标签映射
 // 将YOLO英文标签映射为中文标签
-=======
-// 中英文标签映射表
->>>>>>> Stashed changes
 var detectLabeltMap = map[string]string{
 	"person":         "人员",
 	"bicycle":        "自行车",
