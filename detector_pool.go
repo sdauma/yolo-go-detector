@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -24,34 +25,68 @@ type DetectionTask struct {
 
 // ModelSessionPool ONNX Runtime会话池
 type ModelSessionPool struct {
-	sessions  chan *ModelSession
-	maxSize   int
-	mutex     sync.Mutex
-	modelPath string
+	sessions       chan *ModelSession
+	maxSize        int
+	activeSessions int32 // 活跃会话计数，使用原子操作
+	mutex          sync.Mutex
+	modelPath      string
 }
 
 // NewModelSessionPool 创建新的会话池
 func NewModelSessionPool(maxSize int, modelPath string) *ModelSessionPool {
-	return &ModelSessionPool{
+	pool := &ModelSessionPool{
 		sessions:  make(chan *ModelSession, maxSize),
 		maxSize:   maxSize,
 		modelPath: modelPath,
 	}
+
+	// 预创建一些会话，提高初始处理速度
+	preCreateCount := max(1, min(maxSize/2, runtime.NumCPU()))
+	for i := 0; i < preCreateCount; i++ {
+		if session, err := initSession(); err == nil {
+			select {
+			case pool.sessions <- session:
+			default:
+				session.Destroy()
+			}
+		}
+	}
+
+	return pool
 }
 
 // GetSession 从池中获取会话，如果池为空则创建新会话
 func (pool *ModelSessionPool) GetSession() (*ModelSession, error) {
+	// 首先尝试从池中获取会话
 	select {
 	case session := <-pool.sessions:
-		return session, nil
+		// 健康检查：验证会话是否有效
+		if session != nil && session.Session != nil {
+			atomic.AddInt32(&pool.activeSessions, 1)
+			return session, nil
+		}
+		// 会话无效，销毁并继续尝试
+		if session != nil {
+			session.Destroy()
+		}
 	default:
-		// 池为空，创建新会话（注意：应限制总数避免资源耗尽）
-		return pool.createSession()
 	}
+
+	// 池为空或会话无效，尝试创建新会话
+	return pool.createSession()
 }
 
 // PutSession 将会话放回池中
 func (pool *ModelSessionPool) PutSession(session *ModelSession) {
+	// 减少活跃会话计数
+	atomic.AddInt32(&pool.activeSessions, -1)
+
+	// 检查会话是否有效
+	if session == nil || session.Session == nil {
+		return
+	}
+
+	// 将会话放回池中
 	select {
 	case pool.sessions <- session:
 		// 成功放回池中
@@ -63,20 +98,31 @@ func (pool *ModelSessionPool) PutSession(session *ModelSession) {
 
 // createSession 创建新的会话
 func (pool *ModelSessionPool) createSession() (*ModelSession, error) {
-	pool.mutex.Lock()
-	defer pool.mutex.Unlock()
-
-	// 检查当前池大小，避免无限增长
-	if len(pool.sessions) >= pool.maxSize {
-		return nil, fmt.Errorf("会话池已达到最大容量: %d", pool.maxSize)
+	// 检查当前活跃会话数量，避免资源耗尽
+	if atomic.LoadInt32(&pool.activeSessions) >= int32(pool.maxSize) {
+		// 等待一段时间，看是否有会话被释放
+		time.Sleep(10 * time.Millisecond)
+		if atomic.LoadInt32(&pool.activeSessions) >= int32(pool.maxSize) {
+			return nil, fmt.Errorf("活跃会话数量已达到最大容量: %d", pool.maxSize)
+		}
 	}
 
+	// 创建新会话
 	session, err := initSession()
 	if err != nil {
 		return nil, err
 	}
 
+	// 增加活跃会话计数
+	atomic.AddInt32(&pool.activeSessions, 1)
 	return session, nil
+}
+
+// GetStats 获取会话池统计信息
+func (pool *ModelSessionPool) GetStats() (active, idle int) {
+	active = int(atomic.LoadInt32(&pool.activeSessions))
+	idle = len(pool.sessions)
+	return
 }
 
 // VideoDetectorManager 视频检测管理器
@@ -110,6 +156,16 @@ func NewVideoDetectorManager(workerCount, queueSize int, timeout time.Duration) 
 	maxSessions := workerCount
 	if maxSessions > runtime.NumCPU()*2 {
 		maxSessions = runtime.NumCPU() * 2 // 限制会话数量避免资源耗尽
+	}
+
+	// 根据系统内存调整队列大小，避免内存溢出
+	systemMemory := runtime.MemStats{}
+	runtime.ReadMemStats(&systemMemory)
+	availableMemory := systemMemory.Sys - systemMemory.Alloc
+	maxQueueSize := int(availableMemory / (1024 * 1024 * 10)) // 每10MB内存最多处理一个任务
+	if queueSize > maxQueueSize && maxQueueSize > 0 {
+		fmt.Printf("警告: 队列大小 %d 可能导致内存不足，将限制为 %d\n", queueSize, maxQueueSize)
+		queueSize = maxQueueSize
 	}
 
 	manager := &VideoDetectorManager{
@@ -181,33 +237,58 @@ func (manager *VideoDetectorManager) Stop() {
 func (worker *Worker) run() {
 	defer worker.manager.wg.Done()
 
+	// 批量处理任务，减少上下文切换开销
+	const batchSize = 4
+	taskBatch := make([]*DetectionTask, 0, batchSize)
+
 	for {
-		select {
-		case task, ok := <-worker.manager.taskQueue:
-			if !ok {
+		// 尝试批量获取任务
+		taskBatch = taskBatch[:0]
+		batchTimeout := time.NewTimer(100 * time.Millisecond)
+
+		// 最多等待100ms或直到收集到batchSize个任务
+		for len(taskBatch) < batchSize {
+			select {
+			case task, ok := <-worker.manager.taskQueue:
+				if !ok {
+					batchTimeout.Stop()
+					return
+				}
+				taskBatch = append(taskBatch, task)
+			case <-batchTimeout.C:
+				break
+			case <-worker.shutdown:
+				batchTimeout.Stop()
 				return
 			}
+		}
 
-			// 执行检测任务
-			result := worker.processTask(task)
+		// 停止定时器
+		batchTimeout.Stop()
 
-			// 发送结果
-			select {
-			case task.Callback <- result:
-				// 通过回调发送结果
-			case <-time.After(time.Second * 5): // 防止回调通道阻塞
-				// 记录超时日志，但不阻塞工作协程
+		// 如果收集到了任务，批量处理
+		if len(taskBatch) > 0 {
+			for _, task := range taskBatch {
+				// 执行检测任务
+				result := worker.processTask(task)
+
+				// 发送结果
+				if task.Callback != nil {
+					select {
+					case task.Callback <- result:
+						// 通过回调发送结果
+					case <-time.After(500 * time.Millisecond): // 减少超时时间，提高响应速度
+						// 记录超时日志，但不阻塞工作协程
+					}
+				}
+
+				select {
+				case worker.manager.resultQueue <- result:
+					// 也发送到全局结果队列
+				case <-time.After(500 * time.Millisecond): // 减少超时时间，提高响应速度
+					// 记录超时日志，但不阻塞工作协程
+				}
 			}
-
-			select {
-			case worker.manager.resultQueue <- result:
-				// 也发送到全局结果队列
-			case <-time.After(time.Second * 5): // 防止结果队列阻塞
-				// 记录超时日志，但不阻塞工作协程
-			}
-
-		case <-worker.shutdown:
-			return
 		}
 	}
 }

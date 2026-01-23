@@ -24,6 +24,8 @@ import (
 	"sync"
 	"time"
 
+	"math/rand/v2"
+
 	"github.com/flopp/go-findfont" // 添加字体查找库
 	"github.com/nfnt/resize"
 	ort "github.com/yalue/onnxruntime_go"
@@ -40,7 +42,8 @@ var (
 	useCoreML = false                        // 是否使用CoreML加速（仅限iOS/macOS）
 
 	// 输入输出路径参数
-	inputImagePath  = flag.String("img", "./assets/bus.jpg", "输入图像路径、目录、视频文件或.txt文件")
+	inputImagePath = flag.String("img", "./assets/bus.jpg", "输入图像路径、目录、视频文件或.txt文件")
+	//inputImagePath  = flag.String("img", "../yolo/camera", "输入图像路径、目录、视频文件或.txt文件")
 	outputImagePath = flag.String("output", "./assets/bus_11x_false.jpg", "输出图像路径（仅在输入单个图像时有效）")
 
 	// 检测参数配置
@@ -73,6 +76,21 @@ var (
 
 	//步长
 	stride = 32
+
+	// 内存池优化
+	boundingBoxPool = sync.Pool{
+		New: func() interface{} {
+			return &boundingBox{}
+		},
+	}
+
+	// 图像对象池，用于重用RGBA图像
+	imagePool = sync.Pool{
+		New: func() interface{} {
+			// 默认创建640x640的图像，这是最常用的尺寸
+			return image.NewRGBA(image.Rect(0, 0, 640, 640))
+		},
+	}
 )
 
 // 定义支持的图像和视频扩展名常量，提升可维护性
@@ -145,13 +163,23 @@ func main() {
 		// 单个图像，使用指定的输出路径
 		fmt.Printf("找到 1 个图像文件，使用指定的输出路径: %s\n", *outputImagePath)
 
+		// 如果输出路径为空，则自动生成带模型标识的路径
+		outputPath := *outputImagePath
+		if outputPath == "" || outputPath == "../yolo/camera/3_11x_false.jpg" {
+			modelIdentifier := getModelIdentifier(modelPath)
+			imgName := filepath.Base(imagePaths[0])
+			ext := filepath.Ext(imgName)
+			fileNameWithoutExt := imgName[:len(imgName)-len(ext)]
+			outputPath = filepath.Join("./assets", fileNameWithoutExt+"_"+modelIdentifier+"_"+strconv.Itoa(rand.IntN(10000))+ext)
+		}
+
 		// 执行检测
-		num, desc, err := detectImage(imagePaths[0], *outputImagePath)
+		num, desc, err := detectImage(imagePaths[0], outputPath)
 		if err != nil {
 			fmt.Printf("处理图像 %s 时出错: %v\n", imagePaths[0], err)
 		} else {
 			fmt.Printf("图像 %s 检测完成: %d 个对象 - %s\n", imagePaths[0], num, desc)
-			fmt.Printf("检测结果已保存至: %s\n", *outputImagePath)
+			fmt.Printf("检测结果已保存至: %s\n", outputPath)
 		}
 	} else if isInputDirectory {
 		// 输入是目录的情况，使用目录处理函数
@@ -165,11 +193,14 @@ func main() {
 		// 多个图像（来自txt文件等），使用批量处理逻辑
 		fmt.Printf("找到 %d 个图像文件，将使用并发处理（工作协程: %d）\n", len(imagePaths), *workerCount)
 
-		// 生成输出路径列表
+		// 生成输出路径列表，添加模型标识
+		modelIdentifier := getModelIdentifier(modelPath)
 		outputPaths := make([]string, len(imagePaths))
 		for i, imagePath := range imagePaths {
 			imgName := filepath.Base(imagePath)
-			outputPaths[i] = filepath.Join(defaultOutputDir, "detected_"+imgName)
+			ext := filepath.Ext(imgName)
+			fileNameWithoutExt := imgName[:len(imgName)-len(ext)]
+			outputPaths[i] = filepath.Join(defaultOutputDir, fileNameWithoutExt+"_"+modelIdentifier+"_"+strconv.Itoa(rand.IntN(10000))+ext)
 		}
 
 		// 使用并发处理图像
@@ -186,6 +217,13 @@ func main() {
 func ConcurrentBatchProcessImages(sourceImagePaths []string, outputImagePaths []string) error {
 	if len(sourceImagePaths) != len(outputImagePaths) {
 		return fmt.Errorf("输入图片路径数量(%d)与输出图片路径数量(%d)不匹配", len(sourceImagePaths), len(outputImagePaths))
+	}
+
+	// 初始化中文字体
+	if err := initChineseFont(); err != nil {
+		fmt.Printf("警告: 中文字体初始化失败: %v\n", err)
+	} else {
+		defer cleanupFont()
 	}
 
 	fmt.Printf("启动并发处理，工作协程数量: %d, 队列大小: %d\n", *workerCount, *queueSize)
@@ -319,6 +357,42 @@ func getKeys(m map[string]bool) []string {
 	return keys
 }
 
+// 从模型路径中提取模型名称标识
+func getModelIdentifier(modelPath string) string {
+	fileName := filepath.Base(modelPath)
+	// 移除扩展名
+	nameWithoutExt := strings.TrimSuffix(fileName, filepath.Ext(fileName))
+	// 转换为小写方便处理
+	nameLower := strings.ToLower(nameWithoutExt)
+
+	// 根据模型名称返回对应的标识
+	switch {
+	case strings.Contains(nameLower, "yolo11"):
+		return "11x"
+	case strings.Contains(nameLower, "yolov8"):
+		return "v8x"
+	case strings.Contains(nameLower, "yolov5"):
+		return "v5x"
+	case strings.Contains(nameLower, "yolo11n"):
+		return "11n"
+	case strings.Contains(nameLower, "yolov8n"):
+		return "v8n"
+	default:
+		// 如果没有匹配到特定模式，尝试提取包含yolo和版本号的部分
+		if idx := strings.Index(nameLower, "yolo"); idx != -1 {
+			rest := nameLower[idx:]
+			// 提取yolo之后的字母数字部分
+			for i, char := range rest {
+				if !((char >= '0' && char <= '9') || (char >= 'a' && char <= 'z')) {
+					return rest[:i]
+				}
+			}
+			return rest
+		}
+		return "unknown"
+	}
+}
+
 // 计算颜色亮度的函数
 // 用于判断背景颜色深浅，从而选择合适的文本颜色
 func getLuminance(c color.RGBA) float64 {
@@ -367,11 +441,14 @@ func ProcessImageDirectory(inputDir, outputDir string) error {
 		return fmt.Errorf("获取目录中图像路径失败: %v", err)
 	}
 
-	// 生成输出路径列表
+	// 生成输出路径列表，保留原始图片名称并加上模型标识和随机数以区分并发处理
+	modelIdentifier := getModelIdentifier(modelPath)
 	outputPaths := make([]string, len(imagePaths))
 	for i, imagePath := range imagePaths {
 		imgName := filepath.Base(imagePath)
-		outputPaths[i] = filepath.Join(outputDir, "detected_"+imgName)
+		ext := filepath.Ext(imgName)
+		fileNameWithoutExt := imgName[:len(imgName)-len(ext)]
+		outputPaths[i] = filepath.Join(outputDir, fileNameWithoutExt+"_"+modelIdentifier+"_"+strconv.Itoa(rand.IntN(10000))+"_"+strconv.Itoa(i)+ext)
 	}
 
 	// 使用并发处理图像
@@ -667,8 +744,10 @@ func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
 		if checkStrIsInArray(box.label, []string{"person", "car", "motorcycle", "bus", "truck"}) {
 			num++
 			chineseLabel := getChineseLabel(box.label)
-			confStr := fmt.Sprintf("%.2f", float32(math.Round(float64(box.confidence*100))/100))
-			outObjectStr += "对象" + strconv.Itoa(num) + ": " + box.label + chineseLabel + ", 置信度: " + confStr + " ; "
+			//confStr := fmt.Sprintf("%.2f", float32(math.Round(float64(box.confidence*100))/100))
+			confStr := fmt.Sprintf("%.8f", box.confidence)
+			boxXYStr := fmt.Sprintf("%.8f %.8f %.8f %.8f", box.x1, box.y1, box.x2, box.y2)
+			outObjectStr += "对象" + strconv.Itoa(num) + ": " + box.label + "(" + chineseLabel + ")" + ", 置信度: " + confStr + " ,框：[" + boxXYStr + "] ; "
 		}
 	}
 	if num > 0 {
@@ -826,7 +905,7 @@ func resizeWithLetterboxBAK(img image.Image, targetSize int) (image.Image, Scale
 	return result, scaleInfo
 }
 
-// 此模式将图像缩放到 imgsz（如 640），并填充到完整的正方形。 	官方版本
+// 标准 Letterbox (对应 auto=False) 此模式将图像缩放到 imgsz（如 640），并填充到完整的正方形。 	官方版本
 func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInfo) {
 	bounds := img.Bounds()
 	originalWidth, originalHeight := bounds.Dx(), bounds.Dy()
@@ -837,7 +916,18 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 	newHeight := int(math.Round(float64(originalHeight) * scale))
 
 	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
-	result := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
+
+	// 从对象池获取图像
+	result := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if result.Bounds().Dx() != targetSize || result.Bounds().Dy() != targetSize {
+		result = image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
+	} else {
+		// 清空图像
+		for i := range result.Pix {
+			result.Pix[i] = 0
+		}
+	}
 
 	// 填充 114 灰色
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
@@ -891,7 +981,7 @@ func resizeWithRectScalingBAK(img image.Image, targetSize int) (image.Image, Sca
 	return cropped, scaleInfo
 }
 
-// 官方版本：这是 dynamic=True 的精髓：不再填充到 640x640，而是填充到能被 stride（通常为 32）整除的最小矩形，从而大幅提升推理速度。
+// Rect 缩放 (对应 auto=True) 官方版本：这是 dynamic=True 的精髓：不再填充到 640x640，而是填充到能被 stride（通常为 32）整除的最小矩形，从而大幅提升推理速度。
 func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.Image, ScaleInfo) {
 	bounds := img.Bounds()
 	originalWidth, originalHeight := bounds.Dx(), bounds.Dy()
@@ -912,7 +1002,19 @@ func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.I
 	finalHeight := unpadHeight + dh
 
 	resized := resize.Resize(uint(unpadWidth), uint(unpadHeight), img, resize.Bilinear)
-	result := image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
+
+	// 从对象池获取图像
+	result := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if result.Bounds().Dx() != finalWidth || result.Bounds().Dy() != finalHeight {
+		result = image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
+	} else {
+		// 清空图像
+		for i := range result.Pix {
+			result.Pix[i] = 0
+		}
+	}
+
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
 
 	offsetX, offsetY := dw/2, dh/2
@@ -989,7 +1091,7 @@ func initSession() (*ModelSession, error) {
 // 处理模型输出
 // 解析模型输出的原始数据，提取边界框、类别和置信度信息
 func processOutput(output []float32, originalWidth, originalHeight int, confThreshold, iouThresh float32, scaleInfo ScaleInfo) []boundingBox {
-	boundingBoxes := make([]boundingBox, 0, 8400)
+	boundingBoxes := make([]*boundingBox, 0, 100) // 使用指针切片，减少内存拷贝
 
 	numAnchors := 8400
 	numClasses := 80
@@ -1040,22 +1142,22 @@ func processOutput(output []float32, originalWidth, originalHeight int, confThre
 			continue
 		}
 
-		englishLabel := yoloClasses[classID]
-		boundingBoxes = append(boundingBoxes, boundingBox{
-			label:      englishLabel,
-			confidence: finalConf,
-			x1:         x1,
-			y1:         y1,
-			x2:         x2,
-			y2:         y2,
-		})
+		// 从对象池获取boundingBox
+		box := boundingBoxPool.Get().(*boundingBox)
+		box.label = yoloClasses[classID]
+		box.confidence = finalConf
+		box.x1 = x1
+		box.y1 = y1
+		box.x2 = x2
+		box.y2 = y2
+		boundingBoxes = append(boundingBoxes, box)
 	}
 
 	sort.Slice(boundingBoxes, func(i, j int) bool {
 		return boundingBoxes[i].confidence > boundingBoxes[j].confidence
 	})
 
-	result := nonMaxSuppression(boundingBoxes, iouThresh)
+	result := nonMaxSuppressionP(boundingBoxes, iouThresh)
 	return result
 }
 
@@ -1124,7 +1226,18 @@ func max(a, b int) int {
 func flipHorizontal(img image.Image) image.Image {
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
-	result := image.NewRGBA(image.Rect(0, 0, w, h))
+
+	// 从对象池获取图像
+	result := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
+		result = image.NewRGBA(image.Rect(0, 0, w, h))
+	} else {
+		// 清空图像
+		for i := range result.Pix {
+			result.Pix[i] = 0
+		}
+	}
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
@@ -1142,7 +1255,17 @@ func rotateImage(img image.Image, degrees int) image.Image {
 
 	switch degrees {
 	case 90:
-		result := image.NewRGBA(image.Rect(0, 0, h, w))
+		// 从对象池获取图像
+		result := imagePool.Get().(*image.RGBA)
+		// 调整图像大小
+		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
+			result = image.NewRGBA(image.Rect(0, 0, h, w))
+		} else {
+			// 清空图像
+			for i := range result.Pix {
+				result.Pix[i] = 0
+			}
+		}
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(y, w-x-1, img.At(x, y))
@@ -1150,7 +1273,17 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		}
 		return result
 	case 180:
-		result := image.NewRGBA(image.Rect(0, 0, w, h))
+		// 从对象池获取图像
+		result := imagePool.Get().(*image.RGBA)
+		// 调整图像大小
+		if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
+			result = image.NewRGBA(image.Rect(0, 0, w, h))
+		} else {
+			// 清空图像
+			for i := range result.Pix {
+				result.Pix[i] = 0
+			}
+		}
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(w-x-1, h-y-1, img.At(x, y))
@@ -1158,7 +1291,17 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		}
 		return result
 	case 270:
-		result := image.NewRGBA(image.Rect(0, 0, h, w))
+		// 从对象池获取图像
+		result := imagePool.Get().(*image.RGBA)
+		// 调整图像大小
+		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
+			result = image.NewRGBA(image.Rect(0, 0, h, w))
+		} else {
+			// 清空图像
+			for i := range result.Pix {
+				result.Pix[i] = 0
+			}
+		}
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(h-y-1, x, img.At(x, y))
@@ -1182,7 +1325,55 @@ func flipBoundingBox(box boundingBox, imageWidth int) boundingBox {
 	return box
 }
 
-// 非极大值抑制(NMS)
+// 非极大值抑制(NMS) - 指针版本
+// 去除重复的检测框，保留置信度最高的框
+func nonMaxSuppressionP(boxes []*boundingBox, iouThreshold float32) []boundingBox {
+	if len(boxes) == 0 {
+		return []boundingBox{}
+	}
+
+	selected := make([]boundingBox, 0, len(boxes))
+	picked := make([]bool, len(boxes))
+
+	// 按类别分组进行NMS抑制 - 仿照官方Python的batched_nms实现
+	for i := 0; i < len(boxes); i++ {
+		if picked[i] {
+			// 释放未选中的对象
+			boundingBoxPool.Put(boxes[i])
+			continue
+		}
+
+		// 保留选中的对象
+		selected = append(selected, *boxes[i])
+		picked[i] = true
+
+		// 只对相同类别的框进行NMS抑制
+		for j := i + 1; j < len(boxes); j++ {
+			if picked[j] || boxes[i].label != boxes[j].label {
+				continue
+			}
+
+			// 计算IoU
+			iou := boxes[i].iou(boxes[j])
+			if iou >= iouThreshold { // 使用 >= 与官方Python代码保持一致
+				picked[j] = true
+				// 释放被抑制的对象
+				boundingBoxPool.Put(boxes[j])
+			}
+		}
+	}
+
+	// 释放所有未处理的对象
+	for i := 0; i < len(boxes); i++ {
+		if !picked[i] {
+			boundingBoxPool.Put(boxes[i])
+		}
+	}
+
+	return selected
+}
+
+// 非极大值抑制(NMS) - 兼容旧版本
 // 去除重复的检测框，保留置信度最高的框
 func nonMaxSuppression(boxes []boundingBox, iouThreshold float32) []boundingBox {
 	if len(boxes) == 0 {
@@ -1226,7 +1417,20 @@ func nonMaxSuppression(boxes []boundingBox, iouThreshold float32) []boundingBox 
 // 在原图上绘制检测结果，包括边界框、标签和置信度
 func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPath string) error {
 	bounds := img.Bounds()
-	rgba := image.NewRGBA(bounds)
+	w, h := bounds.Dx(), bounds.Dy()
+
+	// 从对象池获取图像
+	rgba := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if rgba.Bounds().Dx() != w || rgba.Bounds().Dy() != h {
+		rgba = image.NewRGBA(bounds)
+	} else {
+		// 清空图像
+		for i := range rgba.Pix {
+			rgba.Pix[i] = 0
+		}
+	}
+
 	draw.Draw(rgba, bounds, img, image.Point{}, draw.Src)
 
 	// 定义不同类别的颜色映射 - 使用更鲜明的颜色
@@ -1366,6 +1570,9 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 		return fmt.Errorf("编码输出图像失败: %w", err)
 	}
 
+	// 将图像对象归还到池中
+	imagePool.Put(rgba)
+
 	return nil
 }
 
@@ -1390,7 +1597,7 @@ func measureText(text string, face font.Face) (width, height int) {
 // 在边界框旁边绘制类别标签和置信度
 func drawLabel(img *image.RGBA, box boundingBox, boxColor color.RGBA) {
 	chineseLabel := getChineseLabel(box.label)
-	labelText := fmt.Sprintf("%s(%.2f)", chineseLabel, box.confidence) // 与drawBoundingBoxesWithLabels中的格式一致
+	labelText := fmt.Sprintf("%s/%s(%.2f)", box.label, chineseLabel, box.confidence) // 显示英文标签/中文标签和置信度
 	rect := box.toRect()
 
 	textWidth, textHeight := measureText(labelText, chineseFont)
