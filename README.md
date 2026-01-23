@@ -1,6 +1,6 @@
-# 🚀 YOLOv11 Go 目标检测器（支持中文标签）
+# 🚀 YOLO11/YOLOv8x Go 目标检测器（支持中文标签）
 
-一个基于 **ONNX Runtime** 和 **YOLOv11** 的轻量级目标检测工具，使用 Go 语言编写，支持中文标签显示、多平台（Windows/macOS/Linux）。
+一个基于 **ONNX Runtime** 和 **YOLO11/YOLOv8x** 的轻量级目标检测工具，使用 Go 语言编写，支持中文标签显示、多平台（Windows/macOS/Linux）。
 
 ![示例图](assets/bus_11x_false.jpg) 
 
