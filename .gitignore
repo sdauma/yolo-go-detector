@@ -1,8 +1,31 @@
-# 排除不需要的文件
+# Binaries
+detector
 *.exe
 *.zip
+
+# Models (large files)
+*.onnx
+*.pt
+*.pth
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 *.bak
-*.pyc
+
+# Python files
+*.py
 __pycache__/
+*.pyc
+*.pyo
+
+# Go
+bin/
+tmp/
+
+# Performance test outputs
 go_benchmark_*.txt
 python_benchmark_*.txt
