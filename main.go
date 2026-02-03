@@ -85,13 +85,17 @@ var (
 	}
 
 	// 图像对象池，用于重用RGBA图像
-	imagePool = sync.Pool{
-		New: func() interface{} {
-			// 默认创建640x640的图像，这是最常用的尺寸
-			return image.NewRGBA(image.Rect(0, 0, 640, 640))
-		},
-	}
+	// 使用map存储不同尺寸的图像池，提高内存使用效率
+	imagePools     map[imageSizeKey]*sync.Pool
+	imagePoolMutex sync.RWMutex
 )
+
+// imageSizeKey 用于标识不同尺寸的图像
+
+type imageSizeKey struct {
+	width  int
+	height int
+}
 
 // 定义支持的图像和视频扩展名常量，提升可维护性
 var (
@@ -121,11 +125,66 @@ type ScaleInfo struct {
 	NewHeight int     // 缩放后高度
 }
 
+// GetImageFromPool 从图像池中获取指定尺寸的图像
+func GetImageFromPool(width, height int) *image.RGBA {
+	key := imageSizeKey{width: width, height: height}
+
+	// 先尝试读取现有池
+	imagePoolMutex.RLock()
+	pool, exists := imagePools[key]
+	imagePoolMutex.RUnlock()
+
+	if !exists {
+		// 如果池不存在，创建一个新池
+		imagePoolMutex.Lock()
+		// 再次检查，防止并发创建
+		if pool, exists = imagePools[key]; !exists {
+			pool = &sync.Pool{
+				New: func() interface{} {
+					return image.NewRGBA(image.Rect(0, 0, width, height))
+				},
+			}
+			imagePools[key] = pool
+		}
+		imagePoolMutex.Unlock()
+	}
+
+	// 从池中获取图像
+	img := pool.Get().(*image.RGBA)
+	// 清空图像数据
+	for i := range img.Pix {
+		img.Pix[i] = 0
+	}
+	return img
+}
+
+// PutImageToPool 将图像归还到对应的尺寸池中
+func PutImageToPool(img *image.RGBA) {
+	if img == nil {
+		return
+	}
+
+	bounds := img.Bounds()
+	key := imageSizeKey{width: bounds.Dx(), height: bounds.Dy()}
+
+	// 检查池是否存在
+	imagePoolMutex.RLock()
+	pool, exists := imagePools[key]
+	imagePoolMutex.RUnlock()
+
+	if exists {
+		pool.Put(img)
+	}
+}
+
 // 主函数：程序入口点
 // 解析命令行参数，初始化配置，根据输入类型决定处理方式
 func main() {
 	// 设置环境变量确保UTF-8编码支持
 	os.Setenv("LC_ALL", "zh_CN.UTF-8")
+
+	// 初始化图像池映射
+	imagePools = make(map[imageSizeKey]*sync.Pool)
 
 	flag.Parse()
 	fmt.Printf("使用参数: conf=%.2f, iou=%.2f, size=%d, rect=%t, augment=%t, batch=%d, workers=%d\n",
@@ -669,7 +728,7 @@ func cleanupFont() {
 // getChineseLabel 获取中文标签
 // 将英文标签转换为对应的中文标签
 func getChineseLabel(englishLabel string) string {
-	if chinese, exists := detectLabeltMap[englishLabel]; exists {
+	if chinese, exists := detectLabelMap[englishLabel]; exists {
 		return chinese
 	}
 	return englishLabel
@@ -775,11 +834,11 @@ func initializeORTEnvironment() error {
 	}
 	libPath := getSharedLibPath()
 	if libPath == "" {
-		return errors.New("未找到ONNX Runtime库")
+		return errors.New("未找到ONNX Runtime库，请确保已安装ONNX Runtime或在third_party目录中放置了相应的库文件")
 	}
 	ort.SetSharedLibraryPath(libPath)
 	if err := ort.InitializeEnvironment(); err != nil {
-		return fmt.Errorf("初始化ORT环境失败: %w", err)
+		return fmt.Errorf("初始化ORT环境失败: %w，使用的库路径: %s", err, libPath)
 	}
 	ortInitialized = true
 	return nil
@@ -848,61 +907,21 @@ func (b *boundingBox) iou(other *boundingBox) float32 {
 // 加载图像文件
 // 支持多种图像格式（JPEG、PNG、GIF等）
 func loadImageFile(filePath string) (image.Image, error) {
+	// 检查文件是否存在
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("图像文件不存在: %s", filePath)
+	}
+
 	f, e := os.Open(filePath)
 	if e != nil {
-		return nil, fmt.Errorf("打开 %s 错误: %w", filePath, e)
+		return nil, fmt.Errorf("打开图像文件失败 (路径: %s): %w", filePath, e)
 	}
 	defer f.Close()
-	pic, _, e := image.Decode(f)
+	pic, format, e := image.Decode(f)
 	if e != nil {
-		return nil, fmt.Errorf("解码 %s 错误: %w", filePath, e)
+		return nil, fmt.Errorf("解码图像文件失败 (路径: %s, 格式: %v): %w", filePath, format, e)
 	}
 	return pic, nil
-}
-
-// 旧函数已被替换，请使用resizeWithLetterbox函数
-
-// LetterBox类的rect=False模式实现（auto=False）
-// 对应Python中LetterBox的auto=False参数，用于rect=False模式（标准letterbox）
-// 保持长宽比，将图像缩放到最短边等于目标尺寸，用灰色填充
-func resizeWithLetterboxBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
-	bounds := img.Bounds()
-	originalWidth := bounds.Dx()
-	originalHeight := bounds.Dy()
-
-	// 计算缩放比例，保持长宽比，确保最短边适应目标尺寸
-	scale := float64(targetSize) / math.Max(float64(originalWidth), float64(originalHeight))
-	newWidth := int(float64(originalWidth) * scale)
-	newHeight := int(float64(originalHeight) * scale)
-
-	// 缩放图像
-	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
-	result := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
-
-	// 填充灰色背景 (114, 114, 114) - YOLO标准
-	grayFill := &image.Uniform{color.RGBA{114, 114, 114, 255}}
-	draw.Draw(result, result.Bounds(), grayFill, image.Point{}, draw.Src)
-
-	// 将缩放后的图像居中放置
-	offsetX := (targetSize - newWidth) / 2
-	offsetY := (targetSize - newHeight) / 2
-	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight),
-		resized, image.Point{}, draw.Src)
-
-	// 计算实际的缩放比例（相对于原始图像）
-	scaleX := float32(newWidth) / float32(originalWidth)
-	scaleY := float32(newHeight) / float32(originalHeight)
-
-	scaleInfo := ScaleInfo{
-		ScaleX:    scaleX,
-		ScaleY:    scaleY,
-		PadLeft:   offsetX,
-		PadTop:    offsetY,
-		NewWidth:  newWidth,
-		NewHeight: newHeight,
-	}
-
-	return result, scaleInfo
 }
 
 // 标准 Letterbox (对应 auto=False) 此模式将图像缩放到 imgsz（如 640），并填充到完整的正方形。 	官方版本
@@ -917,17 +936,8 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 
 	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
 
-	// 从对象池获取图像
-	result := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if result.Bounds().Dx() != targetSize || result.Bounds().Dy() != targetSize {
-		result = image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
-	} else {
-		// 清空图像
-		for i := range result.Pix {
-			result.Pix[i] = 0
-		}
-	}
+	// 从对象池获取指定尺寸的图像
+	result := GetImageFromPool(targetSize, targetSize)
 
 	// 填充 114 灰色
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
@@ -938,47 +948,6 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight), resized, image.Point{}, draw.Src)
 
 	return result, ScaleInfo{ScaleX: float32(scale), ScaleY: float32(scale), PadLeft: offsetX, PadTop: offsetY}
-}
-
-// LetterBox类的rect=True模式实现（auto=True）
-// 对应Python中LetterBox的auto=True参数，用于rect=True模式
-// 保持长宽比，同时确保尺寸能被步长(stride)整除，以提高批处理效率
-func resizeWithRectScalingBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
-	bounds := img.Bounds()
-	originalWidth := bounds.Dx()
-	originalHeight := bounds.Dy()
-
-	scale := float64(targetSize) / math.Min(float64(originalWidth), float64(originalHeight))
-	newWidth := int(float64(originalWidth) * scale)
-	newHeight := int(float64(originalHeight) * scale)
-
-	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
-
-	// 中心裁剪成 640x640
-	startX := (newWidth - targetSize) / 2
-	startY := (newHeight - targetSize) / 2
-	if startX < 0 {
-		startX = 0
-	}
-	if startY < 0 {
-		startY = 0
-	}
-
-	cropped := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
-	draw.Draw(cropped, cropped.Bounds(), resized, image.Point{startX, startY}, draw.Src)
-
-	scaleX := float32(newWidth) / float32(originalWidth)
-	scaleY := float32(newHeight) / float32(originalHeight)
-
-	scaleInfo := ScaleInfo{
-		ScaleX:    scaleX,
-		ScaleY:    scaleY,
-		PadLeft:   startX,
-		PadTop:    startY,
-		NewWidth:  newWidth,
-		NewHeight: newHeight,
-	}
-	return cropped, scaleInfo
 }
 
 // Rect 缩放 (对应 auto=True) 官方版本：这是 dynamic=True 的精髓：不再填充到 640x640，而是填充到能被 stride（通常为 32）整除的最小矩形，从而大幅提升推理速度。
@@ -1003,17 +972,8 @@ func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.I
 
 	resized := resize.Resize(uint(unpadWidth), uint(unpadHeight), img, resize.Bilinear)
 
-	// 从对象池获取图像
-	result := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if result.Bounds().Dx() != finalWidth || result.Bounds().Dy() != finalHeight {
-		result = image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
-	} else {
-		// 清空图像
-		for i := range result.Pix {
-			result.Pix[i] = 0
-		}
-	}
+	// 从对象池获取指定尺寸的图像
+	result := GetImageFromPool(finalWidth, finalHeight)
 
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
 
@@ -1058,13 +1018,13 @@ func initSession() (*ModelSession, error) {
 	inputShape := ort.NewShape(int64(*batchSize), 3, int64(size), int64(size))
 	inputTensor, err := ort.NewEmptyTensor[float32](inputShape)
 	if err != nil {
-		return nil, fmt.Errorf("创建输入张量失败: %w", err)
+		return nil, fmt.Errorf("创建输入张量失败 (形状: %v): %w", inputShape, err)
 	}
 	outputShape := ort.NewShape(int64(*batchSize), 84, 8400) // YOLO 输出
 	outputTensor, err := ort.NewEmptyTensor[float32](outputShape)
 	if err != nil {
 		inputTensor.Destroy()
-		return nil, fmt.Errorf("创建输出张量失败: %w", err)
+		return nil, fmt.Errorf("创建输出张量失败 (形状: %v): %w", outputShape, err)
 	}
 	options, err := ort.NewSessionOptions()
 	if err != nil {
@@ -1079,7 +1039,7 @@ func initSession() (*ModelSession, error) {
 	if err != nil {
 		inputTensor.Destroy()
 		outputTensor.Destroy()
-		return nil, fmt.Errorf("创建ORT会话失败: %w", err)
+		return nil, fmt.Errorf("创建ORT会话失败 (模型路径: %s, 输入尺寸: %d): %w", modelPath, size, err)
 	}
 	return &ModelSession{
 		Session: session,
@@ -1227,17 +1187,8 @@ func flipHorizontal(img image.Image) image.Image {
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 
-	// 从对象池获取图像
-	result := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
-		result = image.NewRGBA(image.Rect(0, 0, w, h))
-	} else {
-		// 清空图像
-		for i := range result.Pix {
-			result.Pix[i] = 0
-		}
-	}
+	// 从对象池获取指定尺寸的图像
+	result := GetImageFromPool(w, h)
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
@@ -1255,17 +1206,8 @@ func rotateImage(img image.Image, degrees int) image.Image {
 
 	switch degrees {
 	case 90:
-		// 从对象池获取图像
-		result := imagePool.Get().(*image.RGBA)
-		// 调整图像大小
-		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
-			result = image.NewRGBA(image.Rect(0, 0, h, w))
-		} else {
-			// 清空图像
-			for i := range result.Pix {
-				result.Pix[i] = 0
-			}
-		}
+		// 从对象池获取指定尺寸的图像
+		result := GetImageFromPool(h, w)
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(y, w-x-1, img.At(x, y))
@@ -1273,17 +1215,8 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		}
 		return result
 	case 180:
-		// 从对象池获取图像
-		result := imagePool.Get().(*image.RGBA)
-		// 调整图像大小
-		if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
-			result = image.NewRGBA(image.Rect(0, 0, w, h))
-		} else {
-			// 清空图像
-			for i := range result.Pix {
-				result.Pix[i] = 0
-			}
-		}
+		// 从对象池获取指定尺寸的图像
+		result := GetImageFromPool(w, h)
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(w-x-1, h-y-1, img.At(x, y))
@@ -1291,17 +1224,8 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		}
 		return result
 	case 270:
-		// 从对象池获取图像
-		result := imagePool.Get().(*image.RGBA)
-		// 调整图像大小
-		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
-			result = image.NewRGBA(image.Rect(0, 0, h, w))
-		} else {
-			// 清空图像
-			for i := range result.Pix {
-				result.Pix[i] = 0
-			}
-		}
+		// 从对象池获取指定尺寸的图像
+		result := GetImageFromPool(h, w)
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(h-y-1, x, img.At(x, y))
@@ -1419,17 +1343,8 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 
-	// 从对象池获取图像
-	rgba := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if rgba.Bounds().Dx() != w || rgba.Bounds().Dy() != h {
-		rgba = image.NewRGBA(bounds)
-	} else {
-		// 清空图像
-		for i := range rgba.Pix {
-			rgba.Pix[i] = 0
-		}
-	}
+	// 从对象池获取指定尺寸的图像
+	rgba := GetImageFromPool(w, h)
 
 	draw.Draw(rgba, bounds, img, image.Point{}, draw.Src)
 
@@ -1571,7 +1486,7 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 	}
 
 	// 将图像对象归还到池中
-	imagePool.Put(rgba)
+	PutImageToPool(rgba)
 
 	return nil
 }
@@ -1729,7 +1644,7 @@ var yoloClasses = []string{
 
 // 中英标签映射
 // 将YOLO英文标签映射为中文标签
-var detectLabeltMap = map[string]string{
+var detectLabelMap = map[string]string{
 	"person":         "人员",
 	"bicycle":        "自行车",
 	"car":            "汽车",
