@@ -4,7 +4,7 @@ detector
 *.zip
 
 # Models (large files)
-*.onnx
+# *.onnx  # 暂时注释，使用Git LFS跟踪
 *.pt
 *.pth
 
