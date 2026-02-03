@@ -1,0 +1,8 @@
+# 排除不需要的文件
+*.exe
+*.zip
+*.bak
+*.pyc
+__pycache__/
+go_benchmark_*.txt
+python_benchmark_*.txt
