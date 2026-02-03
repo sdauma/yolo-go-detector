@@ -4,7 +4,8 @@ detector
 *.zip
 
 # Models (large files)
-# *.onnx  # 暂时注释，使用Git LFS跟踪
+# 使用Git LFS跟踪onnx文件
+# *.onnx
 *.pt
 *.pth
 
@@ -17,7 +18,8 @@ Thumbs.db
 *.bak
 
 # Python files
-*.py
+# 保留测试用的Python文件
+# *.py
 __pycache__/
 *.pyc
 *.pyo
@@ -27,5 +29,6 @@ bin/
 tmp/
 
 # Performance test outputs
-go_benchmark_*.txt
-python_benchmark_*.txt
+# 测试结果传到仓库也是有意义的
+# go_benchmark_*.txt
+# python_benchmark_*.txt

@@ -86,12 +86,17 @@ go run . -img ./assets/test.jpg -enable-system-text=true -system-text="智能安
 yolo-go-detector/
 ├── main.go           # 主程序入口，包含检测逻辑
 ├── detector_pool.go  # 检测器池，支持并发处理
-├── README.md
-├── LICENSE
-├── assets/           # 示例图像
-├── third_party/      # 第三方依赖（ONNX模型、运行库）
-├── test/             # 性能测试程序
+├── README.md         # 项目说明
+├── LICENSE           # 许可证
+├── assets/           # 资源文件
+│   └── images/       # 测试图像
+├── models/           # 模型文件（使用Git LFS跟踪）
 ├── results/          # 测试结果存储
+├── test/             # 测试脚本
+│   ├── benchmark/    # 基准测试
+│   ├── monitor/      # 监控脚本
+│   └── python/       # Python相关测试
+├── third_party/      # 第三方依赖
 └── go.mod/go.sum     # Go模块文件
 ```
 
