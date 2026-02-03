@@ -35,9 +35,28 @@ cd yolo-go-detector
 go mod tidy
 ```
 
-### 5. 下载模型文件
-下载 YOLOv11 模型文件并放置到 `./third_party/` 目录下，导出为 `yolo11x.onnx`。
-如无特殊要求请使用默认参数: yolo export model=yolo11x.pt format=onnx imgsz=640 opset=17 ,默认参数下请使用rect=false ,本程序的rect=true仅在导出参数dynamic=True时有意义。
+### 5. 模型文件
+
+项目使用 **Git LFS**（Large File Storage）跟踪模型文件，确保仓库大小合理。
+
+#### 克隆仓库后获取模型文件
+```bash
+# 确保已安装Git LFS
+git lfs install
+
+# 拉取模型文件
+git lfs pull
+```
+
+#### 手动添加模型文件
+如果需要手动添加模型文件，请将YOLOv11模型文件放置到 `./third_party/` 目录下，导出格式为 `yolo11x.onnx`。
+
+**导出参数建议**:
+```bash
+yolo export model=yolo11x.pt format=onnx imgsz=640 opset=17
+```
+
+**注意**：默认参数下请使用 `rect=false`，本程序的 `rect=true` 仅在导出参数 `dynamic=True` 时有意义。
 
 ### 6. 编译运行
 ```bash
@@ -90,13 +109,12 @@ yolo-go-detector/
 ├── LICENSE           # 许可证
 ├── assets/           # 资源文件
 │   └── images/       # 测试图像
-├── models/           # 模型文件（使用Git LFS跟踪）
 ├── results/          # 测试结果存储
 ├── test/             # 测试脚本
 │   ├── benchmark/    # 基准测试
 │   ├── monitor/      # 监控脚本
 │   └── python/       # Python相关测试
-├── third_party/      # 第三方依赖
+├── third_party/      # 第三方依赖（包含模型文件，使用Git LFS跟踪）
 └── go.mod/go.sum     # Go模块文件
 ```
 
