@@ -1,319 +1,227 @@
-# YOLO11x ONNX 推理系统：Go 与 Python 性能对比
+# 🚀 YOLO11/YOLOv8x Go 目标检测器（支持中文标签）
 
-## 项目概述
+一个基于 **ONNX Runtime** 和 **YOLO11/YOLOv8x** 的轻量级目标检测工具，使用 Go 语言编写，支持中文标签显示、多平台（Windows/macOS/Linux）。
 
-这是一个用于评估主机语言对 ONNX Runtime 推理性能影响的系统性研究项目，专注于 YOLO11x 模型在 Go 和 Python 中的推理性能与稳定性对比。该项目提供了完整的基准测试框架、内存监控工具和可复现的实验配置，旨在为边缘和生产环境中的深度学习推理系统设计提供参考。
+![示例图](assets/bus_11x_false.jpg) 
 
-## 研究背景
+## ✨ 特性
 
-随着深度学习模型在边缘和工业场景的广泛应用，系统级设计决策（如主机语言选择、内存管理、并发策略）对推理性能和稳定性的影响日益显著。本项目通过严格控制实验条件，量化了 Go 与 Python 作为主机语言对 YOLO11x ONNX 推理系统的影响。
+- 🖼️ 支持 JPG/PNG/GIF/BMP 输入
+- 💡 自动识别中文字体，显示中文标签
+- ⚡ 高性能推理（ONNX Runtime）
+- 🎨 彩色边界框 + 置信度标签 + 鲜明分类色彩
+- 🖼️ 支持 JPG/PNG/GIF 输入
+- 👉 自动识别中文字体，显示中文标签
+- ⚡ 高性能推理（ONNX Runtime + GPU 可选）
+- 🎨 彩色边界框 + 置信度标签
+- 📦 跨平台（Windows / macOS / Linux）
+- 🔄 多线程并发处理
+- 📝 系统文本标注功能
+- 📊 支持批量处理图像
+- 🔧 可调节的检测参数（置信度、IOU阈值等）
 
-## 功能特点
+## 🛠️ 快速开始
 
-- ✅ **跨语言对比**：提供 Go 和 Python 两种实现的完整对比
-- ✅ **ONNX Runtime**：使用 ONNX Runtime 1.23.2 作为统一推理后端
-- ✅ **严格控制**：两种实现使用相同的模型、硬件、配置和预处理流程
-- ✅ **全面基准测试**：支持多种线程配置（intra=1/2/4）和长时间稳定性测试
-- ✅ **内存监控**：提供 RSS 内存占用的实时监控和分析
-- ✅ **数值一致性**：确保两种实现的输出结果数值一致
-- ✅ **可复现性**：提供详细的实验配置和环境说明
+### 1. 安装 Go（≥1.20）
+[https://go.dev/dl](https://go.dev/dl)
 
-## 技术架构
+### 2. 环境准备
+确保系统中安装了 Go 并配置好 GOPATH 环境变量。
 
-```
-┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
-│                     │     │                     │     │                     │
-│   图像预处理        │────▶│   ONNX Runtime      │────▶│   后处理与分析      │
-│                     │     │   模型推理          │     │                     │
-└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
-        ▲                          ▲                            │
-        │                          │                            ▼
-┌────────────────┐         ┌────────────────┐           ┌─────────────────────┐
-│                │         │                │           │                     │
-│  主机语言实现   │         │  YOLO11x ONNX  │           │   性能指标收集       │
-│  (Go / Python)  │         │    模型文件     │           │  (延迟、内存、稳定性) │
-└────────────────┘         └────────────────┘           └─────────────────────┘
-```
-
-## 安装依赖
-
-### 1. Go 语言环境
-
-确保您的系统已安装 Go 1.25 或更高版本：
-
+### 3. 克隆项目
 ```bash
-go version
+git clone https://github.com/yourusername/yolo-go-detector.git
+cd yolo-go-detector
 ```
 
-### 2. Python 环境
-
-确保您的系统已安装 Python 3.12 或更高版本：
-
+### 4. 安装依赖
 ```bash
-python --version
+go mod tidy
 ```
 
-### 3. ONNX Runtime
+### 5. 下载模型文件
+下载 YOLOv11 模型文件并放置到 `./third_party/` 目录下，导出为 `yolo11x.onnx`。
+如无特殊要求请使用默认参数: yolo export model=yolo11x.pt format=onnx imgsz=640 opset=17 ,默认参数下请使用rect=false ,本程序的rect=true仅在导出参数dynamic=True时有意义。
 
-#### Go 依赖
-
+### 6. 编译运行
 ```bash
-go get github.com/yalue/onnxruntime_go
+go run .
 ```
 
-#### Python 依赖
+## ⚙️ 使用参数
 
+| 参数 | 默认值 | 描述 |
+|------|--------|------|
+| `-img` | `./assets/bus.jpg` | 输入图像路径、目录或.txt文件 |
+| `-output` | `./assets/bus_11x_false.jpg` | 输出图像路径 |
+| `-conf` | `0.25` | 置信度阈值，过滤低置信度检测结果 |
+| `-iou` | `0.7` | IOU阈值，用于非极大值抑制(NMS) |
+| `-size` | `640` | 模型输入尺寸，通常为640x640 |
+| `-rect` | `false` | 是否使用矩形缩放（保持长宽比） |
+| `-augment` | `false` | 是否启用测试时增强(TTA) |
+| `-batch` | `1` | 推理的批处理大小 |
+| `-workers` | `CPU核数/2` | 并发工作协程数量 |
+| `-queue-size` | `100` | 任务队列大小 |
+| `-timeout` | `30s` | 单个任务超时时间 |
+| `-enable-system-text` | `true` | 是否显示系统文本 |
+| `-system-text` | `重要设施危险场景监测系统` | 系统显示文本 |
+| `-text-location` | `bottom-left` | 系统文本位置 (top-left, bottom-left, top-right, bottom-right) |
+
+### 示例命令
+
+检测单个图像：
 ```bash
-pip install onnxruntime==1.23.2 opencv-python numpy
+go run . -img ./assets/test.jpg -output ./output/result.jpg -conf 0.5
 ```
 
-### 4. 其他依赖
-
-#### Go 依赖
-
+批量处理目录中的图像：
 ```bash
-go get github.com/flopp/go-findfont
-go get golang.org/x/image/font
-go get golang.org/x/image/font/opentype
-go get golang.org/x/image/math/fixed
+go run . -img ./test_images/ -conf 0.3 -workers 4
 ```
 
-## 快速开始
+启用系统文本标注：
+```bash
+go run . -img ./assets/test.jpg -enable-system-text=true -system-text="智能安全监控系统" -text-location="top-left"
+```
 
-### 1. 准备模型文件
+## 🏗️ 项目结构
 
-将 YOLO11x 模型转换为 ONNX 格式，并将其放置在 `third_party/` 目录下，命名为 `yolo11x.onnx`。
+```
+yolo-go-detector/
+├── main.go           # 主程序入口，包含检测逻辑
+├── detector_pool.go  # 检测器池，支持并发处理
+├── README.md
+├── LICENSE
+├── assets/           # 示例图像
+├── third_party/      # 第三方依赖（ONNX模型、运行库）
+├── test/             # 性能测试程序
+├── results/          # 测试结果存储
+└── go.mod/go.sum     # Go模块文件
+```
 
-### 2. 准备测试图像
+## 🧪 性能测试
 
-将测试图像放置在 `assets/` 目录下，例如 `bus.jpg`。
+本项目包含完整的性能测试程序，用于比较 Go 和 Python 作为主机语言对 ONNX Runtime 推理性能的影响。
 
-### 3. 运行基准测试
+### 测试目录结构
+
+```
+test/
+├── benchmark_go_std_intra1.go    # Go 基准测试（intra_op_num_threads=1）
+├── benchmark_go_std_intra2.go    # Go 基准测试（intra_op_num_threads=2）
+├── benchmark_go_std_intra4.go    # Go 基准测试（intra_op_num_threads=4）
+├── benchmark_go_long_stability.go # Go 长时间稳定性测试
+├── inference_align.py            # Python 对齐实现
+├── monitor_go_memory.ps1         # Go 内存监控脚本
+├── monitor_python_memory.ps1     # Python 内存监控脚本
+├── monitor_long_stability.ps1    # 长时间稳定性监控
+└── requirements_inference.txt    # Python 推理依赖
+```
+
+### 运行测试
 
 #### Go 基准测试
 
 ```bash
-# 运行 intra=1 配置
-go run benchmark_go_std_intra1.go
+# 运行 intra=1 测试
+go run test/benchmark_go_std_intra1.go
 
-# 运行 intra=2 配置
-go run benchmark_go_std_intra2.go
+# 运行 intra=2 测试
+go run test/benchmark_go_std_intra2.go
 
-# 运行 intra=4 配置
-go run benchmark_go_std_intra4.go
+# 运行 intra=4 测试
+go run test/benchmark_go_std_intra4.go
+
+# 运行长时间稳定性测试
+go run test/benchmark_go_long_stability.go
 ```
 
 #### Python 基准测试
 
 ```bash
-python inference_align.py
+# 安装依赖
+pip install -r test/requirements_inference.txt
+
+# 运行 Python 测试
+python test/inference_align.py
 ```
 
-### 4. 运行内存监控
+### 内存监控
 
-#### Go 内存监控
+#### 监控 Go 内存
 
-```powershell
-./monitor_go_memory.ps1
+```bash
+# 启动内存监控脚本
+./test/monitor_go_memory.ps1
+
+# 同时运行 Go 测试程序
+go run test/benchmark_go_std_intra1.go
 ```
 
-#### Python 内存监控
+#### 监控 Python 内存
 
-```powershell
-./monitor_python_memory.ps1
+```bash
+# 启动内存监控脚本
+./test/monitor_python_memory.ps1
+
+# 同时运行 Python 测试程序
+python test/inference_align.py
 ```
 
-## 核心功能说明
+### 测试结果
 
-### 1. 图像预处理
+测试结果将存储在 `results/` 目录中，包含：
 
-使用 letterbox 算法对输入图像进行预处理，保持宽高比并缩放至模型输入尺寸 (640x640)：
+- 延迟指标：Avg、p50、p90、p99
+- 内存使用：Peak RSS、Stable RSS
+- 长时间稳定性：内存泄漏检测、推理稳定性
 
-```go
-// Go 实现
-scaleInfo := fillInputTensor(img, inputTensor)
+## 📊 性能对比
 
-// Python 实现
-img, scale, pad_x, pad_y = letterbox(img)
-```
-
-### 2. 模型推理
-
-使用 ONNX Runtime 进行模型推理，支持会话复用和显式张量管理：
-
-```go
-// Go 实现
-session, err := ort.NewAdvancedSession(...)
-if err := session.Run(); err != nil {
-    panic(err)
-}
-```
-
-### 3. 性能评估
-
-提供全面的性能指标评估，包括平均延迟、p50/p90/p99 分位数延迟、内存占用和长时间稳定性：
-
-```go
-// 计算统计信息
-avg := sum / float64(N)
-p50 := times[N/2]
-p90 := times[int(math.Floor(float64(N)*0.9))]
-p99 := times[int(math.Floor(float64(N)*0.99))]
-```
-
-## 实验配置
-
-### 硬件与软件环境
-
-| 项目 | 配置说明 |
-|------|----------|
-| CPU | Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz |
-| 内存 | 16 GB |
-| 操作系统 | Windows 11 x64 |
-| ONNX Runtime | 1.23.2 (CPUExecutionProvider) |
-| 模型 | YOLO11x (ONNX, FP32) |
-| 主机语言 | Go 1.25 / Python 3.12 |
-| 图优化 | 禁用 |
-
-### 推理配置
-
-| 项目 | 设置说明 |
-|------|----------|
-| 批处理大小 | 1 |
-| 并发流数 | 1 |
-| Intra-op 线程数 | 1/2/4 |
-| Inter-op 线程数 | 1 |
-| 会话生命周期 | 单会话复用 |
-| 张量生命周期 | 显式销毁 |
-| 预热运行次数 | 10 |
-| 测量运行次数 | 30 |
-| 输入图像 | 810×1080 RGB |
-| 预处理 | Letterbox 缩放 640×640, 常数填充 114, HWC→CHW, float32 |
-
-## 项目结构
-
-```
-.
-├── assets/              # 测试图像和资源文件
-├── third_party/         # 第三方依赖和模型文件
-├── benchmark_go_std_intra1.go  # Go 基准测试文件 (intra=1)
-├── benchmark_go_std_intra2.go  # Go 基准测试文件 (intra=2)
-├── benchmark_go_std_intra4.go  # Go 基准测试文件 (intra=4)
-├── benchmark_go_long_stability.go  # Go 长时间稳定性测试
-├── inference_align.py   # Python 对齐实现
-├── monitor_go_memory.ps1  # Go 内存监控脚本
-├── monitor_python_memory.ps1  # Python 内存监控脚本
-├── README.md            # 项目说明书
-├── go.mod               # Go 模块定义
-├── go.sum               # Go 依赖校验
-└── labels.txt           # 类别标签文件
-```
-
-## 实验结果
-
-### 推理性能对比
+### 推理性能（YOLO11x）
 
 | 实现语言 | Avg (ms) | P50 (ms) | P90 (ms) | P99 (ms) |
 |---------|----------|----------|----------|----------|
 | Python  | 3382.21  | 3711.85  | 4184.99  | 4590.05  |
 | Go      | 1087.35  | 1088.36  | 1207.51  | 1260.42  |
 
-### 内存占用对比
+### 内存使用（YOLO11x）
 
 | 实现语言 | Peak RSS (MB) | Stable RSS (MB) |
-|---------|---------------|-----------------|
-| Python  | 558.3         | 558.3           |
-| Go      | 530.3         | 530.3           |
+|---------|---------------|----------------|
+| Python  | 4280.00       | 3860.00        |
+| Go      | 3650.00       | 3250.00        |
 
-### 长时间稳定性
+## 📋 支持的类别（80个COCO类别）
 
-Go 实现在长时间运行中表现出稳定的内存使用，无明显内存漂移，适合边缘和生产环境部署。
+支持包括人、车、动物、家具、电器等在内的80个常见物体类别的检测，并提供中文标签显示。
 
-## 使用示例
+- 人员 (person)
+- 交通工具：汽车(car)、摩托车(motorcycle)、飞机(airplane)、公交车(bus)、火车(train)、卡车(truck)、船(boat)等
+- 动物：鸟(bird)、猫(cat)、狗(dog)、马(horse)、牛(cow)、大象(elephant)等
+- 家具用品：椅子(chair)、沙发(couch)、盆栽(potted plant)、床(bed)等
+- 电子设备：电视(tv)、笔记本电脑(laptop)、鼠标(mouse)、遥控器(remote)等
+- 食物：香蕉(banana)、苹果(apple)、热狗(hot dog)、披萨(pizza)等
+- 以及其他50多个常用类别
 
-### 运行基准测试
+## 🚀 性能优化
 
-#### Go 实现
+- 多线程并发处理图像
+- 检测器池机制，复用模型会话
+- 高效的内存管理和垃圾回收
+- ONNX Runtime硬件加速支持
 
-```bash
-# 运行标准配置测试 (intra=4, inter=1)
-go run benchmark_go_std_intra4.go
+## 🤝 贡献
 
-# 运行长时间稳定性测试
-go run benchmark_go_long_stability.go
-```
+欢迎提交 Issue 和 Pull Request 来改进项目。
 
-#### Python 实现
+## 📄 许可证
 
-```bash
-# 运行对齐的 Python 测试
-python inference_align.py
-```
+MIT License
 
-### 内存监控
+## 🙏 致谢
 
-```powershell
-# 启动 Go 内存监控
-./monitor_go_memory.ps1
-
-# 启动 Python 内存监控
-./monitor_python_memory.ps1
-```
-
-## 性能优化
-
-- **会话复用**：创建一次会话，多次使用，减少初始化开销
-- **显式张量管理**：及时销毁不再使用的张量，避免内存泄漏
-- **线程配置**：根据硬件特性调整 intra-op 线程数，平衡并行度和开销
-- **内存管理**：Go 的显式内存管理有助于减少内存占用和提高稳定性
-
-## 常见问题
-
-### 1. 模型加载失败
-
-请检查 ONNX 模型文件的路径和格式是否正确，确保 ONNX Runtime 库的版本与模型兼容。
-
-### 2. 性能测试结果不一致
-
-请确保关闭系统中其他占用资源的程序，按照相同的硬件和软件环境进行测试，以确保结果的可复现性。
-
-### 3. 内存监控脚本无法找到进程
-
-请确保基准测试程序正在运行，并且进程名称与监控脚本中指定的名称匹配。
-
-## 许可证
-
-本项目采用 MIT 许可证，详见 LICENSE 文件。
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request 来帮助改进这个项目！
-
-## 论文引用
-
-如果您使用本项目的代码或结果，请引用我们的论文：
-
-```
-@article{yolo-go-python-comparison,
-title={面向边缘推理系统的跨语言深度学习推理性能与稳定性分析},
-author={Your Name},
-year={2026},
-journal={Journal Name}
-}
-```
-
-## 更新日志
-
-### v2.0.0 (2026-02-03)
-
-- 完成 YOLO11x ONNX 模型的 Go 和 Python 实现
-- 实现严格控制的性能对比实验
-- 添加内存监控和稳定性测试
-- 提供完整的实验复现说明
-- 更新项目文档和论文支持
-
----
-
-**作者**: Your Name
-**联系方式**: your-email@example.com
-**项目地址**: https://github.com/sdauma/yolo-go-detector
+- [ultralytics/yolov11](https://docs.ultralytics.com/models/yolo11/) - YOLOv11 模型
+- [yalue/onnxruntime_go](https://github.com/yalue/onnxruntime_go) - Go语言ONNX Runtime绑定
+- [Go编程语言](https://go.dev/) - Go语言开发
+- 人工智能后面的所有人类, 感谢所有开源项目提供的帮助
