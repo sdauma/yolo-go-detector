@@ -37,23 +37,22 @@ go mod tidy
 
 ### 5. 模型文件
 
-项目使用 **Git LFS**（Large File Storage）跟踪模型文件，确保仓库大小合理。
+项目支持同时使用 **YOLO11x** 和 **YOLOv8x** 模型，无需修改代码即可切换使用。
 
-#### 克隆仓库后获取模型文件
-```bash
-# 确保已安装Git LFS
-git lfs install
-
-# 拉取模型文件
-git lfs pull
-```
+#### 支持的模型文件
+- `yolo11x.onnx` - YOLO11x 模型（默认使用）
+- `yolov8x.onnx` - YOLOv8x 模型
 
 #### 手动添加模型文件
-如果需要手动添加模型文件，请将YOLOv11模型文件放置到 `./third_party/` 目录下，导出格式为 `yolo11x.onnx`。
+请将模型文件放置到 `./third_party/` 目录下。
 
 **导出参数建议**:
 ```bash
+# YOLO11x
 yolo export model=yolo11x.pt format=onnx imgsz=640 opset=17
+
+# YOLOv8x
+yolo export model=yolov8x.pt format=onnx imgsz=640 opset=17
 ```
 
 **注意**：默认参数下请使用 `rect=false`，本程序的 `rect=true` 仅在导出参数 `dynamic=True` 时有意义。
@@ -86,7 +85,7 @@ go run .
 
 检测单个图像：
 ```bash
-go run . -img ./assets/test.jpg -output ./output/result.jpg -conf 0.5
+go run . -img ./assets/bus.jpg -output ./output/bus_11x_false.jpg -conf 0.5
 ```
 
 批量处理目录中的图像：
@@ -96,7 +95,7 @@ go run . -img ./test_images/ -conf 0.3 -workers 4
 
 启用系统文本标注：
 ```bash
-go run . -img ./assets/test.jpg -enable-system-text=true -system-text="智能安全监控系统" -text-location="top-left"
+go run . -img ./assets/bus.jpg -output ./output/bus_11x_true.jpg -enable-system-text=true -system-text="智能安全监控系统" -text-location="top-left"
 ```
 
 ## 🏗️ 项目结构
@@ -107,15 +106,27 @@ yolo-go-detector/
 ├── detector_pool.go  # 检测器池，支持并发处理
 ├── README.md         # 项目说明
 ├── LICENSE           # 许可证
-├── assets/           # 资源文件
-│   └── images/       # 测试图像
+├── assets/           # 资源文件（检测结果图像）
+│   ├── bus.jpg           # 测试图像
+│   ├── bus_11x_false.jpg # YOLO11x检测结果（rect=false）
+│   └── bus_11x_true.jpg  # YOLO11x检测结果（rect=true）
 ├── results/          # 测试结果存储
+│   ├── go_baseline_result.txt    # Go基准测试结果
+│   └── python_baseline_result.txt # Python基准测试结果
 ├── test/             # 测试脚本
 │   ├── benchmark/    # 基准测试
-│   ├── monitor/      # 监控脚本
+│   │   ├── fair_baseline_performance_analysis.md  # 公平基准性能分析报告
+│   │   ├── go_baseline_minimal.go                # Go基准测试
+│   │   └── go_long_stability.go                  # Go长时间稳定性测试
 │   └── python/       # Python相关测试
-├── third_party/      # 第三方依赖（包含模型文件，使用Git LFS跟踪）
-└── go.mod/go.sum     # Go模块文件
+│       ├── python_baseline.py                   # Python基准测试
+│       └── python_long_stability.py             # Python长时间稳定性测试
+├── third_party/      # 第三方依赖
+│   ├── onnxruntime.dll  # ONNX Runtime库
+│   ├── yolo11x.onnx     # YOLO11x模型
+│   └── yolov8x.onnx     # YOLOv8x模型
+├── go.mod            # Go模块文件
+└── go.sum            # Go依赖校验文件
 ```
 
 ## 🧪 性能测试
@@ -126,65 +137,55 @@ yolo-go-detector/
 
 ```
 test/
-├── benchmark_go_std_intra1.go    # Go 基准测试（intra_op_num_threads=1）
-├── benchmark_go_std_intra2.go    # Go 基准测试（intra_op_num_threads=2）
-├── benchmark_go_std_intra4.go    # Go 基准测试（intra_op_num_threads=4）
-├── benchmark_go_long_stability.go # Go 长时间稳定性测试
-├── inference_align.py            # Python 对齐实现
-├── monitor_go_memory.ps1         # Go 内存监控脚本
-├── monitor_python_memory.ps1     # Python 内存监控脚本
-├── monitor_long_stability.ps1    # 长时间稳定性监控
-└── requirements_inference.txt    # Python 推理依赖
+├── benchmark/          # 基准测试
+│   ├── fair_baseline_performance_analysis.md  # 公平基准性能分析报告
+│   ├── go_baseline_minimal.go                # Go 基准测试
+│   └── go_long_stability.go                  # Go 长时间稳定性测试
+└── python/             # Python 相关测试
+    ├── python_baseline.py                   # Python 基准测试
+    └── python_long_stability.py             # Python 长时间稳定性测试
 ```
 
 ### 运行测试
 
-#### Go 基准测试
+#### 运行 Go 基准测试
 
 ```bash
-# 运行 intra=1 测试
-go run test/benchmark_go_std_intra1.go
+# 进入测试目录
+cd test/benchmark
 
-# 运行 intra=2 测试
-go run test/benchmark_go_std_intra2.go
-
-# 运行 intra=4 测试
-go run test/benchmark_go_std_intra4.go
-
-# 运行长时间稳定性测试
-go run test/benchmark_go_long_stability.go
+# 运行 Go 基准测试
+go run go_baseline_minimal.go
 ```
 
-#### Python 基准测试
+#### 运行 Python 基准测试
 
 ```bash
-# 安装依赖
-pip install -r test/requirements_inference.txt
+# 进入测试目录
+cd test/python
 
-# 运行 Python 测试
-python test/inference_align.py
+# 运行 Python 基准测试
+python python_baseline.py
 ```
 
-### 内存监控
-
-#### 监控 Go 内存
+#### 运行 Go 长时间稳定性测试（10分钟）
 
 ```bash
-# 启动内存监控脚本
-./test/monitor_go_memory.ps1
+# 进入测试目录
+cd test/benchmark
 
-# 同时运行 Go 测试程序
-go run test/benchmark_go_std_intra1.go
+# 运行 Go 长时间稳定性测试
+go run go_long_stability.go
 ```
 
-#### 监控 Python 内存
+#### 运行 Python 长时间稳定性测试（10分钟）
 
 ```bash
-# 启动内存监控脚本
-./test/monitor_python_memory.ps1
+# 进入测试目录
+cd test/python
 
-# 同时运行 Python 测试程序
-python test/inference_align.py
+# 运行 Python 长时间稳定性测试
+python python_long_stability.py
 ```
 
 ### 测试结果
@@ -201,15 +202,28 @@ python test/inference_align.py
 
 | 实现语言 | Avg (ms) | P50 (ms) | P90 (ms) | P99 (ms) |
 |---------|----------|----------|----------|----------|
-| Python  | 3382.21  | 3711.85  | 4184.99  | 4590.05  |
-| Go      | 1087.35  | 1088.36  | 1207.51  | 1260.42  |
+| Python  | 963.489  | 961.574  | 996.911  | 1043.257 |
+| Go      | 824.740  | 821.952  | 841.367  | 925.461  |
 
 ### 内存使用（YOLO11x）
 
-| 实现语言 | Peak RSS (MB) | Stable RSS (MB) |
-|---------|---------------|----------------|
-| Python  | 4280.00       | 3860.00        |
-| Go      | 3650.00       | 3250.00        |
+| 实现语言 | Start RSS (MB) | Peak RSS (MB) | Stable RSS (MB) | RSS Drift (MB) |
+|---------|---------------|---------------|----------------|----------------|
+| Python  | 293.21        | 531.10        | 531.06         | 237.85         |
+| Go      | 62.00         | 62.45         | 61.88          | -0.13          |
+
+### 长时间稳定性测试（10分钟）
+
+| 指标 | Go | Python |
+|------|----|--------|
+| 测试时长 | 10m2s | 601秒 |
+| 推理次数 | 649 | 307 |
+| 推理频率 | 1.08 次/秒 | 0.51 次/秒 |
+| 平均推理时间 | 822.612 ms | 956.588 ms |
+| 初始 RSS | 61.93 MB | 540.96 MB |
+| 最终 RSS | 62.15 MB | 541.25 MB |
+| RSS Drift | 0.22 MB | 0.29 MB |
+| RSS 波动范围 | 0.99 MB (1.59%) | 0.33 MB (0.06%) |
 ## 📋 支持的类别（80个COCO类别）
 
 支持包括人、车、动物、家具、电器等在内的80个常见物体类别的检测，并提供中文标签显示。
