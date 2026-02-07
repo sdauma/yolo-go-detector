@@ -111,16 +111,57 @@ yolo-go-detector/
 │   ├── bus_11x_false.jpg # YOLO11x检测结果（rect=false）
 │   └── bus_11x_true.jpg  # YOLO11x检测结果（rect=true）
 ├── results/          # 测试结果存储
-│   ├── go_baseline_result.txt    # Go基准测试结果
-│   └── python_baseline_result.txt # Python基准测试结果
-├── test/             # 测试脚本
-│   ├── benchmark/    # 基准测试
-│   │   ├── fair_baseline_performance_analysis.md  # 公平基准性能分析报告
-│   │   ├── go_baseline_minimal.go                # Go基准测试
-│   │   └── go_long_stability.go                  # Go长时间稳定性测试
-│   └── python/       # Python相关测试
-│       ├── python_baseline.py                   # Python基准测试
-│       └── python_long_stability.py             # Python长时间稳定性测试
+│   ├── charts/                               # 图表文件
+│   │   ├── cold_start_factor.png              # 冷启动因子分析
+│   │   ├── cold_start_vs_stable.png           # 冷启动与稳定状态对比
+│   │   ├── thread_config_avg_latency.png      # 线程配置平均延迟
+│   │   ├── thread_config_latency_distribution.png  # 线程配置延迟分布
+│   │   ├── thread_config_memory_usage.png     # 线程配置内存使用
+│   │   └── thread_config_speedup.png          # 线程配置加速比
+│   ├── benchmark_analysis_report.txt           # 基准测试分析报告
+│   ├── cold_start_comparison.pdf               # 冷启动时间对比图表
+│   ├── env_check_result.txt                   # 环境检查结果
+│   ├── go_baseline_result.txt                  # Go基准测试结果
+│   ├── go_cold_start_result.txt                # Go冷启动测试结果
+│   ├── go_long_stability_result.txt            # Go长时间稳定性测试结果
+│   ├── go_rss_curve.csv                        # Go内存使用曲线数据
+│   ├── go_thread_1_result.txt                  # Go线程配置1测试结果
+│   ├── go_thread_2_result.txt                  # Go线程配置2测试结果
+│   ├── go_thread_4_result.txt                  # Go线程配置4测试结果
+│   ├── go_thread_8_result.txt                  # Go线程配置8测试结果
+│   ├── go_thread_config_comprehensive.txt      # Go线程配置综合结果
+│   ├── latency_boxplot.pdf                     # 延迟分布箱线图
+│   ├── model_md5.txt                          # 模型MD5校验结果
+│   ├── python_baseline_result.txt              # Python基准测试结果
+│   ├── python_cold_start_result.txt            # Python冷启动测试结果
+│   ├── python_long_stability_result.txt        # Python长时间稳定性测试结果
+│   ├── python_rss_curve.csv                    # Python内存使用曲线数据
+│   ├── python_thread_1_result.txt              # Python线程配置1测试结果
+│   ├── python_thread_2_result.txt              # Python线程配置2测试结果
+│   ├── python_thread_4_result.txt              # Python线程配置4测试结果
+│   ├── python_thread_8_result.txt              # Python线程配置8测试结果
+│   ├── rss_curve.pdf                          # 内存使用曲线图表
+│   └── thread_config_comparison.pdf            # 线程配置性能对比图表
+├── test/             # 测试脚本和数据
+│   ├── benchmark/    # Go基准测试
+│   │   ├── cold_start_benchmark.go             # Go冷启动测试
+│   │   ├── go_baseline_minimal.go              # Go基准测试
+│   │   ├── go_long_stability.go                # Go长时间稳定性测试
+│   │   └── thread_config_benchmark.go          # Go线程配置测试
+│   ├── charts/       # 图表生成脚本
+│   │   ├── generate_cold_start_and_thread_charts.py  # 生成冷启动和线程配置图表
+│   │   ├── generate_latency_boxplot.py         # 生成延迟箱线图
+│   │   └── plot_rss_curve.py                    # 生成RSS内存曲线
+│   ├── data/         # 测试数据
+│   │   └── input_data.bin                       # 统一输入数据文件
+│   ├── python/       # Python相关测试
+│   │   ├── python_baseline.py                   # Python基准测试
+│   │   ├── python_cold_start_benchmark.py       # Python冷启动测试
+│   │   ├── python_long_stability.py             # Python长时间稳定性测试
+│   │   └── python_thread_config_benchmark.py    # Python线程配置测试
+│   ├── fair_baseline_performance_analysis.md    # 公平基准性能分析报告
+│   ├── generate_input_data.py                   # 生成统一输入数据
+│   └── test_specification_compliance_report.md  # 测试规范合规性检查报告
 ├── third_party/      # 第三方依赖
 │   ├── onnxruntime.dll  # ONNX Runtime库
 │   ├── yolo11x.onnx     # YOLO11x模型
@@ -138,15 +179,36 @@ yolo-go-detector/
 ```
 test/
 ├── benchmark/          # 基准测试
-│   ├── fair_baseline_performance_analysis.md  # 公平基准性能分析报告
-│   ├── go_baseline_minimal.go                # Go 基准测试
-│   └── go_long_stability.go                  # Go 长时间稳定性测试
-└── python/             # Python 相关测试
-    ├── python_baseline.py                   # Python 基准测试
-    └── python_long_stability.py             # Python 长时间稳定性测试
+│   ├── cold_start_benchmark.go             # Go 冷启动测试
+│   ├── go_baseline_minimal.go              # Go 基准测试
+│   ├── go_long_stability.go                # Go 长时间稳定性测试
+│   └── thread_config_benchmark.go          # Go 线程配置测试
+├── charts/             # 图表生成脚本
+│   ├── generate_cold_start_and_thread_charts.py  # 生成冷启动和线程配置图表
+│   ├── generate_latency_boxplot.py         # 生成延迟箱线图
+│   └── plot_rss_curve.py                    # 生成RSS内存曲线
+├── data/               # 测试数据
+│   └── input_data.bin                       # 统一输入数据文件
+├── python/             # Python 相关测试
+│   ├── python_baseline.py                   # Python 基准测试
+│   ├── python_cold_start_benchmark.py       # Python 冷启动测试
+│   ├── python_long_stability.py             # Python 长时间稳定性测试
+│   └── python_thread_config_benchmark.py    # Python 线程配置测试
+├── check_environment.py                     # 环境检查脚本
+├── fair_baseline_performance_analysis.md    # 公平基准性能分析报告
+├── generate_input_data.py                   # 生成统一输入数据
+├── generate_model_md5.py                   # 生成模型MD5校验
+└── test_specification_compliance_report.md  # 测试规范合规性检查报告
 ```
 
 ### 运行测试
+
+#### 运行所有测试
+
+```bash
+# 运行批处理脚本，自动执行所有测试
+run_all_tests.bat
+```
 
 #### 运行 Go 基准测试
 
@@ -166,6 +228,46 @@ cd test/python
 
 # 运行 Python 基准测试
 python python_baseline.py
+```
+
+#### 运行 Go 冷启动测试
+
+```bash
+# 进入测试目录
+cd test/benchmark
+
+# 运行 Go 冷启动测试
+go run cold_start_benchmark.go
+```
+
+#### 运行 Python 冷启动测试
+
+```bash
+# 进入测试目录
+cd test/python
+
+# 运行 Python 冷启动测试
+python python_cold_start_benchmark.py
+```
+
+#### 运行 Go 线程配置测试
+
+```bash
+# 进入测试目录
+cd test/benchmark
+
+# 运行 Go 线程配置测试
+go run thread_config_benchmark.go
+```
+
+#### 运行 Python 线程配置测试
+
+```bash
+# 进入测试目录
+cd test/python
+
+# 运行 Python 线程配置测试
+python python_thread_config_benchmark.py
 ```
 
 #### 运行 Go 长时间稳定性测试（10分钟）
@@ -188,6 +290,22 @@ cd test/python
 python python_long_stability.py
 ```
 
+#### 生成测试图表
+
+```bash
+# 进入图表生成目录
+cd test/charts
+
+# 生成延迟箱线图
+python generate_latency_boxplot.py
+
+# 生成内存使用曲线
+python plot_rss_curve.py
+
+# 生成冷启动和线程配置图表
+python generate_cold_start_and_thread_charts.py
+```
+
 ### 测试结果
 
 测试结果将存储在 `results/` 目录中，包含：
@@ -202,28 +320,28 @@ python python_long_stability.py
 
 | 实现语言 | Avg (ms) | P50 (ms) | P90 (ms) | P99 (ms) |
 |---------|----------|----------|----------|----------|
-| Python  | 963.489  | 961.574  | 996.911  | 1043.257 |
-| Go      | 824.740  | 821.952  | 841.367  | 925.461  |
+| Python  | 1045.688 | 1045.236 | 1081.978 | 1130.758 |
+| Go      | 904.708  | 901.404  | 925.663  | 995.259  |
 
 ### 内存使用（YOLO11x）
 
 | 实现语言 | Start RSS (MB) | Peak RSS (MB) | Stable RSS (MB) | RSS Drift (MB) |
 |---------|---------------|---------------|----------------|----------------|
-| Python  | 293.21        | 531.10        | 531.06         | 237.85         |
-| Go      | 62.00         | 62.45         | 61.88          | -0.13          |
+| Python  | 293.45        | 554.86        | 554.82         | 261.37         |
+| Go      | 62.00         | 62.52         | 61.96          | -0.04          |
 
 ### 长时间稳定性测试（10分钟）
 
 | 指标 | Go | Python |
 |------|----|--------|
 | 测试时长 | 10m2s | 601秒 |
-| 推理次数 | 649 | 307 |
-| 推理频率 | 1.08 次/秒 | 0.51 次/秒 |
-| 平均推理时间 | 822.612 ms | 956.588 ms |
-| 初始 RSS | 61.93 MB | 540.96 MB |
-| 最终 RSS | 62.15 MB | 541.25 MB |
-| RSS Drift | 0.22 MB | 0.29 MB |
-| RSS 波动范围 | 0.99 MB (1.59%) | 0.33 MB (0.06%) |
+| 推理次数 | 599 | 294 |
+| 推理频率 | 1.00 次/秒 | 0.49 次/秒 |
+| 平均推理时间 | 896.190 ms | 1042.995 ms |
+| 初始 RSS | 62.66 MB | 554.22 MB |
+| 最终 RSS | 62.12 MB | 554.46 MB |
+| RSS Drift | -0.54 MB | 0.24 MB |
+| RSS 波动范围 | 0.81 MB (1.30%) | 0.28 MB (0.05%) |
 ## 📋 支持的类别（80个COCO类别）
 
 支持包括人、车、动物、家具、电器等在内的80个常见物体类别的检测，并提供中文标签显示。

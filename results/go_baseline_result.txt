@@ -1,14 +1,14 @@
 ===== Go 基准测试结果 =====
-平均延迟: 824.740 ms
-P50延迟: 821.952 ms
-P90延迟: 841.367 ms
-P99延迟: 925.461 ms
-最小延迟: 804.929 ms
-最大延迟: 925.461 ms
+平均延迟: 904.708 ms
+P50延迟: 901.404 ms
+P90延迟: 925.663 ms
+P99延迟: 995.259 ms
+最小延迟: 869.193 ms
+最大延迟: 995.259 ms
 
 ===== 内存使用情况 =====
 Start RSS: 62.00 MB
-Peak RSS: 62.45 MB
-Stable RSS: 61.88 MB
-RSS Drift: -0.13 MB
-Go Heap: 226.15 MB
+Peak RSS: 62.52 MB
+Stable RSS: 61.96 MB
+RSS Drift: -0.04 MB
+Go Heap: 226.16 MB

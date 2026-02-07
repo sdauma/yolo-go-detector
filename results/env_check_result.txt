@@ -1,0 +1,26 @@
+# 环境检查结果
+# 生成时间: 2026/02/06 周五 16:07
+
+## 系统信息
+- 操作系统: Windows-11-10.0.22631-SP0
+- 系统版本: 10.0.22631
+- 架构: ('64bit', 'WindowsPE')
+- 处理器: Intel64 Family 6 Model 165 Stepping 3, GenuineIntel
+- Python版本: 3.12.0
+- Python实现: CPython
+
+## 硬件信息
+- CPU信息: 
+- 内存信息: 获取失败: invalid literal for int() with base 10: ''
+
+## Go信息
+- Go版本: go version go1.25.4 windows/amd64
+
+## ONNX Runtime信息
+- Python ONNX Runtime版本: 1.23.2
+
+## 项目信息
+- 项目路径: C:\Users\Administrator\Documents\trae_projects\1\yolo-go-detector
+- 工作目录: C:\Users\Administrator\Documents\trae_projects\1\yolo-go-detector\test
+- 环境变量: {'PATH': 'C:\\lnmp\\Go\\bin;D:\\mlz\\go\\bin;c:\\Users\\Administrator\\.trae-cn\\tools\\trae-gopls\\current;c:\\Users\\Administrator\\.trae-cn\\sdks\\workspaces\\15e46847\\versions\\node\\current;c:\\Users\\Administrator\\.trae-cn\\sdks\\versions\\node\\current;D:\\lnmp\\Python312\\Scripts\\;D:\\lnmp\\Python312\\;C:\\lnmp\\Python\\Python314\\Scripts\\;C:\\lnmp\\Python\\Python314\\;C:\\windows\\system32;C:\\windows;C:\\windows\\System32\\Wbem;C:\\windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\windows\\System32\\OpenSSH\\;C:\\lnmp\\CMake\\bin;C:\\lnmp\\Go\\bin;C:\\opencv\\build\\x64\\vc16\\bin;C:\\opencv\\build\\include;C:\\lnmp\\Git\\cmd;d:\\lnmp\\gs\\gs10.06.0\\bin;C:\\lnmp\\msys64\\mingw64\\bin;C:\\lnmp\\Pandoc\\;C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps;C:\\lnmp\\msys64\\mingw64\\bin;C:\\Users\\Administrator\\go\\bin;;C:\\opencv\\build\\x64\\vc16\\bin;c:\\Users\\Administrator\\.trae-cn\\extensions\\ms-python.debugpy-2025.18.0-win32-x64\\bundled\\scripts\\noConfigScripts', 'GOPATH': 'D:\\mlz\\go', 'GOROOT': 'C:\\lnmp\\Go'}
+

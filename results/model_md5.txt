@@ -1,0 +1,13 @@
+# 模型文件MD5校验值
+# 生成时间: 2026/02/06 周五 16:07
+
+## yolo11x.onnx
+- 文件路径: C:\Users\Administrator\Documents\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+- MD5校验值: 3aafbc737e9912199622b471380118b8
+- 文件大小: 217.49 MB
+
+## yolov8x.onnx
+- 文件路径: C:\Users\Administrator\Documents\trae_projects\1\yolo-go-detector\third_party\yolov8x.onnx
+- MD5校验值: 9369d89690a708d9fda94079ae7b175a
+- 文件大小: 260.44 MB
+
