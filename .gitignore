@@ -35,3 +35,6 @@ tmp/
 
 # Paper directory (not to be uploaded to repository)
 paper/
+
+# Batch files (not to be uploaded to repository)
+*.bat
