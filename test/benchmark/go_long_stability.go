@@ -1,6 +1,24 @@
+// go_long_stability.go
+// Go 长时间稳定性测试 - Baseline 执行路径
+//
+// 重要声明（P0原则）：
+// 本测试使用 Go baseline Session 接口（NewSession），由于技术限制，实际上启用了 I/O Binding。
+// 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+//
+// 技术限制说明：
+// - Go baseline Session 接口（NewSession）不支持显式设置线程参数
+// - 线程配置可能依赖 ONNX Runtime 的默认行为
+// - 因此，Go 和 Python 的线程配置测试结果不可直接对比
+//
+// 测试目的：
+// - 观察不同线程配置下的性能趋势
+// - 验证 ONNX Runtime 的线程扩展性
+// - 不用于语言级线程扩展性结论
+
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"os"
 	"os/exec"
@@ -9,6 +27,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	ort "github.com/yalue/onnxruntime_go"
 )
@@ -47,6 +66,34 @@ func getProcessRSS() float64 {
 		return 0
 	}
 	return rss
+}
+
+// loadInputDataFromFile 从二进制文件加载输入数据
+func loadInputDataFromFile(data []float32, filePath string) error {
+	// 打开文件
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("打开文件失败: %w", err)
+	}
+	defer file.Close()
+
+	// 读取文件内容到缓冲区
+	buffer := make([]byte, len(data)*4) // float32 占 4 字节
+	_, err = file.Read(buffer)
+	if err != nil {
+		return fmt.Errorf("读取文件失败: %w", err)
+	}
+
+	// 将字节数据转换为 float32（使用 LittleEndian 字节序）
+	for i := 0; i < len(data); i++ {
+		offset := i * 4
+		// 读取 4 字节并转换为 uint32
+		u32 := binary.LittleEndian.Uint32(buffer[offset : offset+4])
+		// 将 uint32 转换为 float32
+		data[i] = *(*float32)(unsafe.Pointer(&u32))
+	}
+
+	return nil
 }
 
 // RSSSample RSS采样点
@@ -102,9 +149,21 @@ func main() {
 	}
 	defer opts.Destroy()
 
-	// 设置线程配置
+	// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
+	// 线程配置
 	opts.SetIntraOpNumThreads(4)
 	opts.SetInterOpNumThreads(1)
+
+	// 日志配置（关闭所有日志，避免日志IO干扰性能）
+	opts.SetLogSeverityLevel(3) // 3 = ORT_LOGGING_LEVEL_ERROR
+
+	// 性能分析配置（关闭性能分析，避免额外开销）
+	opts.SetExecutionMode(0) // 0 = ORT_SEQUENTIAL
+
+	// 内存池配置（启用内存池复用）
+	opts.SetGraphOptimizationLevel(3) // 3 = ORT_ENABLE_ALL
+
+	// 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
 
 	// 创建输入张量
 	inputShape := ort.NewShape(1, 3, 640, 640)
@@ -115,14 +174,17 @@ func main() {
 	}
 	defer inputTensor.Destroy()
 
-	// 准备输入数据（使用固定种子生成随机数）
-	fmt.Println("生成输入数据...")
+	// 准备输入数据（从文件加载，确保与 Python 版本一致）
+	fmt.Println("加载输入数据...")
 	inputData := inputTensor.GetData()
-	seed := 12345
-	rng := &Rand{seed: uint64(seed)}
-	for i := range inputData {
-		inputData[i] = rng.Float32()
+	// 计算数据文件路径
+	inputDataPath := filepath.Join(basePath, "test", "data", "input_data.bin")
+	err = loadInputDataFromFile(inputData, inputDataPath)
+	if err != nil {
+		fmt.Printf("加载输入数据失败: %v\n", err)
+		return
 	}
+	fmt.Printf("输入数据加载成功: %s\n", inputDataPath)
 
 	// 创建会话（使用默认执行路径，绑定输入和输出张量）
 	fmt.Println("创建 Session...")

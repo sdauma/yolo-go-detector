@@ -1,7 +1,23 @@
 // cold_start_benchmark.go
-// 测试 YOLO11x 模型的冷启动时间和稳定状态推理时间的对比
-// 冷启动时间: 会话创建后第一次推理的时间
-// 稳定状态时间: 多次推理后的平均时间
+// Go 冷启动时间对比分析测试 - Baseline 执行路径
+//
+// 重要声明（P0原则）：
+// 本测试使用 Go baseline Session 接口（NewSession），由于技术限制，实际上启用了 I/O Binding。
+// 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+//
+// 技术限制说明：
+// - Go baseline Session 接口（NewSession）不支持显式设置线程参数
+// - 线程配置可能依赖 ONNX Runtime 的默认行为
+// - 因此，Go 和 Python 的线程配置测试结果不可直接对比
+//
+// 测试目的：
+// - 观察不同线程配置下的性能趋势
+// - 验证 ONNX Runtime 的线程扩展性
+// - 不用于语言级线程扩展性结论
+//
+// 测试内容：
+// - 冷启动时间: 会话创建后第一次推理的时间
+// - 稳定状态时间: 多次推理后的平均时间
 
 package main
 
@@ -178,9 +194,21 @@ func main() {
 			continue
 		}
 
-		// 设置线程配置
+		// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
+		// 线程配置
 		opts.SetIntraOpNumThreads(4)
 		opts.SetInterOpNumThreads(1)
+
+		// 日志配置（关闭所有日志，避免日志IO干扰性能）
+		opts.SetLogSeverityLevel(3) // 3 = ORT_LOGGING_LEVEL_ERROR
+
+		// 性能分析配置（关闭性能分析，避免额外开销）
+		opts.SetExecutionMode(0) // 0 = ORT_SEQUENTIAL
+
+		// 内存池配置（启用内存池复用）
+		opts.SetGraphOptimizationLevel(3) // 3 = ORT_ENABLE_ALL
+
+		// 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
 
 		// 创建输入张量
 		inputShape := ort.NewShape(1, 3, 640, 640)

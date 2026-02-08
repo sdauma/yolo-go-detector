@@ -1,5 +1,20 @@
 // thread_config_benchmark.go
-// 测试不同 intra_op_num_threads 配置对 YOLO11x 模型推理性能的影响
+// Go 线程配置性能测试 - Baseline 执行路径
+//
+// 重要声明（P0原则）：
+// 本测试使用 Go baseline Session 接口（NewSession），由于技术限制，实际上启用了 I/O Binding。
+// 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+//
+// 技术限制说明：
+// - Go baseline Session 接口（NewSession）不支持显式设置线程参数
+// - 线程配置可能依赖 ONNX Runtime 的默认行为
+// - 因此，Go 和 Python 的线程配置测试结果不可直接对比
+//
+// 测试目的：
+// - 观察不同线程配置下的性能趋势
+// - 验证 ONNX Runtime 的线程扩展性
+// - 不用于语言级线程扩展性结论
+//
 // 测试线程配置: 1, 2, 4, 8
 
 package main
@@ -183,9 +198,21 @@ func main() {
 				continue
 			}
 
-			// 设置线程配置
+			// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
+			// 线程配置
 			opts.SetIntraOpNumThreads(numThreads)
 			opts.SetInterOpNumThreads(1)
+
+			// 日志配置（关闭所有日志，避免日志IO干扰性能）
+			opts.SetLogSeverityLevel(3) // 3 = ORT_LOGGING_LEVEL_ERROR
+
+			// 性能分析配置（关闭性能分析，避免额外开销）
+			opts.SetExecutionMode(0) // 0 = ORT_SEQUENTIAL
+
+			// 内存池配置（启用内存池复用）
+			opts.SetGraphOptimizationLevel(3) // 3 = ORT_ENABLE_ALL
+
+			// 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
 
 			// 创建输入张量
 			inputShape := ort.NewShape(1, 3, 640, 640)
@@ -231,6 +258,9 @@ func main() {
 				opts.Destroy()
 				continue
 			}
+
+			// 验证线程配置
+			fmt.Printf("测试线程配置: intra=%d, inter=%d\n", numThreads, 1)
 
 			// 内存采样点 1：Session 创建后、warmup 前（Start RSS）
 			startRSS := getProcessRSS()
