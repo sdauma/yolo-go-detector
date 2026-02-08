@@ -804,8 +804,8 @@ func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
 			num++
 			chineseLabel := getChineseLabel(box.label)
 			//confStr := fmt.Sprintf("%.2f", float32(math.Round(float64(box.confidence*100))/100))
-			confStr := fmt.Sprintf("%.8f", box.confidence)
-			boxXYStr := fmt.Sprintf("%.8f %.8f %.8f %.8f", box.x1, box.y1, box.x2, box.y2)
+			confStr := fmt.Sprintf("%.6f", box.confidence)
+			boxXYStr := fmt.Sprintf("%.6f %.6f %.6f %.6f", box.x1, box.y1, box.x2, box.y2)
 			outObjectStr += "对象" + strconv.Itoa(num) + ": " + box.label + "(" + chineseLabel + ")" + ", 置信度: " + confStr + " ,框：[" + boxXYStr + "] ; "
 		}
 	}

@@ -130,6 +130,7 @@ yolo-go-detector/
 │   ├── go_thread_4_result.txt                  # Go线程配置4测试结果
 │   ├── go_thread_8_result.txt                  # Go线程配置8测试结果
 │   ├── go_thread_config_comprehensive.txt      # Go线程配置综合结果
+│   ├── go_advanced_session_supplementary.txt   # Go AdvancedSession补充测试结果
 │   ├── latency_boxplot.pdf                     # 延迟分布箱线图
 │   ├── model_md5.txt                          # 模型MD5校验结果
 │   ├── python_baseline_result.txt              # Python基准测试结果
@@ -140,6 +141,8 @@ yolo-go-detector/
 │   ├── python_thread_2_result.txt              # Python线程配置2测试结果
 │   ├── python_thread_4_result.txt              # Python线程配置4测试结果
 │   ├── python_thread_8_result.txt              # Python线程配置8测试结果
+│   ├── python_thread_config_comprehensive.txt  # Python线程配置综合结果
+│   ├── python_baseline_supplementary.txt       # Python Baseline补充测试结果
 │   ├── rss_curve.pdf                          # 内存使用曲线图表
 │   └── thread_config_comparison.pdf            # 线程配置性能对比图表
 ├── test/             # 测试脚本和数据
@@ -174,6 +177,43 @@ yolo-go-detector/
 
 本项目包含完整的性能测试程序，用于比较 Go 和 Python 作为主机语言对 ONNX Runtime 推理性能的影响。
 
+### 测试规范
+
+本项目遵循核心期刊标准的测试规范，确保测试结果的科学性和可复现性。
+
+#### 核心测试原则
+
+**P0 原则（最重要）**：只比较"执行语义"，不比较"API 便利性"
+- 不比较 Go 的 AdvancedSession 优势
+- 不比较 Python 的高级封装
+- 只比较：ORT CPUExecutionProvider + 默认执行路径
+
+**P1 原则（公平性）**
+- 相同模型（YOLO11x）
+- 相同 ONNX Runtime 版本（1.23.2）
+- 相同 Execution Provider（CPUExecutionProvider）
+- 相同线程配置（intra_op_num_threads=4, inter_op_num_threads=1）
+- 相同 batch size（1）
+- 相同输入数据（固定种子 12345）
+- 相同 warmup / runs（10 warmup, 100 runs）
+- 相同 Session 生命周期策略
+
+**P2 原则（可复现）**
+- 所有参数显式写死
+- 所有随机数固定 seed
+- 所有统计指标明确定义
+
+#### 测试环境
+
+| 项目 | 配置 |
+|------|------|
+| CPU | Intel Core i5-10400（2.9GHz 基准频率，4.3GHz 最大睿频，6核心12线程） |
+| 内存 | 16 GB |
+| 操作系统 | Windows 11 x64 |
+| Go 版本 | Go 1.25 |
+| Python 版本 | Python 3.12.x |
+| ONNX Runtime 版本 | 1.23.2 |
+
 ### 测试目录结构
 
 ```
@@ -199,6 +239,8 @@ test/
 ├── generate_input_data.py                   # 生成统一输入数据
 ├── generate_model_md5.py                   # 生成模型MD5校验
 └── test_specification_compliance_report.md  # 测试规范合规性检查报告
+├── go_advanced_session_supplementary.go      # Go AdvancedSession补充测试
+└── python_baseline_supplementary.py         # Python Baseline补充测试
 ```
 
 ### 运行测试
@@ -207,128 +249,96 @@ test/
 
 ```bash
 # 运行批处理脚本，自动执行所有测试
-run_all_tests.bat
+run_all_tests_complete.bat
 ```
 
-#### 运行 Go 基准测试
+该批处理脚本将自动执行以下操作：
+1. 运行所有 10 个测试程序（Go 和 Python 各 5 个）
+2. 生成所有测试结果文件
+3. 生成所有图表（PDF 和 PNG 格式）
+4. 输出测试结果到 results/ 目录
 
-```bash
-# 进入测试目录
-cd test/benchmark
+### 测试程序列表
 
-# 运行 Go 基准测试
-go run go_baseline_minimal.go
-```
+#### Go 测试程序
+1. `go_baseline_minimal.go` - Go 基准测试
+2. `cold_start_benchmark.go` - Go 冷启动测试
+3. `thread_config_benchmark.go` - Go 线程配置测试
+4. `go_long_stability.go` - Go 长时间稳定性测试
+5. `go_advanced_session_supplementary.go` - Go AdvancedSession 补充测试
 
-#### 运行 Python 基准测试
+#### Python 测试程序
+1. `python_baseline.py` - Python 基准测试
+2. `python_cold_start_benchmark.py` - Python 冷启动测试
+3. `python_thread_config_benchmark.py` - Python 线程配置测试
+4. `python_long_stability.py` - Python 长时间稳定性测试
+5. `python_baseline_supplementary.py` - Python Baseline 补充测试
 
-```bash
-# 进入测试目录
-cd test/python
+### 测试结果文件
 
-# 运行 Python 基准测试
-python python_baseline.py
-```
+#### 基准测试结果
+- `results/go_baseline_result.txt` - Go 基准测试结果
+- `results/python_baseline_result.txt` - Python 基准测试结果
 
-#### 运行 Go 冷启动测试
+#### 冷启动测试结果
+- `results/go_cold_start_result.txt` - Go 冷启动测试结果
+- `results/python_cold_start_result.txt` - Python 冷启动测试结果
 
-```bash
-# 进入测试目录
-cd test/benchmark
+#### 线程配置测试结果
+- `results/go_thread_1_result.txt` - Go 1 线程测试结果
+- `results/go_thread_2_result.txt` - Go 2 线程测试结果
+- `results/go_thread_4_result.txt` - Go 4 线程测试结果
+- `results/go_thread_8_result.txt` - Go 8 线程测试结果
+- `results/python_thread_1_result.txt` - Python 1 线程测试结果
+- `results/python_thread_2_result.txt` - Python 2 线程测试结果
+- `results/python_thread_4_result.txt` - Python 4 线程测试结果
+- `results/python_thread_8_result.txt` - Python 8 线程测试结果
+- `results/go_thread_config_comprehensive.txt` - Go 线程配置综合结果
+- `results/python_thread_config_comprehensive.txt` - Python 线程配置综合结果
 
-# 运行 Go 冷启动测试
-go run cold_start_benchmark.go
-```
+#### 长时间稳定性测试结果
+- `results/go_long_stability_result.txt` - Go 长时间稳定性测试结果
+- `results/python_long_stability_result.txt` - Python 长时间稳定性测试结果
 
-#### 运行 Python 冷启动测试
+#### 补充测试结果
+- `results/go_advanced_session_supplementary.txt` - Go AdvancedSession 补充测试结果
+- `results/python_baseline_supplementary.txt` - Python Baseline 补充测试结果
 
-```bash
-# 进入测试目录
-cd test/python
+### 图表生成脚本
 
-# 运行 Python 冷启动测试
-python python_cold_start_benchmark.py
-```
+#### PDF 图表
+- `test/charts/generate_latency_boxplot.py` - 生成延迟箱线图
+- `test/charts/plot_rss_curve.py` - 生成 RSS 内存曲线
+- `test/charts/generate_cold_start_and_thread_charts.py` - 生成冷启动和线程配置图表
 
-#### 运行 Go 线程配置测试
+#### PNG 图表
+- `test/charts/generate_charts_png.py` - 生成 PNG 格式图表（用于论文）
 
-```bash
-# 进入测试目录
-cd test/benchmark
+### 测试文档
 
-# 运行 Go 线程配置测试
-go run thread_config_benchmark.go
-```
-
-#### 运行 Python 线程配置测试
-
-```bash
-# 进入测试目录
-cd test/python
-
-# 运行 Python 线程配置测试
-python python_thread_config_benchmark.py
-```
-
-#### 运行 Go 长时间稳定性测试（10分钟）
-
-```bash
-# 进入测试目录
-cd test/benchmark
-
-# 运行 Go 长时间稳定性测试
-go run go_long_stability.go
-```
-
-#### 运行 Python 长时间稳定性测试（10分钟）
-
-```bash
-# 进入测试目录
-cd test/python
-
-# 运行 Python 长时间稳定性测试
-python python_long_stability.py
-```
-
-#### 生成测试图表
-
-```bash
-# 进入图表生成目录
-cd test/charts
-
-# 生成延迟箱线图
-python generate_latency_boxplot.py
-
-# 生成内存使用曲线
-python plot_rss_curve.py
-
-# 生成冷启动和线程配置图表
-python generate_cold_start_and_thread_charts.py
-```
-
-### 测试结果
-
-测试结果将存储在 `results/` 目录中，包含：
-
-- 延迟指标：Avg、p50、p90、p99
-- 内存使用：Peak RSS、Stable RSS
-- 长时间稳定性：内存泄漏检测、推理稳定性
+- `test/test_specification_compliance_report.md` - 测试规范合规性报告（完整版）
+- `test/fair_baseline_performance_analysis.md` - 公平基准性能分析报告
+- `test/detection_comparison_absolute_diff.md` - 检测结果像素绝对误差分析报告
 
 ## 📊 性能对比
 
 ### 推理性能（YOLO11x）
 
-| 实现语言 | Avg (ms) | P50 (ms) | P90 (ms) | P99 (ms) |
-|---------|----------|----------|----------|----------|
-| Python  | 1045.688 | 1045.236 | 1081.978 | 1130.758 |
-| Go      | 904.708  | 901.404  | 925.663  | 995.259  |
+| 实现语言 | Avg (ms) | P50 (ms) | P90 (ms) | P99 (ms) | 相对性能 |
+|---------|----------|----------|----------|----------|----------|
+| Python  | 952.234 | 950.797 | 986.161 | 1026.292 | 1.00× |
+| Go      | 903.297 | 902.611 | 915.386 | 970.881 | 0.95× |
+
+**性能差异**：Go 比 Python 快 5.13%
 
 ### 内存使用（YOLO11x）
 
-| 实现语言 | Start RSS (MB) | Peak RSS (MB) | Stable RSS (MB) | RSS Drift (MB) |
-|---------|---------------|---------------|----------------|----------------|
-| Python  | 293.45        | 554.86        | 554.82         | 261.37         |
-| Go      | 62.00         | 62.52         | 61.96          | -0.04          |
+| 实现语言 | Start RSS (MB) | Peak RSS (MB) | Stable RSS (MB) | RSS Drift (MB) | 内存效率 |
+|---------|---------------|---------------|----------------|----------------|----------|
+| Python  | 292.78        | 549.44        | 549.39         | 256.61         | 1.00× |
+| Go      | 62.29         | 62.61         | 62.16          | -0.13          | 8.81× |
+
+**内存效率**：Go 内存使用仅为 Python 的 1/8.81
 
 ### 长时间稳定性测试（10分钟）
 
@@ -342,6 +352,20 @@ python generate_cold_start_and_thread_charts.py
 | 最终 RSS | 62.12 MB | 554.46 MB |
 | RSS Drift | -0.54 MB | 0.24 MB |
 | RSS 波动范围 | 0.81 MB (1.30%) | 0.28 MB (0.05%) |
+
+### 线程配置测试结果
+
+| 线程数 | Go 延迟 | Python 延迟 | 差异 | 优势 |
+|--------|---------|------------|------|------|
+| 1 | 899.022 ms | 2258.219 ms | -60.2% | **Go** |
+| 2 | 898.007 ms | 1308.488 ms | -31.4% | **Go** |
+| 4 | 896.928 ms | 947.116 ms | -5.3% | **Go** |
+| 8 | 897.169 ms | 734.746 ms | +22.1% | **Python** |
+
+**关键发现**：
+- Go 在 1-4 线程配置下性能优于 Python
+- Python 在 8 线程配置下性能优于 Go（多线程优化）
+- Go 内存使用始终优于 Python（8.6-8.9倍）
 ## 📋 支持的类别（80个COCO类别）
 
 支持包括人、车、动物、家具、电器等在内的80个常见物体类别的检测，并提供中文标签显示。

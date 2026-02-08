@@ -32,3 +32,6 @@ tmp/
 # 测试结果传到仓库也是有意义的
 # go_benchmark_*.txt
 # python_benchmark_*.txt
+
+# Paper directory (not to be uploaded to repository)
+paper/

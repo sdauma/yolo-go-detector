@@ -1,3 +1,15 @@
+# python_cold_start_benchmark.py
+# Python 冷启动时间对比分析测试 - Baseline 执行路径
+# 
+# 重要声明（P0原则）：
+# 本测试使用 Python baseline Session 接口（InferenceSession），不启用 I/O Binding。
+# 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+# 
+# 测试目的：
+# - 观察不同线程配置下的性能趋势
+# - 验证 ONNX Runtime 的线程扩展性
+# - 不用于语言级线程扩展性结论
+
 import onnxruntime as ort
 import numpy as np
 import time
@@ -49,8 +61,22 @@ for test_idx in range(1, test_count + 1):
     print("创建 InferenceSession...")
     try:
         sess_options = ort.SessionOptions()
+        
+        # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
+        # 线程配置
         sess_options.intra_op_num_threads = 4
         sess_options.inter_op_num_threads = 1
+        
+        # 日志配置（关闭所有日志，避免日志IO干扰性能）
+        sess_options.log_severity_level = 3  # 3 = ORT_LOGGING_LEVEL_ERROR
+        
+        # 性能分析配置（关闭性能分析，避免额外开销）
+        sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+        
+        # 内存池配置（启用内存池复用）
+        sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        
+        # 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
         
         sess = ort.InferenceSession(
             model_path,

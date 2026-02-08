@@ -32,6 +32,9 @@ print(f"模型路径: {model_path}")
 # 测试的线程配置
 thread_configs = [1, 2, 4, 8]
 
+# 存储所有线程配置的综合结果
+all_thread_results = []
+
 # 对每个线程配置进行测试
 for num_threads in thread_configs:
     print(f"\n===== 测试线程配置: intra_op_num_threads={num_threads} ====")
@@ -157,6 +160,20 @@ for num_threads in thread_configs:
     # 计算FPS
     fps = 1000.0 / avg_latency
     
+    # 存储结果到综合结果列表
+    all_thread_results.append({
+        'num_threads': num_threads,
+        'avg_latency': avg_latency,
+        'std_dev': std_dev,
+        'coeff_var': coeff_var,
+        'fps': fps,
+        'p50_latency': p50_latency,
+        'p90_latency': p90_latency,
+        'p99_latency': p99_latency,
+        'start_rss': start_rss,
+        'stable_rss': stable_rss
+    })
+    
     print("\n===== 测试结果 =====")
     print(f"平均延迟: {avg_latency:.3f} ms")
     print(f"标准差: {std_dev:.3f} ms")
@@ -242,4 +259,50 @@ for num_threads in thread_configs:
     
     print(f"\n结果已保存到: {result_path}")
 
-print("\n===== 所有线程配置测试完成 ====")
+# 保存所有线程配置的综合结果
+comprehensive_result_path = os.path.join(current_dir, '..', '..', 'results', 'python_thread_config_comprehensive.txt')
+print(f"\n保存综合结果到: {comprehensive_result_path}")
+
+try:
+    with open(comprehensive_result_path, 'w', encoding='utf-8') as f:
+        f.write("===== 不同 intra_op_num_threads 配置性能测试综合结果 =====\n\n")
+        f.write(f"{'线程配置':<20} {'平均延迟(ms)':<15} {'标准差(ms)':<12} {'变异系数(%)':<12} {'FPS':<10} {'P50延迟(ms)':<15} {'P90延迟(ms)':<15} {'P99延迟(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n")
+        
+        for result in all_thread_results:
+            f.write(f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n")
+    
+    print("综合结果文件写入成功!")
+    
+except Exception as e:
+    print(f"保存综合结果失败: {e}")
+    # 尝试使用 GBK 编码
+    try:
+        with open(comprehensive_result_path, 'w', encoding='gbk') as f:
+            f.write("===== 不同 intra_op_num_threads 配置性能测试综合结果 =====\n\n")
+            f.write(f"{'线程配置':<20} {'平均延迟(ms)':<15} {'标准差(ms)':<12} {'变异系数(%)':<12} {'FPS':<10} {'P50延迟(ms)':<15} {'P90延迟(ms)':<15} {'P99延迟(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n")
+            
+            for result in all_thread_results:
+                f.write(f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n")
+        
+        print("综合结果文件写入成功 (GBK编码)!")
+        
+    except Exception as e2:
+        print(f"GBK编码写入失败: {e2}")
+        
+        # 方法3: 使用二进制模式写入
+        try:
+            print("尝试使用二进制模式写入...")
+            with open(comprehensive_result_path, 'wb') as f:
+                header = "===== 不同 intra_op_num_threads 配置性能测试综合结果 =====\n\n"
+                header += f"{'线程配置':<20} {'平均延迟(ms)':<15} {'标准差(ms)':<12} {'变异系数(%)':<12} {'FPS':<10} {'P50延迟(ms)':<15} {'P90延迟(ms)':<15} {'P99延迟(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n"
+                f.write(header.encode('utf-8'))
+                
+                for result in all_thread_results:
+                    line = f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n"
+                    f.write(line.encode('utf-8'))
+            print("综合结果文件写入成功 (二进制模式)!")
+            
+        except Exception as e3:
+            print(f"二进制模式写入失败: {e3}")
+
+print("\n===== 所有线程配置测试完成 =====")
