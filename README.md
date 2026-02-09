@@ -226,29 +226,31 @@ yolo-go-detector/
 
 ```
 test/
-├── benchmark/          # 基准测试
-│   ├── cold_start_benchmark.go             # Go 冷启动测试
-│   ├── go_baseline_minimal.go              # Go 基准测试
-│   ├── go_long_stability.go                # Go 长时间稳定性测试
-│   └── thread_config_benchmark.go          # Go 线程配置测试
-├── charts/             # 图表生成脚本
+├── benchmark/    # Go基准测试
+│   ├── cold_start_benchmark.go             # Go冷启动测试
+│   ├── go_baseline_minimal.go              # Go基准测试
+│   ├── go_long_stability.go                # Go长时间稳定性测试
+│   ├── thread_config_benchmark.go          # Go线程配置测试
+│   └── go_advanced_session_supplementary.go # Go AdvancedSession补充测试
+├── charts/       # 图表生成脚本
 │   ├── generate_cold_start_and_thread_charts.py  # 生成冷启动和线程配置图表
 │   ├── generate_latency_boxplot.py         # 生成延迟箱线图
-│   └── plot_rss_curve.py                    # 生成RSS内存曲线
-├── data/               # 测试数据
+│   ├── plot_rss_curve.py                    # 生成RSS内存曲线
+│   └── generate_charts_png.py              # 生成PNG格式图表
+├── data/         # 测试数据
 │   └── input_data.bin                       # 统一输入数据文件
-├── python/             # Python 相关测试
-│   ├── python_baseline.py                   # Python 基准测试
-│   ├── python_cold_start_benchmark.py       # Python 冷启动测试
-│   ├── python_long_stability.py             # Python 长时间稳定性测试
-│   └── python_thread_config_benchmark.py    # Python 线程配置测试
+├── python/       # Python相关测试
+│   ├── python_baseline.py                   # Python基准测试
+│   ├── python_cold_start_benchmark.py       # Python冷启动测试
+│   ├── python_long_stability.py             # Python长时间稳定性测试
+│   ├── python_thread_config_benchmark.py    # Python线程配置测试
+│   └── python_baseline_supplementary.py     # Python Baseline补充测试
 ├── check_environment.py                     # 环境检查脚本
 ├── fair_baseline_performance_analysis.md    # 公平基准性能分析报告
 ├── generate_input_data.py                   # 生成统一输入数据
 ├── generate_model_md5.py                   # 生成模型MD5校验
-└── test_specification_compliance_report.md  # 测试规范合规性检查报告
-├── go_advanced_session_supplementary.go      # Go AdvancedSession补充测试
-└── python_baseline_supplementary.py         # Python Baseline补充测试
+├── test_specification_compliance_report.md  # 测试规范合规性检查报告
+└── detection_comparison_absolute_diff.md     # 检测结果像素绝对误差分析报告
 ```
 
 ### 运行测试
