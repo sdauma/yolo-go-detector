@@ -38,3 +38,6 @@ paper/
 
 # Batch files (not to be uploaded to repository)
 *.bat
+
+# IDE
+.idea/
