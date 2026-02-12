@@ -15,6 +15,8 @@
 - 📝 系统文本标注功能
 - 📊 支持批量处理图像
 - 🔧 可调节的检测参数（置信度、IOU阈值等）
+- 🏎️ 检测器池机制，复用模型会话
+- 📈 内存池优化，提高内存使用效率
 
 ## 🛠️ 快速开始
 
@@ -116,35 +118,52 @@ yolo-go-detector/
 │   ├── charts/                               # 图表文件
 │   │   ├── cold_start_factor.png              # 冷启动因子分析
 │   │   ├── cold_start_vs_stable.png           # 冷启动与稳定状态对比
+│   │   ├── inference_flow.png                # 推理流程图表
+│   │   ├── latency_boxplot.png               # 延迟分布箱线图
+│   │   ├── memory_comparison.png             # 内存使用对比
+│   │   ├── rss_curve.png                     # 内存使用曲线
 │   │   ├── thread_config_avg_latency.png      # 线程配置平均延迟
 │   │   ├── thread_config_latency_distribution.png  # 线程配置延迟分布
 │   │   ├── thread_config_memory_usage.png     # 线程配置内存使用
-│   │   └── thread_config_speedup.png          # 线程配置加速比
-│   ├── benchmark_analysis_report.txt           # 基准测试分析报告
+│   │   ├── thread_config_speedup.png          # 线程配置加速比
+│   │   └── yolo_evolution.png                # YOLO演进图表
 │   ├── cold_start_comparison.pdf               # 冷启动时间对比图表
 │   ├── env_check_result.txt                   # 环境检查结果
+│   ├── go_advanced_session_supplementary.txt   # Go AdvancedSession补充测试结果
+│   ├── go_baseline_detailed_log.txt            # Go基准测试详细日志
+│   ├── go_baseline_latency_data.txt            # Go基准测试延迟数据
 │   ├── go_baseline_result.txt                  # Go基准测试结果
+│   ├── go_cold_start_detailed_log.txt          # Go冷启动测试详细日志
 │   ├── go_cold_start_result.txt                # Go冷启动测试结果
 │   ├── go_long_stability_result.txt            # Go长时间稳定性测试结果
 │   ├── go_rss_curve.csv                        # Go内存使用曲线数据
+│   ├── go_thread_1_detailed_log.txt            # Go线程配置1测试详细日志
 │   ├── go_thread_1_result.txt                  # Go线程配置1测试结果
+│   ├── go_thread_2_detailed_log.txt            # Go线程配置2测试详细日志
 │   ├── go_thread_2_result.txt                  # Go线程配置2测试结果
+│   ├── go_thread_4_detailed_log.txt            # Go线程配置4测试详细日志
 │   ├── go_thread_4_result.txt                  # Go线程配置4测试结果
+│   ├── go_thread_8_detailed_log.txt            # Go线程配置8测试详细日志
 │   ├── go_thread_8_result.txt                  # Go线程配置8测试结果
 │   ├── go_thread_config_comprehensive.txt      # Go线程配置综合结果
-│   ├── go_advanced_session_supplementary.txt   # Go AdvancedSession补充测试结果
 │   ├── latency_boxplot.pdf                     # 延迟分布箱线图
 │   ├── model_md5.txt                          # 模型MD5校验结果
+│   ├── python_baseline_detailed_log.txt        # Python基准测试详细日志
+│   ├── python_baseline_latency_data.txt        # Python基准测试延迟数据
 │   ├── python_baseline_result.txt              # Python基准测试结果
+│   ├── python_cold_start_detailed_log.txt      # Python冷启动测试详细日志
 │   ├── python_cold_start_result.txt            # Python冷启动测试结果
 │   ├── python_long_stability_result.txt        # Python长时间稳定性测试结果
 │   ├── python_rss_curve.csv                    # Python内存使用曲线数据
+│   ├── python_thread_1_detailed_log.txt        # Python线程配置1测试详细日志
 │   ├── python_thread_1_result.txt              # Python线程配置1测试结果
+│   ├── python_thread_2_detailed_log.txt        # Python线程配置2测试详细日志
 │   ├── python_thread_2_result.txt              # Python线程配置2测试结果
+│   ├── python_thread_4_detailed_log.txt        # Python线程配置4测试详细日志
 │   ├── python_thread_4_result.txt              # Python线程配置4测试结果
+│   ├── python_thread_8_detailed_log.txt        # Python线程配置8测试详细日志
 │   ├── python_thread_8_result.txt              # Python线程配置8测试结果
 │   ├── python_thread_config_comprehensive.txt  # Python线程配置综合结果
-│   ├── python_baseline_supplementary.txt       # Python Baseline补充测试结果
 │   ├── rss_curve.pdf                          # 内存使用曲线图表
 │   └── thread_config_comparison.pdf            # 线程配置性能对比图表
 ├── test/             # 测试脚本和数据
@@ -155,24 +174,24 @@ yolo-go-detector/
 │   │   ├── thread_config_benchmark.go          # Go线程配置测试
 │   │   └── go_advanced_session_supplementary.go # Go AdvancedSession补充测试
 │   ├── charts/       # 图表生成脚本
+│   │   ├── generate_charts_png.py              # 生成PNG格式图表
 │   │   ├── generate_cold_start_and_thread_charts.py  # 生成冷启动和线程配置图表
 │   │   ├── generate_latency_boxplot.py         # 生成延迟箱线图
-│   │   ├── plot_rss_curve.py                    # 生成RSS内存曲线
-│   │   └── generate_charts_png.py              # 生成PNG格式图表
+│   │   ├── generate_main_charts.py             # 生成主要图表
+│   │   └── plot_rss_curve.py                    # 生成RSS内存曲线
 │   ├── data/         # 测试数据
 │   │   └── input_data.bin                       # 统一输入数据文件
 │   ├── python/       # Python相关测试
 │   │   ├── python_baseline.py                   # Python基准测试
+│   │   ├── python_baseline_supplementary.py     # Python Baseline补充测试
 │   │   ├── python_cold_start_benchmark.py       # Python冷启动测试
 │   │   ├── python_long_stability.py             # Python长时间稳定性测试
-│   │   ├── python_thread_config_benchmark.py    # Python线程配置测试
-│   │   └── python_baseline_supplementary.py     # Python Baseline补充测试
+│   │   └── python_thread_config_benchmark.py    # Python线程配置测试
 │   ├── check_environment.py                     # 环境检查脚本
-│   ├── fair_baseline_performance_analysis.md    # 公平基准性能分析报告
+│   ├── env_check.py                             # 环境检查脚本
 │   ├── generate_input_data.py                   # 生成统一输入数据
 │   ├── generate_model_md5.py                   # 生成模型MD5校验
-│   ├── test_specification_compliance_report.md  # 测试规范合规性检查报告
-│   └── detection_comparison_absolute_diff.md     # 检测结果像素绝对误差分析报告
+│   └── 测试规范与性能分析综合报告.md             # 测试规范与性能分析综合报告
 ├── third_party/      # 第三方依赖
 │   ├── onnxruntime.dll  # ONNX Runtime库
 │   ├── yolo11x.onnx     # YOLO11x模型
@@ -233,24 +252,24 @@ test/
 │   ├── thread_config_benchmark.go          # Go线程配置测试
 │   └── go_advanced_session_supplementary.go # Go AdvancedSession补充测试
 ├── charts/       # 图表生成脚本
+│   ├── generate_charts_png.py              # 生成PNG格式图表
 │   ├── generate_cold_start_and_thread_charts.py  # 生成冷启动和线程配置图表
 │   ├── generate_latency_boxplot.py         # 生成延迟箱线图
-│   ├── plot_rss_curve.py                    # 生成RSS内存曲线
-│   └── generate_charts_png.py              # 生成PNG格式图表
+│   ├── generate_main_charts.py             # 生成主要图表
+│   └── plot_rss_curve.py                    # 生成RSS内存曲线
 ├── data/         # 测试数据
 │   └── input_data.bin                       # 统一输入数据文件
 ├── python/       # Python相关测试
 │   ├── python_baseline.py                   # Python基准测试
+│   ├── python_baseline_supplementary.py     # Python Baseline补充测试
 │   ├── python_cold_start_benchmark.py       # Python冷启动测试
 │   ├── python_long_stability.py             # Python长时间稳定性测试
-│   ├── python_thread_config_benchmark.py    # Python线程配置测试
-│   └── python_baseline_supplementary.py     # Python Baseline补充测试
+│   └── python_thread_config_benchmark.py    # Python线程配置测试
 ├── check_environment.py                     # 环境检查脚本
-├── fair_baseline_performance_analysis.md    # 公平基准性能分析报告
+├── env_check.py                             # 环境检查脚本
 ├── generate_input_data.py                   # 生成统一输入数据
 ├── generate_model_md5.py                   # 生成模型MD5校验
-├── test_specification_compliance_report.md  # 测试规范合规性检查报告
-└── detection_comparison_absolute_diff.md     # 检测结果像素绝对误差分析报告
+└── 测试规范与性能分析综合报告.md             # 测试规范与性能分析综合报告
 ```
 
 ### 运行测试
@@ -309,13 +328,12 @@ test/
 - `test/charts/generate_cold_start_and_thread_charts.py` - 生成冷启动和线程配置图表
 
 #### PNG 图表
-- `test/charts/generate_charts_png.py` - 生成 PNG 格式图表（用于论文）
+- `test/charts/generate_charts_png.py` - 生成 PNG 格式图表
+- `test/charts/generate_main_charts.py` - 生成主要图表
 
 ### 测试文档
 
-- `test/test_specification_compliance_report.md` - 测试规范合规性报告（完整版）
-- `test/fair_baseline_performance_analysis.md` - 公平基准性能分析报告
-- `test/detection_comparison_absolute_diff.md` - 检测结果像素绝对误差分析报告
+- `test/测试规范与性能分析综合报告.md` - 测试规范与性能分析综合报告
 
 ## 📊 性能对比
 
@@ -381,6 +399,8 @@ test/
 - 检测器池机制，复用模型会话
 - 高效的内存管理和垃圾回收
 - ONNX Runtime硬件加速支持
+- 图像对象池，减少内存分配
+- 批量任务处理，减少上下文切换开销
 
 ## 🤝 贡献
 

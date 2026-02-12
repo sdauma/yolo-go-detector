@@ -7,6 +7,11 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+# 设置中文字体为华文中宋，英文字体为Times New Roman
+plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'Microsoft YaHei']
+plt.rcParams['font.family'] = ['sans-serif', 'Times New Roman']
+plt.rcParams['axes.unicode_minus'] = False
+
 # 读取冷启动测试结果
 def read_cold_start_results():
     """读取冷启动测试结果"""

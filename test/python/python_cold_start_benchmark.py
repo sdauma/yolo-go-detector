@@ -41,8 +41,8 @@ if not os.path.exists(model_path):
 print("===== Python 冷启动时间对比分析测试 ====")
 print(f"模型路径: {model_path}")
 
-# 执行3次独立测试
-test_count = 3
+# 执行5次独立测试
+test_count = 5
 all_cold_start_times = []
 all_avg_stable_latencies = []
 all_min_stable_latencies = []
@@ -217,13 +217,55 @@ print(f"Stable RSS: {stable_rss:.2f} MB")
 print(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.2f} MB")
 print(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.2f} MB")
 
+# 保存详细日志
+log_path = os.path.join(current_dir, '..', '..', 'results', 'python_cold_start_detailed_log.txt')
+with open(log_path, 'w', encoding='utf-8') as f:
+    for i in range(len(all_cold_start_times)):
+        f.write(f"===== 第 {i+1} 次测试 =====\n")
+        f.write(f"冷启动时间: {all_cold_start_times[i]:.3f} ms\n")
+        f.write(f"稳定状态平均时间: {all_avg_stable_latencies[i]:.3f} ms\n")
+        f.write(f"最小延迟: {all_min_stable_latencies[i]:.3f} ms\n")
+        f.write(f"最大延迟: {all_max_stable_latencies[i]:.3f} ms\n")
+        f.write(f"P50延迟: {all_p50_stable_latencies[i]:.3f} ms\n")
+        f.write(f"P90延迟: {all_p90_stable_latencies[i]:.3f} ms\n")
+        f.write(f"P99延迟: {all_p99_stable_latencies[i]:.3f} ms\n")
+        f.write(f"Start RSS: {all_start_rss[i]:.2f} MB\n")
+        f.write(f"Cold Start RSS: {all_cold_start_rss[i]:.2f} MB\n")
+        f.write(f"Stable RSS: {all_stable_rss[i]:.2f} MB\n")
+        f.write("\n")
+
+    f.write("===== 5次测试平均值 =====\n")
+    f.write(f"冷启动时间: {cold_start_time:.3f} ms\n")
+    f.write(f"稳定状态平均时间: {avg_stable_latency:.3f} ms\n")
+    f.write(f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍\n\n")
+
+    f.write("===== 稳定状态详细统计 =====\n")
+    f.write(f"平均延迟: {avg_stable_latency:.3f} ms\n")
+    f.write(f"标准差: {std_dev_stable:.3f} ms\n")
+    f.write(f"变异系数: {coeff_var_stable:.2f}%\n")
+    f.write(f"FPS: {fps:.2f}\n")
+    f.write(f"最小延迟: {min_stable_latency:.3f} ms\n")
+    f.write(f"最大延迟: {max_stable_latency:.3f} ms\n")
+    f.write(f"P50延迟: {p50_stable_latency:.3f} ms\n")
+    f.write(f"P90延迟: {p90_stable_latency:.3f} ms\n")
+    f.write(f"P99延迟: {p99_stable_latency:.3f} ms\n")
+
+    f.write("\n===== 内存使用情况 =====\n")
+    f.write(f"Start RSS: {start_rss:.2f} MB\n")
+    f.write(f"Cold Start RSS: {cold_start_rss:.2f} MB\n")
+    f.write(f"Stable RSS: {stable_rss:.2f} MB\n")
+    f.write(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.2f} MB\n")
+    f.write(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.2f} MB\n")
+
+print(f"\n详细日志已保存到: {log_path}")
+
 # 保存结果
 result_path = os.path.join(current_dir, '..', '..', 'results', 'python_cold_start_result.txt')
 print(f"\n保存结果到: {result_path}")
 
 # 构建结果字符串
 result_lines = [
-    "===== Python 冷启动时间对比分析测试结果 =====",
+    "===== Python 冷启动时间对比分析测试结果（5次运行平均值） =====",
     f"冷启动时间: {cold_start_time:.3f} ms",
     f"稳定状态平均时间: {avg_stable_latency:.3f} ms",
     f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍",

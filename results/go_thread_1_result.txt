@@ -1,17 +1,17 @@
-===== 线程配置测试结果: intra_op_num_threads=1 =====
-平均延迟: 899.022 ms
-标准差: 4.153 ms
-变异系数: 0.46%
-FPS: 1.11
-P50延迟: 895.033 ms
-P90延迟: 923.159 ms
-P99延迟: 1022.260 ms
-最小延迟: 870.574 ms
-最大延迟: 1022.260 ms
+===== 线程配置测试结果（5次运行平均值）: intra_op_num_threads=1 =====
+平均延迟: 786.572 ms
+标准差: 3.344 ms
+变异系数: 0.43%
+FPS: 1.27
+P50延迟: 785.772 ms
+P90延迟: 809.747 ms
+P99延迟: 869.424 ms
+最小延迟: 738.819 ms
+最大延迟: 869.424 ms
 
 ===== 内存使用情况 =====
-Start RSS: 62.08 MB
-Peak RSS: 62.42 MB
-Stable RSS: 62.10 MB
-RSS Drift: 0.02 MB
-Go Heap: 226.19 MB
+Start RSS: 61.80 MB
+Peak RSS: 62.08 MB
+Stable RSS: 61.88 MB
+RSS Drift: 0.08 MB
+Go Heap: 226.18 MB

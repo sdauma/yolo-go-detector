@@ -39,8 +39,8 @@ all_thread_results = []
 for num_threads in thread_configs:
     print(f"\n===== 测试线程配置: intra_op_num_threads={num_threads} ====")
     
-    # 执行3次独立测试
-    test_count = 3
+    # 执行5次独立测试
+    test_count = 5
     all_avg_latencies = []
     all_min_latencies = []
     all_max_latencies = []
@@ -189,13 +189,46 @@ for num_threads in thread_configs:
     print(f"Peak RSS: {peak_rss:.2f} MB")
     print(f"Stable RSS: {stable_rss:.2f} MB")
     
+    # 保存详细日志
+    log_path = os.path.join(current_dir, '..', '..', 'results', f'python_thread_{num_threads}_detailed_log.txt')
+    with open(log_path, 'w', encoding='utf-8') as f:
+        for i in range(len(all_avg_latencies)):
+            f.write(f"===== 第 {i+1} 次测试 =====\n")
+            f.write(f"平均延迟: {all_avg_latencies[i]:.3f} ms\n")
+            f.write(f"最小延迟: {all_min_latencies[i]:.3f} ms\n")
+            f.write(f"最大延迟: {all_max_latencies[i]:.3f} ms\n")
+            f.write(f"P50延迟: {all_p50_latencies[i]:.3f} ms\n")
+            f.write(f"P90延迟: {all_p90_latencies[i]:.3f} ms\n")
+            f.write(f"P99延迟: {all_p99_latencies[i]:.3f} ms\n")
+            f.write(f"Start RSS: {all_start_rss[i]:.2f} MB\n")
+            f.write(f"Peak RSS: {all_peak_rss[i]:.2f} MB\n")
+            f.write(f"Stable RSS: {all_stable_rss[i]:.2f} MB\n")
+            f.write("\n")
+
+        f.write("===== 5次测试平均值 =====\n")
+        f.write(f"平均延迟: {avg_latency:.3f} ms\n")
+        f.write(f"标准差: {std_dev:.3f} ms\n")
+        f.write(f"变异系数: {coeff_var:.2f}%\n")
+        f.write(f"FPS: {fps:.2f}\n")
+        f.write(f"P50延迟: {p50_latency:.3f} ms\n")
+        f.write(f"P90延迟: {p90_latency:.3f} ms\n")
+        f.write(f"P99延迟: {p99_latency:.3f} ms\n")
+        f.write(f"最小延迟: {min_latency:.3f} ms\n")
+        f.write(f"最大延迟: {max_latency:.3f} ms\n")
+        f.write("\n===== 内存使用情况 =====\n")
+        f.write(f"Start RSS: {start_rss:.2f} MB\n")
+        f.write(f"Peak RSS: {peak_rss:.2f} MB\n")
+        f.write(f"Stable RSS: {stable_rss:.2f} MB\n")
+
+    print(f"\n详细日志已保存到: {log_path}")
+
     # 保存结果
     result_path = os.path.join(current_dir, '..', '..', 'results', f'python_thread_{num_threads}_result.txt')
     print(f"保存结果到: {result_path}")
     
     # 构建结果字符串
     result_lines = [
-        f"===== Python 线程配置测试结果 (intra_op_num_threads={num_threads}) =====",
+        f"===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads={num_threads}) =====",
         f"平均延迟: {avg_latency:.3f} ms",
         f"标准差: {std_dev:.3f} ms",
         f"变异系数: {coeff_var:.2f}%",

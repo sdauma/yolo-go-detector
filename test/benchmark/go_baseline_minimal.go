@@ -67,42 +67,42 @@ func getProcessRSS() float64 {
 	return rss
 }
 
-// RSSSample RSS采样点
-type RSSSample struct {
-	Timestamp time.Time
-	RSS       float64
+// BenchmarkResult 单次测试结果
+type BenchmarkResult struct {
+	AvgLatency float64
+	P50Latency float64
+	P90Latency float64
+	P99Latency float64
+	MinLatency float64
+	MaxLatency float64
+	StartRSS   float64
+	PeakRSS    float64
+	StableRSS  float64
+	GoHeap     float64
+	Times      []float64
 }
 
-func main() {
-	fmt.Println("===== Go 基准测试 =====")
-
+// runBenchmark 执行一次基准测试
+func runBenchmark() (*BenchmarkResult, error) {
 	// 获取当前工作目录
 	wd, err := os.Getwd()
 	if err != nil {
-		fmt.Printf("获取工作目录失败: %v\n", err)
-		return
+		return nil, fmt.Errorf("获取工作目录失败: %v", err)
 	}
-	fmt.Printf("当前目录: %s\n", wd)
 
 	// 构建项目根路径
 	basePath := filepath.Dir(filepath.Dir(wd))
-	fmt.Printf("项目根路径: %s\n", basePath)
 
 	// 设置模型和库路径
 	modelPath := filepath.Join(basePath, "third_party", "yolo11x.onnx")
 	libPath := filepath.Join(basePath, "third_party", "onnxruntime.dll")
 
-	fmt.Printf("模型路径: %s\n", modelPath)
-	fmt.Printf("库路径: %s\n", libPath)
-
 	// 检查文件是否存在
 	if !fileExists(modelPath) {
-		fmt.Printf("错误: 模型文件不存在: %s\n", modelPath)
-		return
+		return nil, fmt.Errorf("模型文件不存在: %s", modelPath)
 	}
 	if !fileExists(libPath) {
-		fmt.Printf("错误: 库文件不存在: %s\n", libPath)
-		return
+		return nil, fmt.Errorf("库文件不存在: %s", libPath)
 	}
 
 	// 初始化ORT
@@ -113,8 +113,7 @@ func main() {
 	// 创建会话选项
 	opts, err := ort.NewSessionOptions()
 	if err != nil {
-		fmt.Printf("创建会话选项失败: %v\n", err)
-		return
+		return nil, fmt.Errorf("创建会话选项失败: %v", err)
 	}
 	defer opts.Destroy()
 
@@ -124,27 +123,23 @@ func main() {
 	opts.SetInterOpNumThreads(1)
 
 	// 日志配置（关闭所有日志，避免日志IO干扰性能）
-	opts.SetLogSeverityLevel(3) // 3 = ORT_LOGGING_LEVEL_ERROR
+	opts.SetLogSeverityLevel(3)
 
 	// 性能分析配置（关闭性能分析，避免额外开销）
-	opts.SetExecutionMode(0) // 0 = ORT_SEQUENTIAL
+	opts.SetExecutionMode(0)
 
 	// 内存池配置（启用内存池复用）
-	opts.SetGraphOptimizationLevel(3) // 3 = ORT_ENABLE_ALL
-
-	// 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
+	opts.SetGraphOptimizationLevel(3)
 
 	// 创建输入张量
 	inputShape := ort.NewShape(1, 3, 640, 640)
 	inputTensor, err := ort.NewEmptyTensor[float32](inputShape)
 	if err != nil {
-		fmt.Printf("创建输入张量失败: %v\n", err)
-		return
+		return nil, fmt.Errorf("创建输入张量失败: %v", err)
 	}
 	defer inputTensor.Destroy()
 
 	// 准备输入数据（使用固定种子生成随机数）
-	fmt.Println("生成输入数据...")
 	inputData := inputTensor.GetData()
 	seed := 12345
 	rng := &Rand{seed: uint64(seed)}
@@ -152,63 +147,45 @@ func main() {
 		inputData[i] = rng.Float32()
 	}
 
-	// 创建会话（使用默认执行路径，绑定输入和输出张量）
-	fmt.Println("创建 Session...")
-	// 创建输出张量（YOLO11x 的输出形状通常为 [1, 84, 8400]）
+	// 创建输出张量
 	outputShape := ort.NewShape(1, 84, 8400)
 	outputTensor, err := ort.NewEmptyTensor[float32](outputShape)
 	if err != nil {
-		fmt.Printf("创建输出张量失败: %v\n", err)
-		return
+		return nil, fmt.Errorf("创建输出张量失败: %v", err)
 	}
 	defer outputTensor.Destroy()
 
-	// 使用与 Python 相同的默认执行路径
+	// 创建会话
 	session, err := ort.NewSession(modelPath, []string{"images"}, []string{"output0"}, []*ort.Tensor[float32]{inputTensor}, []*ort.Tensor[float32]{outputTensor})
 	if err != nil {
-		fmt.Printf("创建会话失败: %v\n", err)
-		return
+		return nil, fmt.Errorf("创建会话失败: %v", err)
 	}
 	defer session.Destroy()
-	fmt.Println("Session 创建成功!")
 
 	// 内存采样点 1：Session 创建后、warmup 前（Start RSS）
 	startRSS := getProcessRSS()
-	fmt.Printf("Start RSS: %.2f MB\n", startRSS)
 
 	// Warmup
-	fmt.Println("Warming up...")
 	for i := 0; i < 10; i++ {
-		err := session.Run()
-		if err != nil {
-			fmt.Printf("Warmup 运行失败: %v\n", err)
-			return
+		if err := session.Run(); err != nil {
+			return nil, fmt.Errorf("Warmup 运行失败: %v", err)
 		}
 	}
 
-	// 内存采样点 2：Warmup 后
-	warmupRSS := getProcessRSS()
-	fmt.Printf("Warmup RSS: %.2f MB\n", warmupRSS)
-
 	// Benchmark
-	fmt.Println("Running benchmark...")
 	runs := 100
 	var sum float64
 	times := make([]float64, runs)
 	peakRSS := startRSS
 
-	// 每10次推理采样一次内存，减少开销
 	for i := 0; i < runs; i++ {
 		t0 := time.Now()
-		err := session.Run()
-		if err != nil {
-			fmt.Printf("运行失败: %v\n", err)
-			return
+		if err := session.Run(); err != nil {
+			return nil, fmt.Errorf("运行失败: %v", err)
 		}
 		dt := time.Since(t0).Seconds() * 1000.0
 		sum += dt
 		times[i] = dt
-		fmt.Printf("Run %d: %.3f ms\n", i+1, dt)
 
 		// 每10次推理采样一次内存，记录峰值
 		if i%10 == 0 {
@@ -221,7 +198,6 @@ func main() {
 
 	// 内存采样点 3：Benchmark 后稳定值
 	stableRSS := getProcessRSS()
-	fmt.Printf("Stable RSS: %.2f MB\n", stableRSS)
 
 	// 计算结果
 	sort.Float64s(times)
@@ -232,66 +208,184 @@ func main() {
 	p90_latency := times[int(float64(runs)*0.9)]
 	p99_latency := times[int(float64(runs)*0.99)]
 
-	// 获取 Go heap 内存使用情况（辅助指标）
+	// 获取 Go heap 内存使用情况
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 
-	fmt.Printf("\n===== 测试结果 =====\n")
-	fmt.Printf("平均延迟: %.3f ms\n", avg_latency)
-	fmt.Printf("P50延迟: %.3f ms\n", p50_latency)
-	fmt.Printf("P90延迟: %.3f ms\n", p90_latency)
-	fmt.Printf("P99延迟: %.3f ms\n", p99_latency)
-	fmt.Printf("最小延迟: %.3f ms\n", min_latency)
-	fmt.Printf("最大延迟: %.3f ms\n", max_latency)
-	fmt.Printf("\n===== 内存使用情况 =====\n")
+	return &BenchmarkResult{
+		AvgLatency: avg_latency,
+		P50Latency: p50_latency,
+		P90Latency: p90_latency,
+		P99Latency: p99_latency,
+		MinLatency: min_latency,
+		MaxLatency: max_latency,
+		StartRSS:   startRSS,
+		PeakRSS:    peakRSS,
+		StableRSS:  stableRSS,
+		GoHeap:     float64(m.Alloc) / 1024 / 1024,
+		Times:      times,
+	}, nil
+}
+
+func main() {
+	fmt.Println("===== Go 基准测试（5次运行） =====")
+
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		fmt.Printf("获取工作目录失败: %v\n", err)
+		return
+	}
+
+	// 构建项目根路径
+	basePath := filepath.Dir(filepath.Dir(wd))
+
+	// 运行5次测试
+	numRuns := 5
+	results := make([]*BenchmarkResult, numRuns)
+
+	for i := 0; i < numRuns; i++ {
+		fmt.Printf("\n===== 第 %d 次测试 =====\n", i+1)
+		result, err := runBenchmark()
+		if err != nil {
+			fmt.Printf("测试失败: %v\n", err)
+			return
+		}
+		results[i] = result
+
+		fmt.Printf("平均延迟: %.3f ms\n", result.AvgLatency)
+		fmt.Printf("P50延迟: %.3f ms\n", result.P50Latency)
+		fmt.Printf("P90延迟: %.3f ms\n", result.P90Latency)
+		fmt.Printf("P99延迟: %.3f ms\n", result.P99Latency)
+		fmt.Printf("最小延迟: %.3f ms\n", result.MinLatency)
+		fmt.Printf("最大延迟: %.3f ms\n", result.MaxLatency)
+		fmt.Printf("Start RSS: %.2f MB\n", result.StartRSS)
+		fmt.Printf("Peak RSS: %.2f MB\n", result.PeakRSS)
+		fmt.Printf("Stable RSS: %.2f MB\n", result.StableRSS)
+		fmt.Printf("RSS Drift: %.2f MB\n", result.StableRSS-result.StartRSS)
+		fmt.Printf("Go Heap: %.2f MB\n", result.GoHeap)
+	}
+
+	// 计算平均值
+	var avgLatency, p50Latency, p90Latency, p99Latency float64
+	var minLatency, maxLatency float64
+	var startRSS, peakRSS, stableRSS, goHeap float64
+
+	for _, r := range results {
+		avgLatency += r.AvgLatency
+		p50Latency += r.P50Latency
+		p90Latency += r.P90Latency
+		p99Latency += r.P99Latency
+		minLatency += r.MinLatency
+		maxLatency += r.MaxLatency
+		startRSS += r.StartRSS
+		peakRSS += r.PeakRSS
+		stableRSS += r.StableRSS
+		goHeap += r.GoHeap
+	}
+
+	avgLatency /= float64(numRuns)
+	p50Latency /= float64(numRuns)
+	p90Latency /= float64(numRuns)
+	p99Latency /= float64(numRuns)
+	minLatency /= float64(numRuns)
+	maxLatency /= float64(numRuns)
+	startRSS /= float64(numRuns)
+	peakRSS /= float64(numRuns)
+	stableRSS /= float64(numRuns)
+	goHeap /= float64(numRuns)
+
+	fmt.Printf("\n===== 5次测试平均值 =====\n")
+	fmt.Printf("平均延迟: %.3f ms\n", avgLatency)
+	fmt.Printf("P50延迟: %.3f ms\n", p50Latency)
+	fmt.Printf("P90延迟: %.3f ms\n", p90Latency)
+	fmt.Printf("P99延迟: %.3f ms\n", p99Latency)
+	fmt.Printf("最小延迟: %.3f ms\n", minLatency)
+	fmt.Printf("最大延迟: %.3f ms\n", maxLatency)
 	fmt.Printf("Start RSS: %.2f MB\n", startRSS)
 	fmt.Printf("Peak RSS: %.2f MB\n", peakRSS)
 	fmt.Printf("Stable RSS: %.2f MB\n", stableRSS)
 	fmt.Printf("RSS Drift: %.2f MB\n", stableRSS-startRSS)
-	fmt.Printf("Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
+	fmt.Printf("Go Heap: %.2f MB\n", goHeap)
 
-	// 保存结果
+	// 保存详细日志
+	logPath := filepath.Join(basePath, "results", "go_baseline_detailed_log.txt")
+	logFile, err := os.Create(logPath)
+	if err != nil {
+		fmt.Printf("创建日志文件失败: %v\n", err)
+		return
+	}
+	defer logFile.Close()
+
+	for i, r := range results {
+		fmt.Fprintf(logFile, "===== 第 %d 次测试 =====\n", i+1)
+		fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", r.AvgLatency)
+		fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", r.P50Latency)
+		fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", r.P90Latency)
+		fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", r.P99Latency)
+		fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", r.MinLatency)
+		fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", r.MaxLatency)
+		fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", r.StartRSS)
+		fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", r.PeakRSS)
+		fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", r.StableRSS)
+		fmt.Fprintf(logFile, "RSS Drift: %.2f MB\n", r.StableRSS-r.StartRSS)
+		fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", r.GoHeap)
+		fmt.Fprintf(logFile, "\n")
+	}
+
+	fmt.Fprintf(logFile, "===== 5次测试平均值 =====\n")
+	fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", avgLatency)
+	fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", p50Latency)
+	fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", p90Latency)
+	fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", p99Latency)
+	fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", minLatency)
+	fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", maxLatency)
+	fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", startRSS)
+	fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", peakRSS)
+	fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", stableRSS)
+	fmt.Fprintf(logFile, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
+	fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", goHeap)
+
+	fmt.Printf("\n详细日志已保存到: %s\n", logPath)
+
+	// 保存平均值结果
 	resultPath := filepath.Join(basePath, "results", "go_baseline_result.txt")
-	fmt.Printf("\n保存结果到: %s\n", resultPath)
-	file, err := os.Create(resultPath)
+	resultFile, err := os.Create(resultPath)
 	if err != nil {
-		fmt.Printf("创建文件失败: %v\n", err)
+		fmt.Printf("创建结果文件失败: %v\n", err)
 		return
 	}
-	defer file.Close()
+	defer resultFile.Close()
 
-	// 写入结果
-	written, err := fmt.Fprintf(file, "===== Go 基准测试结果 =====\n")
+	fmt.Fprintf(resultFile, "===== Go 基准测试结果（5次运行平均值） =====\n")
+	fmt.Fprintf(resultFile, "平均延迟: %.3f ms\n", avgLatency)
+	fmt.Fprintf(resultFile, "P50延迟: %.3f ms\n", p50Latency)
+	fmt.Fprintf(resultFile, "P90延迟: %.3f ms\n", p90Latency)
+	fmt.Fprintf(resultFile, "P99延迟: %.3f ms\n", p99Latency)
+	fmt.Fprintf(resultFile, "最小延迟: %.3f ms\n", minLatency)
+	fmt.Fprintf(resultFile, "最大延迟: %.3f ms\n", maxLatency)
+	fmt.Fprintf(resultFile, "\n===== 内存使用情况（5次运行平均值） =====\n")
+	fmt.Fprintf(resultFile, "Start RSS: %.2f MB\n", startRSS)
+	fmt.Fprintf(resultFile, "Peak RSS: %.2f MB\n", peakRSS)
+	fmt.Fprintf(resultFile, "Stable RSS: %.2f MB\n", stableRSS)
+	fmt.Fprintf(resultFile, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
+	fmt.Fprintf(resultFile, "Go Heap: %.2f MB\n", goHeap)
+
+	fmt.Printf("结果已保存到: %s\n", resultPath)
+
+	// 保存最后一次测试的原始延迟数据（用于生成箱线图）
+	latencyDataPath := filepath.Join(basePath, "results", "go_baseline_latency_data.txt")
+	latencyFile, err := os.Create(latencyDataPath)
 	if err != nil {
-		fmt.Printf("写入文件失败: %v\n", err)
+		fmt.Printf("创建延迟数据文件失败: %v\n", err)
 		return
 	}
-	fmt.Printf("已写入 %d 字节\n", written)
+	defer latencyFile.Close()
 
-	written, err = fmt.Fprintf(file, "平均延迟: %.3f ms\n", avg_latency)
-	written, err = fmt.Fprintf(file, "P50延迟: %.3f ms\n", p50_latency)
-	written, err = fmt.Fprintf(file, "P90延迟: %.3f ms\n", p90_latency)
-	written, err = fmt.Fprintf(file, "P99延迟: %.3f ms\n", p99_latency)
-	written, err = fmt.Fprintf(file, "最小延迟: %.3f ms\n", min_latency)
-	written, err = fmt.Fprintf(file, "最大延迟: %.3f ms\n", max_latency)
-	written, err = fmt.Fprintf(file, "\n===== 内存使用情况 =====\n")
-	written, err = fmt.Fprintf(file, "Start RSS: %.2f MB\n", startRSS)
-	written, err = fmt.Fprintf(file, "Peak RSS: %.2f MB\n", peakRSS)
-	written, err = fmt.Fprintf(file, "Stable RSS: %.2f MB\n", stableRSS)
-	written, err = fmt.Fprintf(file, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
-	written, err = fmt.Fprintf(file, "Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
-
-	if err != nil {
-		fmt.Printf("写入文件失败: %v\n", err)
-		return
+	for _, t := range results[numRuns-1].Times {
+		fmt.Fprintf(latencyFile, "%.3f\n", t)
 	}
-	fmt.Printf("文件写入成功!\n")
 
-	// 验证文件内容
-	content, err := os.ReadFile(resultPath)
-	if err != nil {
-		fmt.Printf("读取文件失败: %v\n", err)
-		return
-	}
-	fmt.Printf("文件内容:\n%s\n", string(content))
+	fmt.Printf("原始延迟数据已保存到: %s\n", latencyDataPath)
+	fmt.Println("测试完成!")
 }

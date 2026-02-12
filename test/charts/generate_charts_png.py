@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# 设置中文字体
+# 设置中文字体为华文中宋，英文字体为Times New Roman
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'Microsoft YaHei']
+plt.rcParams['font.family'] = ['sans-serif', 'Times New Roman']
 plt.rcParams['axes.unicode_minus'] = False
 
 # 获取项目根目录

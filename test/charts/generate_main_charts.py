@@ -8,14 +8,15 @@ import numpy as np
 import matplotlib.patches as patches
 import matplotlib.lines as lines
 
-# 设置中文字体
+# 设置中文字体为华文中宋，英文字体为Times New Roman
 plt.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'Microsoft YaHei']
+plt.rcParams['font.family'] = ['sans-serif', 'Times New Roman']
 plt.rcParams['axes.unicode_minus'] = False
 
 # 获取项目根目录
 script_dir = os.path.dirname(__file__)
 project_root = os.path.dirname(os.path.dirname(script_dir))
-paper_images_dir = os.path.join(project_root, "paper", "images")
+paper_images_dir = os.path.join(project_root, "results", "charts")
 
 # 确保images目录存在
 os.makedirs(paper_images_dir, exist_ok=True)

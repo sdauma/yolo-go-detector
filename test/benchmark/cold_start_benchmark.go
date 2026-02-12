@@ -171,8 +171,8 @@ func main() {
 	defer ort.DestroyEnvironment()
 	fmt.Println("ONNX Runtime 环境初始化成功!")
 
-	// 执行3次独立测试
-	testCount := 3
+	// 执行5次独立测试
+	testCount := 5
 	var allColdStartTimes []float64
 	var allAvgStableLatencies []float64
 	var allMinStableLatencies []float64
@@ -443,6 +443,56 @@ func main() {
 		StableRSS:        stableRSS,
 	}
 
+	// 保存详细日志
+	logPath := filepath.Join(basePath, "results", "go_cold_start_detailed_log.txt")
+	logFile, err := os.Create(logPath)
+	if err != nil {
+		fmt.Printf("创建日志文件失败: %v\n", err)
+		return
+	}
+	defer logFile.Close()
+
+	for i := 0; i < len(allColdStartTimes); i++ {
+		fmt.Fprintf(logFile, "===== 第 %d 次测试 =====\n", i+1)
+		fmt.Fprintf(logFile, "冷启动时间: %.3f ms\n", allColdStartTimes[i])
+		fmt.Fprintf(logFile, "稳定状态平均时间: %.3f ms\n", allAvgStableLatencies[i])
+		fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", allMinStableLatencies[i])
+		fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", allMaxStableLatencies[i])
+		fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", allP50StableLatencies[i])
+		fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", allP90StableLatencies[i])
+		fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", allP99StableLatencies[i])
+		fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", allStartRSS[i])
+		fmt.Fprintf(logFile, "Cold Start RSS: %.2f MB\n", allColdStartRSS[i])
+		fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", allStableRSS[i])
+		fmt.Fprintf(logFile, "\n")
+	}
+
+	fmt.Fprintf(logFile, "===== 5次测试平均值 =====\n")
+	fmt.Fprintf(logFile, "冷启动时间: %.3f ms\n", coldStartTime)
+	fmt.Fprintf(logFile, "稳定状态平均时间: %.3f ms\n", avgStableLatency)
+	fmt.Fprintf(logFile, "冷启动时间 / 稳定状态平均时间: %.2f 倍\n\n", coldStartTime/avgStableLatency)
+
+	fmt.Fprintf(logFile, "===== 稳定状态详细统计 =====\n")
+	fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", avgStableLatency)
+	fmt.Fprintf(logFile, "标准差: %.3f ms\n", stdDevStable)
+	fmt.Fprintf(logFile, "变异系数: %.2f%%\n", coeffVarStable)
+	fmt.Fprintf(logFile, "FPS: %.2f\n", fps)
+	fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", minStableLatency)
+	fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", maxStableLatency)
+	fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", p50StableLatency)
+	fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", p90StableLatency)
+	fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", p99StableLatency)
+
+	fmt.Fprintf(logFile, "\n===== 内存使用情况 =====\n")
+	fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", startRSS)
+	fmt.Fprintf(logFile, "Cold Start RSS: %.2f MB\n", coldStartRSS)
+	fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", stableRSS)
+	fmt.Fprintf(logFile, "内存增长 (Start -> Cold Start): %.2f MB\n", coldStartRSS-startRSS)
+	fmt.Fprintf(logFile, "内存增长 (Cold Start -> Stable): %.2f MB\n", stableRSS-coldStartRSS)
+	fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
+
+	fmt.Printf("\n详细日志已保存到: %s\n", logPath)
+
 	// 保存结果到文件
 	resultPath := filepath.Join(basePath, "results", "go_cold_start_result.txt")
 	fmt.Printf("\n保存结果到: %s\n", resultPath)
@@ -454,7 +504,7 @@ func main() {
 	defer file.Close()
 
 	// 写入结果
-	fmt.Fprintf(file, "===== 冷启动时间对比分析测试结果 =====\n\n")
+	fmt.Fprintf(file, "===== 冷启动时间对比分析测试结果（5次运行平均值） =====\n\n")
 	fmt.Fprintf(file, "冷启动时间: %.3f ms\n", result.ColdStartLatency)
 	fmt.Fprintf(file, "稳定状态平均时间: %.3f ms\n", result.AvgStableLatency)
 	fmt.Fprintf(file, "冷启动时间 / 稳定状态平均时间: %.2f 倍\n\n", result.ColdStartLatency/result.AvgStableLatency)

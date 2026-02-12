@@ -176,8 +176,8 @@ func main() {
 	for _, numThreads := range threadConfigs {
 		fmt.Printf("\n===== 测试线程配置: intra_op_num_threads=%d =====\n", numThreads)
 
-		// 执行3次独立测试
-		testCount := 3
+		// 执行5次独立测试
+		testCount := 5
 		var allAvgLatencies []float64
 		var allMinLatencies []float64
 		var allMaxLatencies []float64
@@ -420,6 +420,47 @@ func main() {
 		}
 		results = append(results, result)
 
+		// 保存详细日志
+		logPath := filepath.Join(basePath, "results", fmt.Sprintf("go_thread_%d_detailed_log.txt", numThreads))
+		logFile, err := os.Create(logPath)
+		if err != nil {
+			fmt.Printf("创建日志文件失败: %v\n", err)
+		} else {
+			for i := 0; i < len(allAvgLatencies); i++ {
+				fmt.Fprintf(logFile, "===== 第 %d 次测试 =====\n", i+1)
+				fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", allAvgLatencies[i])
+				fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", allMinLatencies[i])
+				fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", allMaxLatencies[i])
+				fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", allP50Latencies[i])
+				fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", allP90Latencies[i])
+				fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", allP99Latencies[i])
+				fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", allStartRSS[i])
+				fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", allPeakRSS[i])
+				fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", allStableRSS[i])
+				fmt.Fprintf(logFile, "\n")
+			}
+
+			fmt.Fprintf(logFile, "===== 5次测试平均值 =====\n")
+			fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", avgLatency)
+			fmt.Fprintf(logFile, "标准差: %.3f ms\n", stdDevLatency)
+			fmt.Fprintf(logFile, "变异系数: %.2f%%\n", coeffVarLatency)
+			fmt.Fprintf(logFile, "FPS: %.2f\n", fps)
+			fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", p50Latency)
+			fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", p90Latency)
+			fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", p99Latency)
+			fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", minLatency)
+			fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", maxLatency)
+			fmt.Fprintf(logFile, "\n===== 内存使用情况 =====\n")
+			fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", startRSS)
+			fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", peakRSS)
+			fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", stableRSS)
+			fmt.Fprintf(logFile, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
+			fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
+
+			logFile.Close()
+			fmt.Printf("详细日志已保存到: %s\n", logPath)
+		}
+
 		// 保存单个配置的结果
 		resultPath := filepath.Join(basePath, "results", fmt.Sprintf("go_thread_%d_result.txt", numThreads))
 		fmt.Printf("\n保存结果到: %s\n", resultPath)
@@ -428,7 +469,7 @@ func main() {
 			fmt.Printf("创建文件失败: %v\n", err)
 		} else {
 			// 写入结果
-			fmt.Fprintf(file, "===== 线程配置测试结果: intra_op_num_threads=%d =====\n", numThreads)
+			fmt.Fprintf(file, "===== 线程配置测试结果（5次运行平均值）: intra_op_num_threads=%d =====\n", numThreads)
 			fmt.Fprintf(file, "平均延迟: %.3f ms\n", avgLatency)
 			fmt.Fprintf(file, "标准差: %.3f ms\n", stdDevLatency)
 			fmt.Fprintf(file, "变异系数: %.2f%%\n", coeffVarLatency)
