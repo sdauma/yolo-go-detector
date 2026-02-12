@@ -17,6 +17,8 @@
 - 🔧 可调节的检测参数（置信度、IOU阈值等）
 - 🏎️ 检测器池机制，复用模型会话
 - 📈 内存池优化，提高内存使用效率
+- 🔍 支持矩形缩放和测试时增强(TTA)
+- 📁 支持目录和文本文件批量输入
 
 ## 🛠️ 快速开始
 
@@ -100,7 +102,29 @@ go run . -img ./test_images/ -conf 0.3 -workers 4
 go run . -img ./assets/bus.jpg -output ./output/bus_11x_true.jpg -enable-system-text=true -system-text="智能安全监控系统" -text-location="top-left"
 ```
 
-## 🏗️ 项目结构
+## 🏗️ 项目架构
+
+### 核心组件
+
+1. **主程序 (main.go)**
+   - 命令行参数解析
+   - 图像处理流程
+   - 模型推理
+   - 结果可视化
+
+2. **检测器池 (detector_pool.go)**
+   - 模型会话池管理
+   - 并发任务处理
+   - 工作协程管理
+
+3. **关键功能模块**
+   - 图像预处理（缩放、填充）
+   - ONNX Runtime 集成
+   - 非极大值抑制 (NMS)
+   - 内存池优化
+   - 中文标签支持
+
+### 项目结构
 
 ```
 yolo-go-detector/
@@ -110,7 +134,7 @@ yolo-go-detector/
 ├── LICENSE           # 许可证
 ├── .gitignore        # Git忽略文件
 ├── .gitattributes   # Git属性文件
-├── assets/           # 资源文件（检测结果图像）
+├── assets/           # 资源文件（测试图像）
 │   ├── bus.jpg           # 测试图像
 │   ├── bus_11x_false.jpg # YOLO11x检测结果（rect=false）
 │   └── bus_11x_true.jpg  # YOLO11x检测结果（rect=true）
@@ -241,39 +265,6 @@ yolo-go-detector/
 | Python 版本 | Python 3.12.x |
 | ONNX Runtime 版本 | 1.23.2 |
 
-### 测试目录结构
-
-```
-test/
-├── benchmark/    # Go基准测试
-│   ├── cold_start_benchmark.go             # Go冷启动测试
-│   ├── go_baseline_minimal.go              # Go基准测试
-│   ├── go_long_stability.go                # Go长时间稳定性测试
-│   ├── thread_config_benchmark.go          # Go线程配置测试
-│   └── go_advanced_session_supplementary.go # Go AdvancedSession补充测试
-├── charts/       # 图表生成脚本
-│   ├── generate_charts_png.py              # 生成PNG格式图表
-│   ├── generate_cold_start_and_thread_charts.py  # 生成冷启动和线程配置图表
-│   ├── generate_latency_boxplot.py         # 生成延迟箱线图
-│   ├── generate_main_charts.py             # 生成主要图表
-│   └── plot_rss_curve.py                    # 生成RSS内存曲线
-├── data/         # 测试数据
-│   └── input_data.bin                       # 统一输入数据文件
-├── python/       # Python相关测试
-│   ├── python_baseline.py                   # Python基准测试
-│   ├── python_baseline_supplementary.py     # Python Baseline补充测试
-│   ├── python_cold_start_benchmark.py       # Python冷启动测试
-│   ├── python_long_stability.py             # Python长时间稳定性测试
-│   └── python_thread_config_benchmark.py    # Python线程配置测试
-├── check_environment.py                     # 环境检查脚本
-├── env_check.py                             # 环境检查脚本
-├── generate_input_data.py                   # 生成统一输入数据
-├── generate_model_md5.py                   # 生成模型MD5校验
-└── 测试规范与性能分析综合报告.md             # 测试规范与性能分析综合报告
-```
-
-### 运行测试
-
 ### 测试程序列表
 
 #### Go 测试程序
@@ -289,36 +280,6 @@ test/
 3. `python_thread_config_benchmark.py` - Python 线程配置测试
 4. `python_long_stability.py` - Python 长时间稳定性测试
 5. `python_baseline_supplementary.py` - Python Baseline 补充测试
-
-### 测试结果文件
-
-#### 基准测试结果
-- `results/go_baseline_result.txt` - Go 基准测试结果
-- `results/python_baseline_result.txt` - Python 基准测试结果
-
-#### 冷启动测试结果
-- `results/go_cold_start_result.txt` - Go 冷启动测试结果
-- `results/python_cold_start_result.txt` - Python 冷启动测试结果
-
-#### 线程配置测试结果
-- `results/go_thread_1_result.txt` - Go 1 线程测试结果
-- `results/go_thread_2_result.txt` - Go 2 线程测试结果
-- `results/go_thread_4_result.txt` - Go 4 线程测试结果
-- `results/go_thread_8_result.txt` - Go 8 线程测试结果
-- `results/python_thread_1_result.txt` - Python 1 线程测试结果
-- `results/python_thread_2_result.txt` - Python 2 线程测试结果
-- `results/python_thread_4_result.txt` - Python 4 线程测试结果
-- `results/python_thread_8_result.txt` - Python 8 线程测试结果
-- `results/go_thread_config_comprehensive.txt` - Go 线程配置综合结果
-- `results/python_thread_config_comprehensive.txt` - Python 线程配置综合结果
-
-#### 长时间稳定性测试结果
-- `results/go_long_stability_result.txt` - Go 长时间稳定性测试结果
-- `results/python_long_stability_result.txt` - Python 长时间稳定性测试结果
-
-#### 补充测试结果
-- `results/go_advanced_session_supplementary.txt` - Go AdvancedSession 补充测试结果
-- `results/python_baseline_supplementary.txt` - Python Baseline 补充测试结果
 
 ### 图表生成脚本
 
@@ -401,6 +362,8 @@ test/
 - ONNX Runtime硬件加速支持
 - 图像对象池，减少内存分配
 - 批量任务处理，减少上下文切换开销
+- 矩形缩放，提高推理速度
+- 测试时增强(TTA)，提高检测精度
 
 ## 🤝 贡献
 
