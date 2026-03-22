@@ -1,0 +1,5570 @@
+
+D:\mlz\trae_projects\1\yolo-go-detector\test>run_all_complete_tests.bat
+========================================
+Test Start (39 tasks total)
+========================================
+
+Script directory: D:\mlz\trae_projects\1\yolo-go-detector\test\
+
+Checking environment...
+Python OK
+Go OK
+Python onnxruntime OK
+Model files OK
+Test data OK
+Environment check passed.
+
+[1/39] Python baseline test...
+===== Python 基准测试（10次运行） =====
+
+===== 第 1 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 707.14649 ms
+P50延迟: 691.10900 ms
+P90延迟: 732.02072 ms
+P99延迟: 983.21780 ms
+最小延迟: 668.47230 ms
+最大延迟: 1162.18330 ms
+Start RSS: 293.94531 MB
+Peak RSS: 555.93359 MB
+Stable RSS: 555.93359 MB
+RSS Drift: 261.98828 MB
+
+===== 第 2 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 726.31215 ms
+P50延迟: 692.49805 ms
+P90延迟: 832.40406 ms
+P99延迟: 1169.08485 ms
+最小延迟: 675.02420 ms
+最大延迟: 1306.53190 ms
+Start RSS: 296.31250 MB
+Peak RSS: 548.45312 MB
+Stable RSS: 548.45312 MB
+RSS Drift: 252.14062 MB
+
+===== 第 3 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 788.69423 ms
+P50延迟: 760.78555 ms
+P90延迟: 927.10363 ms
+P99延迟: 1131.09639 ms
+最小延迟: 674.99700 ms
+最大延迟: 1257.03920 ms
+Start RSS: 297.88281 MB
+Peak RSS: 545.30078 MB
+Stable RSS: 545.28125 MB
+RSS Drift: 247.39844 MB
+
+===== 第 4 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 735.09623 ms
+P50延迟: 704.47040 ms
+P90延迟: 817.68629 ms
+P99延迟: 968.08259 ms
+最小延迟: 674.21990 ms
+最大延迟: 1292.84000 ms
+Start RSS: 296.76172 MB
+Peak RSS: 548.93359 MB
+Stable RSS: 548.93359 MB
+RSS Drift: 252.17188 MB
+
+===== 第 5 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 751.90950 ms
+P50延迟: 693.23095 ms
+P90延迟: 899.81150 ms
+P99延迟: 1411.53444 ms
+最小延迟: 672.97660 ms
+最大延迟: 1522.94080 ms
+Start RSS: 297.50391 MB
+Peak RSS: 544.86719 MB
+Stable RSS: 544.86719 MB
+RSS Drift: 247.36328 MB
+
+===== 第 6 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 705.26548 ms
+P50延迟: 689.83245 ms
+P90延迟: 723.88934 ms
+P99延迟: 1002.18437 ms
+最小延迟: 674.39580 ms
+最大延迟: 1293.61190 ms
+Start RSS: 297.29688 MB
+Peak RSS: 554.41406 MB
+Stable RSS: 554.41406 MB
+RSS Drift: 257.11719 MB
+
+===== 第 7 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 702.51516 ms
+P50延迟: 688.40980 ms
+P90延迟: 721.41459 ms
+P99延迟: 991.09239 ms
+最小延迟: 675.01210 ms
+最大延迟: 1053.53420 ms
+Start RSS: 296.29297 MB
+Peak RSS: 543.70312 MB
+Stable RSS: 543.70312 MB
+RSS Drift: 247.41016 MB
+
+===== 第 8 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 693.99525 ms
+P50延迟: 687.30885 ms
+P90延迟: 706.86572 ms
+P99延迟: 779.24743 ms
+最小延迟: 673.81450 ms
+最大延迟: 1026.81450 ms
+Start RSS: 296.98828 MB
+Peak RSS: 553.75781 MB
+Stable RSS: 553.75781 MB
+RSS Drift: 256.76953 MB
+
+===== 第 9 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 695.26821 ms
+P50延迟: 687.88920 ms
+P90延迟: 702.69548 ms
+P99延迟: 795.19870 ms
+最小延迟: 674.93360 ms
+最大延迟: 1241.55690 ms
+Start RSS: 297.32422 MB
+Peak RSS: 554.12891 MB
+Stable RSS: 554.12891 MB
+RSS Drift: 256.80469 MB
+
+===== 第 10 次测试 =====
+===== Python 基准测试 ====
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 692.07727 ms
+P50延迟: 683.34490 ms
+P90延迟: 706.82808 ms
+P99延迟: 838.63251 ms
+最小延迟: 671.48210 ms
+最大延迟: 956.96930 ms
+Start RSS: 296.71484 MB
+Peak RSS: 553.48828 MB
+Stable RSS: 553.48828 MB
+RSS Drift: 256.77344 MB
+
+===== 10次测试平均值 =====
+平均延迟: 719.82800 ms
+P50延迟: 697.88792 ms
+P90延迟: 777.07194 ms
+P99延迟: 1006.93715 ms
+最小延迟: 673.53281 ms
+最大延迟: 1211.40220 ms
+Start RSS: 296.70234 MB
+Peak RSS: 550.29805 MB
+Stable RSS: 550.29609 MB
+RSS Drift: 253.59375 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_baseline_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_baseline_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_baseline_latency_data.txt
+测试完成!
+
+[2/39] Go baseline test...
+===== Go 基准测试（10次运行） =====
+Go 线程数设置: 12
+
+===== 第 1 次测试 =====
+平均延迟: 950.75473 ms
+P50延迟: 953.44380 ms
+P90延迟: 1000.10360 ms
+P99延迟: 1063.25250 ms
+最小延迟: 821.80060 ms
+最大延迟: 1094.60310 ms
+Start RSS: 59.66016 MB
+Peak RSS: 59.94531 MB
+Stable RSS: 59.77734 MB
+RSS Drift: 0.11719 MB
+Go Heap: 7.74127 MB
+
+===== 第 2 次测试 =====
+平均延迟: 944.93587 ms
+P50延迟: 953.19610 ms
+P90延迟: 985.14510 ms
+P99延迟: 1016.35930 ms
+最小延迟: 828.60550 ms
+最大延迟: 1016.55880 ms
+Start RSS: 59.56641 MB
+Peak RSS: 60.02344 MB
+Stable RSS: 59.50391 MB
+RSS Drift: -0.06250 MB
+Go Heap: 7.75308 MB
+
+===== 第 3 次测试 =====
+平均延迟: 937.56519 ms
+P50延迟: 937.91640 ms
+P90延迟: 984.74660 ms
+P99延迟: 1016.45370 ms
+最小延迟: 844.26760 ms
+最大延迟: 1047.46550 ms
+Start RSS: 59.95312 MB
+Peak RSS: 60.04297 MB
+Stable RSS: 59.77344 MB
+RSS Drift: -0.17969 MB
+Go Heap: 7.71843 MB
+
+===== 第 4 次测试 =====
+平均延迟: 935.03295 ms
+P50延迟: 937.96640 ms
+P90延迟: 984.58630 ms
+P99延迟: 1031.72410 ms
+最小延迟: 828.43920 ms
+最大延迟: 1031.74390 ms
+Start RSS: 59.76953 MB
+Peak RSS: 59.95312 MB
+Stable RSS: 59.74219 MB
+RSS Drift: -0.02734 MB
+Go Heap: 7.72324 MB
+
+===== 第 5 次测试 =====
+平均延迟: 935.11421 ms
+P50延迟: 937.96980 ms
+P90延迟: 969.69670 ms
+P99延迟: 1016.03110 ms
+最小延迟: 812.99540 ms
+最大延迟: 1016.16910 ms
+Start RSS: 59.76953 MB
+Peak RSS: 60.05469 MB
+Stable RSS: 59.70312 MB
+RSS Drift: -0.06641 MB
+Go Heap: 7.73143 MB
+
+===== 第 6 次测试 =====
+平均延迟: 927.96841 ms
+P50延迟: 937.69660 ms
+P90延迟: 976.50110 ms
+P99延迟: 1016.20600 ms
+最小延迟: 813.05570 ms
+最大延迟: 1032.22720 ms
+Start RSS: 59.49609 MB
+Peak RSS: 60.03516 MB
+Stable RSS: 59.63281 MB
+RSS Drift: 0.13672 MB
+Go Heap: 7.70082 MB
+
+===== 第 7 次测试 =====
+平均延迟: 929.57738 ms
+P50延迟: 929.99120 ms
+P90延迟: 969.67310 ms
+P99延迟: 1000.87130 ms
+最小延迟: 828.70080 ms
+最大延迟: 1031.49520 ms
+Start RSS: 59.61328 MB
+Peak RSS: 59.90234 MB
+Stable RSS: 59.66797 MB
+RSS Drift: 0.05469 MB
+Go Heap: 7.74919 MB
+
+===== 第 8 次测试 =====
+平均延迟: 934.53972 ms
+P50延迟: 938.07310 ms
+P90延迟: 984.55360 ms
+P99延迟: 1031.76870 ms
+最小延迟: 782.20160 ms
+最大延迟: 1208.43460 ms
+Start RSS: 59.74609 MB
+Peak RSS: 60.10938 MB
+Stable RSS: 59.78125 MB
+RSS Drift: 0.03516 MB
+Go Heap: 7.75473 MB
+
+===== 第 9 次测试 =====
+平均延迟: 909.21183 ms
+P50延迟: 907.13060 ms
+P90延迟: 969.15970 ms
+P99延迟: 1015.75750 ms
+最小延迟: 797.45280 ms
+最大延迟: 1093.52590 ms
+Start RSS: 59.84375 MB
+Peak RSS: 59.95312 MB
+Stable RSS: 59.64844 MB
+RSS Drift: -0.19531 MB
+Go Heap: 7.71812 MB
+
+===== 第 10 次测试 =====
+平均延迟: 907.23221 ms
+P50延迟: 906.94970 ms
+P90延迟: 953.60270 ms
+P99延迟: 1016.59340 ms
+最小延迟: 788.87600 ms
+最大延迟: 1031.67450 ms
+Start RSS: 59.55469 MB
+Peak RSS: 59.81641 MB
+Stable RSS: 59.97266 MB
+RSS Drift: 0.41797 MB
+Go Heap: 7.72336 MB
+
+===== 10 次测试平均值 =====
+平均延迟：931.19325 ms
+P50 延迟：934.03337 ms
+P90 延迟：977.77685 ms
+P99 延迟：1022.50176 ms
+最小延迟：814.63952 ms
+最大延迟：1060.38978 ms
+Start RSS: 59.69727 MB
+Peak RSS: 59.98359 MB
+Stable RSS: 59.72031 MB
+RSS Drift: 0.02305 MB
+Go Heap: 7.73137 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_baseline_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_baseline_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_baseline_latency_data.txt
+测试完成!
+
+[3/39] Python cold start test...
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\python
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+===== Python 冷启动时间对比分析测试 ====
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+
+=== 独立测试 1/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 294.04688 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 714.52470 ms
+Cold Start RSS: 527.76172 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 546.48438 MB
+Peak RSS: 546.53516 MB
+测试 1 完成: 冷启动时间=714.52470 ms, 稳定状态平均时间=690.54744 ms
+
+=== 独立测试 2/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.07422 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 712.23200 ms
+Cold Start RSS: 530.60547 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 563.37500 MB
+Peak RSS: 563.41797 MB
+测试 2 完成: 冷启动时间=712.23200 ms, 稳定状态平均时间=697.30297 ms
+
+=== 独立测试 3/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 303.12109 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 729.27840 ms
+Cold Start RSS: 536.32812 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 555.07812 MB
+Peak RSS: 555.07812 MB
+测试 3 完成: 冷启动时间=729.27840 ms, 稳定状态平均时间=688.50267 ms
+
+=== 独立测试 4/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.56641 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 735.66470 ms
+Cold Start RSS: 535.81641 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 554.68750 MB
+Peak RSS: 554.68750 MB
+测试 4 完成: 冷启动时间=735.66470 ms, 稳定状态平均时间=691.26692 ms
+
+=== 独立测试 5/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 303.14062 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 710.34080 ms
+Cold Start RSS: 536.35938 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 555.10938 MB
+Peak RSS: 555.10938 MB
+测试 5 完成: 冷启动时间=710.34080 ms, 稳定状态平均时间=689.46261 ms
+
+===== 冷启动与稳定状态对比结果 =====
+冷启动时间: 720.40812 ms
+稳定状态平均时间: 691.41652 ms
+冷启动时间 / 稳定状态平均时间: 1.04 倍
+
+===== 稳定状态详细统计 =====
+平均延迟: 691.41652 ms
+标准差: 3.08986 ms
+变异系数: 0.45%
+FPS: 1.45
+最小延迟: 672.49544 ms
+最大延迟: 927.32942 ms
+P50延迟: 683.87241 ms
+P90延迟: 700.04261 ms
+P99延迟: 845.43001 ms
+
+===== 内存使用情况 =====
+Start RSS: 300.98984 MB
+Cold Start RSS: 533.37422 MB
+Stable RSS: 554.94687 MB
+内存增长 (Start -> Cold Start): 232.38437 MB
+内存增长 (Cold Start -> Stable): 21.57266 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_cold_start_detailed_log.txt
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_cold_start_result.txt
+尝试使用UTF-8编码写入...
+UTF-8编码写入成功!
+验证文件内容...
+文件前500字符: ===== Python 冷启动时间对比分析测试结果（5次运行平均值） =====
+冷启动时间: 720.40812 ms
+稳定状态平均时间: 691.41652 ms
+冷启动时间 / 稳定状态平均时间: 1.04 倍
+
+===== 稳定状态详细统计 =====
+平均延迟: 691.41652 ms
+标准差: 3.08986 ms
+变异系数: 0.45%
+FPS: 1.45
+最小延迟: 672.49544 ms
+最大延迟: 927.32942 ms
+P50延迟: 683.87241 ms
+P90延迟: 700.04261 ms
+P99延迟: 845.43001 ms
+
+===== 内存使用情况 =====
+Start RSS: 300.98984 MB
+Cold Start RSS: 533.37422 MB
+Stable RSS: 554.94687 MB
+内存增长 (Start -> Cold Start): 232.38437 MB
+内存增长 (Cold Start -> Stable): 21.57266 MB
+...
+
+文件完整内容:
+===== Python 冷启动时间对比分析测试结果（5次运行平均值） =====
+冷启动时间: 720.40812 ms
+稳定状态平均时间: 691.41652 ms
+冷启动时间 / 稳定状态平均时间: 1.04 倍
+
+===== 稳定状态详细统计 =====
+平均延迟: 691.41652 ms
+标准差: 3.08986 ms
+变异系数: 0.45%
+FPS: 1.45
+最小延迟: 672.49544 ms
+最大延迟: 927.32942 ms
+P50延迟: 683.87241 ms
+P90延迟: 700.04261 ms
+P99延迟: 845.43001 ms
+
+===== 内存使用情况 =====
+Start RSS: 300.98984 MB
+Cold Start RSS: 533.37422 MB
+Stable RSS: 554.94687 MB
+内存增长 (Start -> Cold Start): 232.38437 MB
+内存增长 (Cold Start -> Stable): 21.57266 MB
+
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_cold_start_result.txt
+
+===== 冷启动时间对比分析测试完成 ====
+
+[4/39] Go cold start test...
+===== 冷启动时间对比分析测试 =====
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+库路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\onnxruntime.dll
+ONNX Runtime 环境初始化成功!
+
+=== 独立测试 1/5 ===
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+Start RSS: 59.72266 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 963.65550 ms
+Cold Start RSS: 59.72656 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 59.64453 MB
+Peak RSS: 59.88281 MB
+测试 1 完成: 冷启动时间=963.65550 ms, 稳定状态平均时间=938.09562 ms
+
+=== 独立测试 2/5 ===
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+Start RSS: 59.84766 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 947.57220 ms
+Cold Start RSS: 59.57422 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 59.80078 MB
+Peak RSS: 60.05859 MB
+测试 2 完成: 冷启动时间=947.57220 ms, 稳定状态平均时间=932.47388 ms
+
+=== 独立测试 3/5 ===
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+Start RSS: 59.68359 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 885.77400 ms
+Cold Start RSS: 59.57031 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 59.53516 MB
+Peak RSS: 60.07812 MB
+测试 3 完成: 冷启动时间=885.77400 ms, 稳定状态平均时间=929.92189 ms
+
+=== 独立测试 4/5 ===
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+Start RSS: 59.96094 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 979.06140 ms
+Cold Start RSS: 59.55859 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 59.41797 MB
+Peak RSS: 59.96094 MB
+测试 4 完成: 冷启动时间=979.06140 ms, 稳定状态平均时间=920.10445 ms
+
+=== 独立测试 5/5 ===
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+Start RSS: 59.63281 MB
+
+===== 测试冷启动时间 =====
+冷启动时间: 883.09830 ms
+Cold Start RSS: 59.54688 MB
+
+===== 预热阶段 =====
+
+===== 稳定状态测试 =====
+
+Stable RSS: 59.61719 MB
+Peak RSS: 59.92969 MB
+测试 5 完成: 冷启动时间=883.09830 ms, 稳定状态平均时间=923.70686 ms
+
+===== 冷启动与稳定状态对比结果 =====
+冷启动时间: 931.83228 ms
+稳定状态平均时间: 928.86054 ms
+冷启动时间 / 稳定状态平均时间: 1.00 倍
+
+===== 稳定状态详细统计 =====
+平均延迟: 928.86054 ms
+标准差: 6.36709 ms
+变异系数: 0.69%
+FPS: 1.08
+最小延迟: 822.16862 ms
+最大延迟: 1009.79028 ms
+P50延迟: 934.78124 ms
+P90延迟: 981.46574 ms
+P99延迟: 1009.79028 ms
+
+===== 内存使用情况 =====
+Start RSS: 59.76953 MB
+Cold Start RSS: 59.59531 MB
+Stable RSS: 59.60312 MB
+内存增长 (Start -> Cold Start): -0.17422 MB
+内存增长 (Cold Start -> Stable): 0.00781 MB
+Go Heap: 7.68234 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_cold_start_detailed_log.txt
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_cold_start_result.txt
+文件写入成功!
+
+文件内容预览:
+===== 冷启动时间对比分析测试结果（5次运行平均值） =====
+
+冷启动时间: 931.83228 ms
+稳定状态平均时间: 928.86054 ms
+冷启动时间 / 稳定状态平均时间: 1.00 倍
+
+===== 稳定状态详细统计 =====
+平均延迟: 928.86054 ms
+标准差: 6.36709 ms
+变异系数: 0.69%
+FPS: 1.08
+最小延迟: 822.16862 ms
+最大延迟: 1009.79028 ms
+P50延迟: 934.78124 ms
+P90延迟: 981.46574 ms
+P99延迟: 1009.79028 ms
+
+===== 内存使用情况 =====
+Start RSS: 59.76953 MB
+Cold Start RSS: 59.59531 MB
+Stable RSS: 59.60312 MB
+内存增长 (Start -> Cold Start): -0.17422 MB
+内存增长 (Cold Start -> Stable): 0.00781 MB
+Go Heap: 7.68234 MB
+
+
+
+===== 冷启动时间对比分析测试完成 =====
+
+[5/39] Python long stability test...
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\python
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+===== Python 长时间稳定性测试 =====
+测试时长: 10分钟
+采样间隔: 1秒
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入名称: images
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Warmup 完成!
+
+===== 开始长时间稳定性测试 =====
+测试时长: 10分钟 (600秒)
+采样间隔: 1秒
+推理模式: 连续推理
+初始 RSS: 546.18750 MB
+进度: 60 次推理, 已运行: 101秒, 剩余: 499秒, 当前RSS: 546.17188 MB
+进度: 120 次推理, 已运行: 202秒, 剩余: 398秒, 当前RSS: 546.16406 MB
+进度: 180 次推理, 已运行: 303秒, 剩余: 297秒, 当前RSS: 546.33594 MB
+进度: 240 次推理, 已运行: 404秒, 剩余: 196秒, 当前RSS: 546.32812 MB
+进度: 300 次推理, 已运行: 505秒, 剩余: 95秒, 当前RSS: 546.35938 MB
+
+===== 长时间稳定性测试结果 =====
+测试时长: 600秒
+推理次数: 356
+推理频率: 0.59 次/秒
+
+===== 推理性能统计 =====
+平均推理时间: 685.10807 ms
+P50推理时间: 679.89930 ms
+P90推理时间: 696.29475 ms
+P99推理时间: 745.41802 ms
+最小推理时间: 667.83910 ms
+最大推理时间: 927.99160 ms
+
+===== 内存使用统计 =====
+初始 RSS: 546.18750 MB
+最终 RSS: 546.43750 MB
+平均 RSS: 546.26559 MB
+峰值 RSS: 546.43750 MB
+最小 RSS: 546.14844 MB
+RSS Drift: 0.25000 MB
+RSS 波动范围: 0.28906 MB (0.05%)
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_long_stability_result.txt
+结果保存成功!
+保存RSS曲线数据到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_rss_curve.csv
+RSS曲线数据已保存: 358 个采样点
+
+测试完成!
+
+[6/39] Go long stability test...
+===== Go 长时间稳定性测试 =====
+测试时长: 10分钟
+采样间隔: 1秒
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+库路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\onnxruntime.dll
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+Session 创建成功!
+Warming up...
+Warmup 完成!
+
+===== 开始长时间稳定性测试 =====
+测试时长: 10分钟 (600秒)
+采样间隔: 1秒
+推理模式: 连续推理
+初始 RSS: 59.60156 MB
+  推理 1: 919.27030 ms
+  推理 2: 965.34570 ms
+  推理 3: 903.89070 ms
+  推理 4: 929.15190 ms
+  推理 5: 902.23180 ms
+进度: 60 次推理, 已运行: 1m9s, 剩余: 8m51s
+进度: 120 次推理, 已运行: 2m16s, 剩余: 7m44s
+进度: 180 次推理, 已运行: 3m23s, 剩余: 6m37s
+进度: 240 次推理, 已运行: 4m29s, 剩余: 5m31s
+进度: 300 次推理, 已运行: 5m35s, 剩余: 4m25s
+进度: 360 次推理, 已运行: 6m42s, 剩余: 3m18s
+进度: 420 次推理, 已运行: 7m49s, 剩余: 2m11s
+进度: 480 次推理, 已运行: 8m57s, 剩余: 1m3s
+
+===== 长时间稳定性测试结果 =====
+测试时长: 10m3s
+推理次数: 538
+推理频率: 0.89 次/秒
+
+===== 推理性能统计 =====
+平均推理时间: 910.04246 ms
+P50推理时间: 907.10340 ms
+P90推理时间: 968.99960 ms
+P99推理时间: 1000.39930 ms
+最小推理时间: 781.00570 ms
+最大推理时间: 1015.91910 ms
+
+===== 内存使用统计 =====
+初始 RSS: 59.60156 MB
+最终 RSS: 59.72266 MB
+平均 RSS: 59.67670 MB
+峰值 RSS: 60.05859 MB
+最小 RSS: 59.39062 MB
+RSS Drift: 0.12109 MB
+RSS 波动范围: 0.66797 MB (1.12%)
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_long_stability_result.txt
+保存RSS曲线数据到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_rss_curve.csv
+RSS曲线数据已保存: 55 个采样点
+
+测试完成!
+
+[7/39] Go supplementary test...
+===== Go AdvancedSession 补充实验 =====
+实验性质：工程级接口能力评估（非语言级性能比较）
+
+调试: 开始查找项目根目录，当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+调试: 检查路径: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark\third_party\yolo11x.onnx
+调试: 检查路径: D:\mlz\trae_projects\1\yolo-go-detector\test\third_party\yolo11x.onnx
+调试: 检查路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+调试: 找到项目根目录: D:\mlz\trae_projects\1\yolo-go-detector
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+库路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\onnxruntime.dll
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+库路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\onnxruntime.dll
+ONNX Runtime 环境初始化成功!
+
+===== 实验编号 S-A1: intra_op_num_threads=1 =====
+AdvancedSession 创建成功!
+线程配置: intra_op_num_threads=1, inter_op_num_threads=1
+Start RSS: 59.72266 MB
+Warming up...
+Warmup 后 RSS: 59.62891 MB
+开始基准测试...
+  推理 1: 2826.13160 ms
+  推理 2: 2833.29790 ms
+  推理 3: 2840.00680 ms
+  推理 4: 3016.72330 ms
+  推理 5: 2862.61390 ms
+Peak RSS: 59.80078 MB
+性能指标: avg=2836.51641 ms, p50=2828.64920 ms, p90=2845.07970 ms, p99=3016.72330 ms, min=2797.24630 ms, max=3016.72330 ms
+工程指标: Tensor分配次数=2, I/O Binding=true, Session创建次数=1, 峰值RSS=59.80078 MB
+
+===== 实验编号 S-A2: intra_op_num_threads=2 =====
+AdvancedSession 创建成功!
+线程配置: intra_op_num_threads=2, inter_op_num_threads=1
+Start RSS: 59.72266 MB
+Warming up...
+Warmup 后 RSS: 59.81250 MB
+开始基准测试...
+  推理 1: 1671.17850 ms
+  推理 2: 1561.07850 ms
+  推理 3: 1576.21620 ms
+  推理 4: 1524.30820 ms
+  推理 5: 1520.93560 ms
+Peak RSS: 59.77734 MB
+性能指标: avg=1546.10071 ms, p50=1532.05170 ms, p90=1578.62730 ms, p99=1671.17850 ms, min=1515.92650 ms, max=1671.17850 ms
+工程指标: Tensor分配次数=2, I/O Binding=true, Session创建次数=1, 峰值RSS=59.77734 MB
+
+===== 实验编号 S-A3: intra_op_num_threads=4 =====
+AdvancedSession 创建成功!
+线程配置: intra_op_num_threads=4, inter_op_num_threads=1
+Start RSS: 59.74219 MB
+Warming up...
+Warmup 后 RSS: 59.49219 MB
+开始基准测试...
+  推理 1: 913.16750 ms
+  推理 2: 893.38980 ms
+  推理 3: 1029.73230 ms
+  推理 4: 982.99940 ms
+  推理 5: 937.54850 ms
+Peak RSS: 59.66797 MB
+性能指标: avg=931.31428 ms, p50=922.10900 ms, p90=1000.52020 ms, p99=1125.26140 ms, min=875.13400 ms, max=1125.26140 ms
+工程指标: Tensor分配次数=2, I/O Binding=true, Session创建次数=1, 峰值RSS=59.66797 MB
+
+===== 实验编号 S-A4: intra_op_num_threads=8 =====
+AdvancedSession 创建成功!
+线程配置: intra_op_num_threads=8, inter_op_num_threads=1
+Start RSS: 59.95312 MB
+Warming up...
+Warmup 后 RSS: 59.60156 MB
+开始基准测试...
+  推理 1: 838.31510 ms
+  推理 2: 831.84860 ms
+  推理 3: 845.29900 ms
+  推理 4: 839.40060 ms
+  推理 5: 829.12780 ms
+Peak RSS: 59.70312 MB
+性能指标: avg=855.86417 ms, p50=844.98590 ms, p90=875.98960 ms, p99=923.03890 ms, min=828.42400 ms, max=923.03890 ms
+工程指标: Tensor分配次数=2, I/O Binding=true, Session创建次数=1, 峰值RSS=59.70312 MB
+
+调试: 开始查找项目根目录，当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+调试: 检查路径: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark\third_party\yolo11x.onnx
+调试: 检查路径: D:\mlz\trae_projects\1\yolo-go-detector\test\third_party\yolo11x.onnx
+调试: 检查路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+调试: 找到项目根目录: D:\mlz\trae_projects\1\yolo-go-detector
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_advanced_session_supplementary.txt
+===== 补充实验完成 =====
+
+[8/39] Go thread config test...
+===== 不同 intra_op_num_threads 配置性能测试 =====
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+库路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\onnxruntime.dll
+ONNX Runtime 环境初始化成功!
+
+===== 测试线程配置: intra_op_num_threads=1 =====
+
+--- 独立测试 1/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=1, inter=1
+Start RSS: 60.36 MB
+Warming up...
+Warmup RSS: 59.60 MB
+Running benchmark...
+Stable RSS: 59.75 MB
+测试 1 完成: 平均延迟=2833.96002 ms
+
+--- 独立测试 2/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=1, inter=1
+Start RSS: 59.68 MB
+Warming up...
+Warmup RSS: 59.40 MB
+Running benchmark...
+Stable RSS: 59.55 MB
+测试 2 完成: 平均延迟=2831.16529 ms
+
+--- 独立测试 3/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=1, inter=1
+Start RSS: 59.56 MB
+Warming up...
+Warmup RSS: 59.95 MB
+Running benchmark...
+Stable RSS: 59.47 MB
+测试 3 完成: 平均延迟=2823.73922 ms
+
+--- 独立测试 4/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=1, inter=1
+Start RSS: 59.57 MB
+Warming up...
+Warmup RSS: 59.61 MB
+Running benchmark...
+Stable RSS: 59.57 MB
+测试 4 完成: 平均延迟=2828.29476 ms
+
+--- 独立测试 5/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=1, inter=1
+Start RSS: 59.63 MB
+Warming up...
+Warmup RSS: 59.81 MB
+Running benchmark...
+Stable RSS: 59.84 MB
+测试 5 完成: 平均延迟=2828.75176 ms
+
+===== 测试结果 =====
+平均延迟: 2829.18221 ms
+标准差: 3.38700 ms
+变异系数: 0.12%
+FPS: 0.35
+P50延迟: 2828.53582 ms
+P90延迟: 2842.66452 ms
+P99延迟: 2872.38266 ms
+最小延迟: 2797.21482 ms
+最大延迟: 2872.38266 ms
+
+===== 内存使用情况 =====
+Start RSS: 59.75937 MB
+Peak RSS: 60.05781 MB
+Stable RSS: 59.63594 MB
+RSS Drift: -0.12344 MB
+Go Heap: 7.90508 MB
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_1_detailed_log.txt
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_1_result.txt
+文件写入成功!
+
+===== 测试线程配置: intra_op_num_threads=2 =====
+
+--- 独立测试 1/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=2, inter=1
+Start RSS: 59.59 MB
+Warming up...
+Warmup RSS: 59.90 MB
+Running benchmark...
+Stable RSS: 59.69 MB
+测试 1 完成: 平均延迟=1536.78319 ms
+
+--- 独立测试 2/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=2, inter=1
+Start RSS: 59.62 MB
+Warming up...
+Warmup RSS: 59.53 MB
+Running benchmark...
+Stable RSS: 59.48 MB
+测试 2 完成: 平均延迟=1543.53121 ms
+
+--- 独立测试 3/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=2, inter=1
+Start RSS: 59.64 MB
+Warming up...
+Warmup RSS: 59.67 MB
+Running benchmark...
+Stable RSS: 59.76 MB
+测试 3 完成: 平均延迟=1535.33764 ms
+
+--- 独立测试 4/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=2, inter=1
+Start RSS: 59.68 MB
+Warming up...
+Warmup RSS: 59.79 MB
+Running benchmark...
+Stable RSS: 59.57 MB
+测试 4 完成: 平均延迟=1539.14899 ms
+
+--- 独立测试 5/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=2, inter=1
+Start RSS: 59.70 MB
+Warming up...
+Warmup RSS: 59.76 MB
+Running benchmark...
+Stable RSS: 59.76 MB
+测试 5 完成: 平均延迟=1544.30266 ms
+
+===== 测试结果 =====
+平均延迟: 1539.82074 ms
+标准差: 3.56739 ms
+变异系数: 0.23%
+FPS: 0.65
+P50延迟: 1534.82714 ms
+P90延迟: 1561.22256 ms
+P99延迟: 1612.77978 ms
+最小延迟: 1515.80234 ms
+最大延迟: 1612.77978 ms
+
+===== 内存使用情况 =====
+Start RSS: 59.64531 MB
+Peak RSS: 59.92266 MB
+Stable RSS: 59.65234 MB
+RSS Drift: 0.00703 MB
+Go Heap: 7.99035 MB
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_2_detailed_log.txt
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_2_result.txt
+文件写入成功!
+
+===== 测试线程配置: intra_op_num_threads=4 =====
+
+--- 独立测试 1/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=4, inter=1
+Start RSS: 59.62 MB
+Warming up...
+Warmup RSS: 59.49 MB
+Running benchmark...
+Stable RSS: 59.55 MB
+测试 1 完成: 平均延迟=941.01589 ms
+
+--- 独立测试 2/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=4, inter=1
+Start RSS: 59.56 MB
+Warming up...
+Warmup RSS: 59.89 MB
+Running benchmark...
+Stable RSS: 59.54 MB
+测试 2 完成: 平均延迟=936.28997 ms
+
+--- 独立测试 3/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=4, inter=1
+Start RSS: 59.93 MB
+Warming up...
+Warmup RSS: 59.58 MB
+Running benchmark...
+Stable RSS: 59.48 MB
+测试 3 完成: 平均延迟=926.63264 ms
+
+--- 独立测试 4/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=4, inter=1
+Start RSS: 59.75 MB
+Warming up...
+Warmup RSS: 59.69 MB
+Running benchmark...
+Stable RSS: 59.70 MB
+测试 4 完成: 平均延迟=938.39744 ms
+
+--- 独立测试 5/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=4, inter=1
+Start RSS: 59.79 MB
+Warming up...
+Warmup RSS: 59.50 MB
+Running benchmark...
+Stable RSS: 59.70 MB
+测试 5 完成: 平均延迟=940.34282 ms
+
+===== 测试结果 =====
+平均延迟: 936.53576 ms
+标准差: 5.21849 ms
+变异系数: 0.56%
+FPS: 1.07
+P50延迟: 929.70324 ms
+P90延迟: 1003.43720 ms
+P99延迟: 1066.12902 ms
+最小延迟: 881.46940 ms
+最大延迟: 1066.12902 ms
+
+===== 内存使用情况 =====
+Start RSS: 59.72812 MB
+Peak RSS: 59.87656 MB
+Stable RSS: 59.59609 MB
+RSS Drift: -0.13203 MB
+Go Heap: 7.72967 MB
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_4_detailed_log.txt
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_4_result.txt
+文件写入成功!
+
+===== 测试线程配置: intra_op_num_threads=8 =====
+
+--- 独立测试 1/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=8, inter=1
+Start RSS: 59.56 MB
+Warming up...
+Warmup RSS: 59.75 MB
+Running benchmark...
+Stable RSS: 59.69 MB
+测试 1 完成: 平均延迟=847.30144 ms
+
+--- 独立测试 2/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=8, inter=1
+Start RSS: 59.74 MB
+Warming up...
+Warmup RSS: 59.85 MB
+Running benchmark...
+Stable RSS: 59.79 MB
+测试 2 完成: 平均延迟=846.97391 ms
+
+--- 独立测试 3/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=8, inter=1
+Start RSS: 59.72 MB
+Warming up...
+Warmup RSS: 59.82 MB
+Running benchmark...
+Stable RSS: 59.60 MB
+测试 3 完成: 平均延迟=849.80356 ms
+
+--- 独立测试 4/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=8, inter=1
+Start RSS: 59.70 MB
+Warming up...
+Warmup RSS: 59.81 MB
+Running benchmark...
+Stable RSS: 59.76 MB
+测试 4 完成: 平均延迟=847.53333 ms
+
+--- 独立测试 5/5 --->
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+创建 Session...
+测试线程配置: intra=8, inter=1
+Start RSS: 59.75 MB
+Warming up...
+Warmup RSS: 59.55 MB
+Running benchmark...
+Stable RSS: 59.68 MB
+测试 5 完成: 平均延迟=847.14322 ms
+
+===== 测试结果 =====
+平均延迟: 847.75109 ms
+标准差: 1.04267 ms
+变异系数: 0.12%
+FPS: 1.18
+P50延迟: 844.53658 ms
+P90延迟: 859.95136 ms
+P99延迟: 889.83760 ms
+最小延迟: 828.52578 ms
+最大延迟: 889.83760 ms
+
+===== 内存使用情况 =====
+Start RSS: 59.69219 MB
+Peak RSS: 59.92031 MB
+Stable RSS: 59.70625 MB
+RSS Drift: 0.01406 MB
+Go Heap: 7.66950 MB
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_8_detailed_log.txt
+
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_8_result.txt
+文件写入成功!
+
+保存综合结果到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_thread_config_comprehensive.txt
+综合结果文件写入成功!
+
+===== 所有线程配置测试完成 =====
+
+[9/39] Python supplementary test...
+===== Python Baseline 补充实验 =====
+实验性质：工程级接口能力评估对照（非语言级性能比较）
+对照策略：Python 仍使用 baseline（不启用 io_binding，不预分配输出）
+原因：Python 侧 io_binding 的行为高度依赖版本与绑定方式，
+难以在工程层面保证与 Go 完全一致，因此未纳入补充实验对照。
+
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\python
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+
+===== 实验编号 S-B1: intra_op_num_threads=1 =====
+执行路径：Baseline InferenceSession（不启用 io_binding，不预分配输出）
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入名称: images
+输入形状: [1, 3, 640, 640]
+从预生成的二进制文件加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 289.07031 MB
+Warming up...
+Warmup 后 RSS: 540.78125 MB
+开始基准测试...
+Peak RSS: 540.78906 MB
+性能指标: avg=2829.62670 ms, p50=2828.12703 ms, p90=2843.79649 ms, p99=2890.68289 ms, min=2796.86570 ms, max=2891.41035 ms
+工程指标: Tensor分配次数=N/A (baseline), I/O Binding=False, Session创建次数=1, 峰值RSS=540.78906 MB
+
+===== 实验编号 S-B2: intra_op_num_threads=2 =====
+执行路径：Baseline InferenceSession（不启用 io_binding，不预分配输出）
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入名称: images
+输入形状: [1, 3, 640, 640]
+从预生成的二进制文件加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 290.86719 MB
+Warming up...
+Warmup 后 RSS: 546.95312 MB
+开始基准测试...
+Peak RSS: 546.92969 MB
+性能指标: avg=1539.33559 ms, p50=1531.46684 ms, p90=1562.51094 ms, p99=1578.67814 ms, min=1515.61618 ms, max=1593.76121 ms
+工程指标: Tensor分配次数=N/A (baseline), I/O Binding=False, Session创建次数=1, 峰值RSS=546.92969 MB
+
+===== 实验编号 S-B4: intra_op_num_threads=4 =====
+执行路径：Baseline InferenceSession（不启用 io_binding，不预分配输出）
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入名称: images
+输入形状: [1, 3, 640, 640]
+从预生成的二进制文件加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 292.06641 MB
+Warming up...
+Warmup 后 RSS: 553.40625 MB
+开始基准测试...
+Peak RSS: 553.40625 MB
+性能指标: avg=930.82808 ms, p50=921.90909 ms, p90=984.32038 ms, p99=1032.19488 ms, min=875.02360 ms, max=1125.00644 ms
+工程指标: Tensor分配次数=N/A (baseline), I/O Binding=False, Session创建次数=1, 峰值RSS=553.40625 MB
+
+===== 实验编号 S-B8: intra_op_num_threads=8 =====
+执行路径：Baseline InferenceSession（不启用 io_binding，不预分配输出）
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入名称: images
+输入形状: [1, 3, 640, 640]
+从预生成的二进制文件加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 293.40625 MB
+Warming up...
+Warmup 后 RSS: 559.28516 MB
+开始基准测试...
+Peak RSS: 559.42969 MB
+性能指标: avg=848.09100 ms, p50=844.20085 ms, p90=859.79524 ms, p99=875.08699 ms, min=828.16672 ms, max=875.46182 ms
+工程指标: Tensor分配次数=N/A (baseline), I/O Binding=False, Session创建次数=1, 峰值RSS=559.42969 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_baseline_supplementary.txt
+===== 补充实验完成 =====
+
+[10/39] Python thread config test...
+当前目录: D:\mlz\trae_projects\1\yolo-go-detector\test\python
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+项目根路径: D:\mlz\trae_projects\1\yolo-go-detector
+===== Python 线程配置性能测试 ====
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+
+===== 测试线程配置: intra_op_num_threads=1 ====
+
+=== 独立测试 1/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 292.12891 MB
+Warming up...
+Running benchmark...
+Stable RSS: 553.30859 MB
+Peak RSS: 553.30859 MB
+测试 1 完成: 平均延迟=2832.41452 ms
+
+=== 独立测试 2/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 299.16016 MB
+Warming up...
+Running benchmark...
+Stable RSS: 550.53906 MB
+Peak RSS: 550.53906 MB
+测试 2 完成: 平均延迟=2833.95036 ms
+
+=== 独立测试 3/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 299.79297 MB
+Warming up...
+Running benchmark...
+Stable RSS: 551.02344 MB
+Peak RSS: 551.05469 MB
+测试 3 完成: 平均延迟=2829.15220 ms
+
+=== 独立测试 4/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 300.32422 MB
+Warming up...
+Running benchmark...
+Stable RSS: 551.60156 MB
+Peak RSS: 551.60156 MB
+测试 4 完成: 平均延迟=2833.69563 ms
+
+=== 独立测试 5/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 300.73828 MB
+Warming up...
+Running benchmark...
+Stable RSS: 556.66016 MB
+Peak RSS: 556.66016 MB
+测试 5 完成: 平均延迟=2829.57026 ms
+
+===== 测试结果 =====
+平均延迟: 2831.75659 ms
+标准差: 2.02821 ms
+变异系数: 0.07%
+FPS: 0.35
+P50延迟: 2832.37804 ms
+P90延迟: 2842.53084 ms
+P99延迟: 2857.78874 ms
+最小延迟: 2803.99276 ms
+最大延迟: 2874.76754 ms
+
+===== 内存使用情况 =====
+Start RSS: 298.42891 MB
+Peak RSS: 552.63281 MB
+Stable RSS: 552.62656 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_1_detailed_log.txt
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_1_result.txt
+尝试使用UTF-8编码写入...
+UTF-8编码写入成功!
+验证文件内容...
+文件前500字符: ===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads=1) =====
+平均延迟: 2831.75659 ms
+标准差: 2.02821 ms
+变异系数: 0.07%
+FPS: 0.35
+P50延迟: 2832.37804 ms
+P90延迟: 2842.53084 ms
+P99延迟: 2857.78874 ms
+最小延迟: 2803.99276 ms
+最大延迟: 2874.76754 ms
+
+===== 内存使用情况 =====
+Start RSS: 298.42891 MB
+Peak RSS: 552.63281 MB
+Stable RSS: 552.62656 MB
+...
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_1_result.txt
+
+===== 测试线程配置: intra_op_num_threads=2 ====
+
+=== 独立测试 1/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 301.95312 MB
+Warming up...
+Running benchmark...
+Stable RSS: 567.36328 MB
+Peak RSS: 567.36328 MB
+测试 1 完成: 平均延迟=1532.99067 ms
+
+=== 独立测试 2/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 301.50391 MB
+Warming up...
+Running benchmark...
+Stable RSS: 562.21484 MB
+Peak RSS: 562.21484 MB
+测试 2 完成: 平均延迟=1538.13987 ms
+
+=== 独立测试 3/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 300.75391 MB
+Warming up...
+Running benchmark...
+Stable RSS: 547.41016 MB
+Peak RSS: 547.41016 MB
+测试 3 完成: 平均延迟=1535.67974 ms
+
+=== 独立测试 4/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 301.14062 MB
+Warming up...
+Running benchmark...
+Stable RSS: 557.20312 MB
+Peak RSS: 557.20312 MB
+测试 4 完成: 平均延迟=1538.09868 ms
+
+=== 独立测试 5/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 301.60547 MB
+Warming up...
+Running benchmark...
+Stable RSS: 548.26953 MB
+Peak RSS: 548.26953 MB
+测试 5 完成: 平均延迟=1538.91067 ms
+
+===== 测试结果 =====
+平均延迟: 1536.76393 ms
+标准差: 2.17698 ms
+变异系数: 0.14%
+FPS: 0.65
+P50延迟: 1533.37692 ms
+P90延迟: 1551.28003 ms
+P99延迟: 1579.99092 ms
+最小延迟: 1520.35338 ms
+最大延迟: 1597.57914 ms
+
+===== 内存使用情况 =====
+Start RSS: 301.39141 MB
+Peak RSS: 556.49219 MB
+Stable RSS: 556.49219 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_2_detailed_log.txt
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_2_result.txt
+尝试使用UTF-8编码写入...
+UTF-8编码写入成功!
+验证文件内容...
+文件前500字符: ===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads=2) =====
+平均延迟: 1536.76393 ms
+标准差: 2.17698 ms
+变异系数: 0.14%
+FPS: 0.65
+P50延迟: 1533.37692 ms
+P90延迟: 1551.28003 ms
+P99延迟: 1579.99092 ms
+最小延迟: 1520.35338 ms
+最大延迟: 1597.57914 ms
+
+===== 内存使用情况 =====
+Start RSS: 301.39141 MB
+Peak RSS: 556.49219 MB
+Stable RSS: 556.49219 MB
+...
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_2_result.txt
+
+===== 测试线程配置: intra_op_num_threads=4 ====
+
+=== 独立测试 1/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 303.53906 MB
+Warming up...
+Running benchmark...
+Stable RSS: 550.25391 MB
+Peak RSS: 550.25391 MB
+测试 1 完成: 平均延迟=931.75355 ms
+
+=== 独立测试 2/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.35547 MB
+Warming up...
+Running benchmark...
+Stable RSS: 558.49609 MB
+Peak RSS: 558.49609 MB
+测试 2 完成: 平均延迟=940.51738 ms
+
+=== 独立测试 3/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.24219 MB
+Warming up...
+Running benchmark...
+Stable RSS: 558.37500 MB
+Peak RSS: 558.37500 MB
+测试 3 完成: 平均延迟=952.68294 ms
+
+=== 独立测试 4/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.44922 MB
+Warming up...
+Running benchmark...
+Stable RSS: 558.60156 MB
+Peak RSS: 558.60156 MB
+测试 4 完成: 平均延迟=936.29947 ms
+
+=== 独立测试 5/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.33203 MB
+Warming up...
+Running benchmark...
+Stable RSS: 539.73828 MB
+Peak RSS: 539.73828 MB
+测试 5 完成: 平均延迟=928.17814 ms
+
+===== 测试结果 =====
+平均延迟: 937.88630 ms
+标准差: 8.48811 ms
+变异系数: 0.91%
+FPS: 1.07
+P50延迟: 927.71181 ms
+P90延迟: 993.23610 ms
+P99延迟: 1066.03803 ms
+最小延迟: 881.89262 ms
+最大延迟: 1092.38538 ms
+
+===== 内存使用情况 =====
+Start RSS: 302.58359 MB
+Peak RSS: 553.09297 MB
+Stable RSS: 553.09297 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_4_detailed_log.txt
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_4_result.txt
+尝试使用UTF-8编码写入...
+UTF-8编码写入成功!
+验证文件内容...
+文件前500字符: ===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads=4) =====
+平均延迟: 937.88630 ms
+标准差: 8.48811 ms
+变异系数: 0.91%
+FPS: 1.07
+P50延迟: 927.71181 ms
+P90延迟: 993.23610 ms
+P99延迟: 1066.03803 ms
+最小延迟: 881.89262 ms
+最大延迟: 1092.38538 ms
+
+===== 内存使用情况 =====
+Start RSS: 302.58359 MB
+Peak RSS: 553.09297 MB
+Stable RSS: 553.09297 MB
+...
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_4_result.txt
+
+===== 测试线程配置: intra_op_num_threads=8 ====
+
+=== 独立测试 1/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 304.00391 MB
+Warming up...
+Running benchmark...
+Stable RSS: 560.45312 MB
+Peak RSS: 560.45312 MB
+测试 1 完成: 平均延迟=848.63807 ms
+
+=== 独立测试 2/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 304.72266 MB
+Warming up...
+Running benchmark...
+Stable RSS: 551.75781 MB
+Peak RSS: 551.75781 MB
+测试 2 完成: 平均延迟=848.66645 ms
+
+=== 独立测试 3/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 303.36328 MB
+Warming up...
+Running benchmark...
+Stable RSS: 559.79297 MB
+Peak RSS: 559.79297 MB
+测试 3 完成: 平均延迟=846.98233 ms
+
+=== 独立测试 4/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 302.80078 MB
+Warming up...
+Running benchmark...
+Stable RSS: 559.46094 MB
+Peak RSS: 559.46094 MB
+测试 4 完成: 平均延迟=848.05792 ms
+
+=== 独立测试 5/5 ===
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Start RSS: 349.16406 MB
+Warming up...
+Running benchmark...
+Stable RSS: 605.50781 MB
+Peak RSS: 605.50781 MB
+测试 5 完成: 平均延迟=848.25743 ms
+
+===== 测试结果 =====
+平均延迟: 848.12044 ms
+标准差: 0.61385 ms
+变异系数: 0.07%
+FPS: 1.18
+P50延迟: 847.79582 ms
+P90延迟: 854.77066 ms
+P99延迟: 863.72462 ms
+最小延迟: 835.42214 ms
+最大延迟: 871.24492 ms
+
+===== 内存使用情况 =====
+Start RSS: 312.81094 MB
+Peak RSS: 567.39453 MB
+Stable RSS: 567.39453 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_8_detailed_log.txt
+保存结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_8_result.txt
+尝试使用UTF-8编码写入...
+UTF-8编码写入成功!
+验证文件内容...
+文件前500字符: ===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads=8) =====
+平均延迟: 848.12044 ms
+标准差: 0.61385 ms
+变异系数: 0.07%
+FPS: 1.18
+P50延迟: 847.79582 ms
+P90延迟: 854.77066 ms
+P99延迟: 863.72462 ms
+最小延迟: 835.42214 ms
+最大延迟: 871.24492 ms
+
+===== 内存使用情况 =====
+Start RSS: 312.81094 MB
+Peak RSS: 567.39453 MB
+Stable RSS: 567.39453 MB
+...
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_8_result.txt
+
+保存综合结果到: D:\mlz\trae_projects\1\yolo-go-detector\test\python\..\..\results\python_thread_config_comprehensive.txt
+综合结果文件写入成功!
+
+===== 所有线程配置测试完成 =====
+
+[11/39] Python large model test...
+===== Python 强化测试（10轮运行）=====
+
+===== 第 1 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 691.337 ms
+标准差: 37.929 ms
+P50延迟: 682.842 ms
+P90延迟: 698.531 ms
+P95延迟: 729.609 ms
+最小延迟: 672.299 ms
+最大延迟: 1007.596 ms
+Start RSS: 294.70 MB
+Peak RSS: 547.20 MB
+Stable RSS: 547.14 MB
+RSS Drift: 252.44 MB
+
+===== 第 2 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 691.904 ms
+标准差: 31.594 ms
+P50延迟: 683.648 ms
+P90延迟: 701.130 ms
+P95延迟: 729.019 ms
+最小延迟: 670.388 ms
+最大延迟: 950.071 ms
+Start RSS: 297.07 MB
+Peak RSS: 554.01 MB
+Stable RSS: 554.01 MB
+RSS Drift: 256.94 MB
+
+===== 第 3 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 692.948 ms
+标准差: 34.634 ms
+P50延迟: 684.655 ms
+P90延迟: 699.075 ms
+P95延迟: 750.315 ms
+最小延迟: 669.868 ms
+最大延迟: 916.282 ms
+Start RSS: 296.40 MB
+Peak RSS: 553.25 MB
+Stable RSS: 553.21 MB
+RSS Drift: 256.81 MB
+
+===== 第 4 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 688.832 ms
+标准差: 29.816 ms
+P50延迟: 682.209 ms
+P90延迟: 695.192 ms
+P95延迟: 702.422 ms
+最小延迟: 669.103 ms
+最大延迟: 931.621 ms
+Start RSS: 298.01 MB
+Peak RSS: 554.91 MB
+Stable RSS: 554.91 MB
+RSS Drift: 256.90 MB
+
+===== 第 5 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 693.717 ms
+标准差: 40.604 ms
+P50延迟: 684.759 ms
+P90延迟: 700.591 ms
+P95延迟: 719.686 ms
+最小延迟: 673.719 ms
+最大延迟: 1009.813 ms
+Start RSS: 296.65 MB
+Peak RSS: 553.42 MB
+Stable RSS: 553.41 MB
+RSS Drift: 256.76 MB
+
+===== 第 6 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 691.594 ms
+标准差: 28.554 ms
+P50延迟: 684.329 ms
+P90延迟: 700.834 ms
+P95延迟: 734.969 ms
+最小延迟: 669.233 ms
+最大延迟: 910.792 ms
+Start RSS: 296.88 MB
+Peak RSS: 544.30 MB
+Stable RSS: 544.30 MB
+RSS Drift: 247.42 MB
+
+===== 第 7 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 695.119 ms
+标准差: 34.503 ms
+P50延迟: 686.824 ms
+P90延迟: 702.039 ms
+P95延迟: 754.564 ms
+最小延迟: 674.317 ms
+最大延迟: 920.962 ms
+Start RSS: 297.40 MB
+Peak RSS: 549.46 MB
+Stable RSS: 549.46 MB
+RSS Drift: 252.06 MB
+
+===== 第 8 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 689.750 ms
+标准差: 34.290 ms
+P50延迟: 682.160 ms
+P90延迟: 698.258 ms
+P95延迟: 706.401 ms
+最小延迟: 671.732 ms
+最大延迟: 1043.318 ms
+Start RSS: 297.61 MB
+Peak RSS: 549.68 MB
+Stable RSS: 549.68 MB
+RSS Drift: 252.07 MB
+
+===== 第 9 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 693.212 ms
+标准差: 41.346 ms
+P50延迟: 683.636 ms
+P90延迟: 701.397 ms
+P95延迟: 722.860 ms
+最小延迟: 673.225 ms
+最大延迟: 1044.551 ms
+Start RSS: 297.28 MB
+Peak RSS: 549.36 MB
+Stable RSS: 549.36 MB
+RSS Drift: 252.07 MB
+
+===== 第 10 轮测试 =====
+===== Python 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 691.256 ms
+标准差: 32.205 ms
+P50延迟: 685.192 ms
+P90延迟: 699.346 ms
+P95延迟: 702.336 ms
+最小延迟: 673.577 ms
+最大延迟: 993.265 ms
+Start RSS: 297.61 MB
+Peak RSS: 549.74 MB
+Stable RSS: 549.74 MB
+RSS Drift: 252.14 MB
+
+===== 10轮测试平均值 =====
+平均延迟: 691.967 ms
+标准差: 34.547 ms
+P50延迟: 684.025 ms
+P90延迟: 699.639 ms
+P95延迟: 725.218 ms
+最小延迟: 671.746 ms
+最大延迟: 972.827 ms
+吞吐量: 1.45 images/sec
+Start RSS: 296.96 MB
+Peak RSS: 550.53 MB
+Stable RSS: 550.52 MB
+RSS Drift: 253.56 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_12threads_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_12threads_latency_data.txt
+测试完成!
+
+[12/39] Go large model test...
+===== Go 强化测试（10轮运行） =====
+
+===== 第 1 轮测试 =====
+平均延迟: 929.49888 ms
+标准差: 37.67456 ms
+P50延迟: 937.74840 ms
+P90延迟: 969.68580 ms
+P95延迟: 984.92630 ms
+最小延迟: 766.11550 ms
+最大延迟: 1016.30950 ms
+Start RSS: 59.66 MB
+Peak RSS: 59.91 MB
+Stable RSS: 59.51 MB
+RSS Drift: -0.14 MB
+Go Heap: 7.71 MB
+
+===== 第 2 轮测试 =====
+平均延迟: 931.05301 ms
+标准差: 35.27518 ms
+P50延迟: 937.73160 ms
+P90延迟: 984.45900 ms
+P95延迟: 984.99280 ms
+最小延迟: 828.70290 ms
+最大延迟: 1016.54200 ms
+Start RSS: 59.57 MB
+Peak RSS: 59.82 MB
+Stable RSS: 59.48 MB
+RSS Drift: -0.09 MB
+Go Heap: 7.72 MB
+
+===== 第 3 轮测试 =====
+平均延迟: 925.82025 ms
+标准差: 39.11095 ms
+P50延迟: 923.27180 ms
+P90延迟: 969.27050 ms
+P95延迟: 990.37450 ms
+最小延迟: 812.60140 ms
+最大延迟: 1016.37180 ms
+Start RSS: 59.75 MB
+Peak RSS: 60.23 MB
+Stable RSS: 59.52 MB
+RSS Drift: -0.24 MB
+Go Heap: 7.68 MB
+
+===== 第 4 轮测试 =====
+平均延迟: 932.75830 ms
+标准差: 35.00752 ms
+P50延迟: 937.71860 ms
+P90延迟: 984.52770 ms
+P95延迟: 985.40630 ms
+最小延迟: 828.37910 ms
+最大延迟: 1016.01020 ms
+Start RSS: 59.86 MB
+Peak RSS: 60.12 MB
+Stable RSS: 59.68 MB
+RSS Drift: -0.18 MB
+Go Heap: 7.74 MB
+
+===== 第 5 轮测试 =====
+平均延迟: 927.03171 ms
+标准差: 42.95814 ms
+P50延迟: 922.72470 ms
+P90延迟: 984.53250 ms
+P95延迟: 1000.40210 ms
+最小延迟: 797.25360 ms
+最大延迟: 1056.25980 ms
+Start RSS: 59.70 MB
+Peak RSS: 59.92 MB
+Stable RSS: 59.58 MB
+RSS Drift: -0.12 MB
+Go Heap: 7.70 MB
+
+===== 第 6 轮测试 =====
+平均延迟: 909.12254 ms
+标准差: 41.84160 ms
+P50延迟: 906.86880 ms
+P90延迟: 954.07590 ms
+P95延迟: 979.52560 ms
+最小延迟: 812.71920 ms
+最大延迟: 1016.61980 ms
+Start RSS: 59.62 MB
+Peak RSS: 60.01 MB
+Stable RSS: 59.67 MB
+RSS Drift: 0.05 MB
+Go Heap: 7.70 MB
+
+===== 第 7 轮测试 =====
+平均延迟: 911.22934 ms
+标准差: 43.04518 ms
+P50延迟: 907.13470 ms
+P90延迟: 969.32120 ms
+P95延迟: 984.78960 ms
+最小延迟: 781.52070 ms
+最大延迟: 1001.28440 ms
+Start RSS: 59.70 MB
+Peak RSS: 60.09 MB
+Stable RSS: 59.62 MB
+RSS Drift: -0.08 MB
+Go Heap: 7.70 MB
+
+===== 第 8 轮测试 =====
+平均延迟: 916.35071 ms
+标准差: 41.02631 ms
+P50延迟: 908.87810 ms
+P90延迟: 969.21790 ms
+P95延迟: 984.66880 ms
+最小延迟: 781.47170 ms
+最大延迟: 1016.15360 ms
+Start RSS: 59.72 MB
+Peak RSS: 59.85 MB
+Stable RSS: 60.02 MB
+RSS Drift: 0.30 MB
+Go Heap: 7.71 MB
+
+===== 第 9 轮测试 =====
+平均延迟: 913.09080 ms
+标准差: 39.38525 ms
+P50延迟: 913.88760 ms
+P90延迟: 969.09370 ms
+P95延迟: 984.66410 ms
+最小延迟: 812.89640 ms
+最大延迟: 1016.14620 ms
+Start RSS: 59.69 MB
+Peak RSS: 60.21 MB
+Stable RSS: 59.47 MB
+RSS Drift: -0.22 MB
+Go Heap: 7.71 MB
+
+===== 第 10 轮测试 =====
+平均延迟: 913.21487 ms
+标准差: 41.42248 ms
+P50延迟: 907.20020 ms
+P90延迟: 969.29120 ms
+P95延迟: 984.86000 ms
+最小延迟: 804.93890 ms
+最大延迟: 1016.08530 ms
+Start RSS: 59.76 MB
+Peak RSS: 60.11 MB
+Stable RSS: 59.76 MB
+RSS Drift: 0.00 MB
+Go Heap: 7.72 MB
+
+===== 10轮测试平均值 =====
+平均延迟: 920.917 ms
+标准差: 39.675 ms
+P50延迟: 920.316 ms
+P90延迟: 972.348 ms
+P95延迟: 986.461 ms
+最小延迟: 802.660 ms
+最大延迟: 1018.778 ms
+吞吐量: 1.09 images/sec
+Start RSS: 59.70 MB
+Peak RSS: 60.03 MB
+Stable RSS: 59.63 MB
+RSS Drift: -0.07 MB
+Go Heap: 7.71 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_reinforced_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_reinforced_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_reinforced_latency_data.txt
+测试完成!
+
+[13/39] Python small model test...
+===== Python 轻模型强化测试（10轮运行）=====
+
+===== 第 1 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 492.799 ms
+标准差: 127.657 ms
+P50延迟: 477.358 ms
+P90延迟: 635.374 ms
+P95延迟: 753.213 ms
+最小延迟: 266.306 ms
+最大延迟: 1077.320 ms
+Start RSS: 75.86 MB
+Peak RSS: 148.34 MB
+Stable RSS: 148.31 MB
+RSS Drift: 72.45 MB
+
+===== 第 2 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 497.439 ms
+标准差: 134.626 ms
+P50延迟: 479.832 ms
+P90延迟: 680.139 ms
+P95延迟: 766.343 ms
+最小延迟: 261.628 ms
+最大延迟: 1132.346 ms
+Start RSS: 77.95 MB
+Peak RSS: 149.14 MB
+Stable RSS: 149.11 MB
+RSS Drift: 71.16 MB
+
+===== 第 3 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 481.894 ms
+标准差: 113.750 ms
+P50延迟: 464.339 ms
+P90延迟: 601.921 ms
+P95延迟: 661.154 ms
+最小延迟: 260.892 ms
+最大延迟: 1260.852 ms
+Start RSS: 78.32 MB
+Peak RSS: 149.66 MB
+Stable RSS: 149.66 MB
+RSS Drift: 71.34 MB
+
+===== 第 4 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 495.242 ms
+标准差: 120.481 ms
+P50延迟: 484.132 ms
+P90延迟: 666.286 ms
+P95延迟: 738.634 ms
+最小延迟: 259.490 ms
+最大延迟: 921.909 ms
+Start RSS: 78.65 MB
+Peak RSS: 150.87 MB
+Stable RSS: 150.83 MB
+RSS Drift: 72.18 MB
+
+===== 第 5 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 491.338 ms
+标准差: 128.959 ms
+P50延迟: 472.537 ms
+P90延迟: 620.264 ms
+P95延迟: 716.757 ms
+最小延迟: 171.816 ms
+最大延迟: 1118.559 ms
+Start RSS: 78.51 MB
+Peak RSS: 149.61 MB
+Stable RSS: 149.61 MB
+RSS Drift: 71.11 MB
+
+===== 第 6 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 494.308 ms
+标准差: 129.412 ms
+P50延迟: 477.056 ms
+P90延迟: 636.835 ms
+P95延迟: 718.258 ms
+最小延迟: 260.875 ms
+最大延迟: 1268.311 ms
+Start RSS: 79.01 MB
+Peak RSS: 150.33 MB
+Stable RSS: 150.33 MB
+RSS Drift: 71.32 MB
+
+===== 第 7 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 493.708 ms
+标准差: 126.859 ms
+P50延迟: 478.779 ms
+P90延迟: 652.530 ms
+P95延迟: 772.410 ms
+最小延迟: 265.429 ms
+最大延迟: 1091.934 ms
+Start RSS: 78.71 MB
+Peak RSS: 149.80 MB
+Stable RSS: 149.80 MB
+RSS Drift: 71.10 MB
+
+===== 第 8 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 507.772 ms
+标准差: 139.702 ms
+P50延迟: 490.046 ms
+P90延迟: 678.132 ms
+P95延迟: 771.858 ms
+最小延迟: 243.602 ms
+最大延迟: 1099.454 ms
+Start RSS: 78.90 MB
+Peak RSS: 150.04 MB
+Stable RSS: 150.04 MB
+RSS Drift: 71.14 MB
+
+===== 第 9 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 487.786 ms
+标准差: 115.737 ms
+P50延迟: 476.214 ms
+P90延迟: 627.943 ms
+P95延迟: 704.968 ms
+最小延迟: 162.565 ms
+最大延迟: 1016.286 ms
+Start RSS: 79.37 MB
+Peak RSS: 150.58 MB
+Stable RSS: 150.58 MB
+RSS Drift: 71.21 MB
+
+===== 第 10 轮测试 =====
+===== Python 轻模型强化测试 ====
+已绑定前4个CPU核心
+创建 InferenceSession...
+InferenceSession 创建成功!
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 486.145 ms
+标准差: 115.076 ms
+P50延迟: 472.467 ms
+P90延迟: 640.268 ms
+P95延迟: 716.879 ms
+最小延迟: 265.773 ms
+最大延迟: 1046.027 ms
+Start RSS: 79.07 MB
+Peak RSS: 150.29 MB
+Stable RSS: 150.29 MB
+RSS Drift: 71.21 MB
+
+===== 10轮测试平均值 =====
+平均延迟: 492.843 ms
+标准差: 125.226 ms
+P50延迟: 477.276 ms
+P90延迟: 643.969 ms
+P95延迟: 732.047 ms
+最小延迟: 241.838 ms
+最大延迟: 1103.300 ms
+Start RSS: 78.44 MB
+Peak RSS: 149.87 MB
+Stable RSS: 149.86 MB
+RSS Drift: 71.42 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_small_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_small_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_small_latency_data.txt
+测试完成!
+
+[14/39] Go small model test...
+===== Go 轻模型强化测试（10轮运行） =====
+
+===== 第 1 轮测试 =====
+平均延迟: 50.46026 ms
+标准差: 8.49789 ms
+P50延迟: 47.25480 ms
+P90延迟: 62.74250 ms
+P95延迟: 62.88610 ms
+最小延迟: 31.34020 ms
+最大延迟: 63.37510 ms
+Start RSS: 59.82422 MB
+Peak RSS: 60.01953 MB
+Stable RSS: 59.56250 MB
+RSS Drift: -0.26172 MB
+Go Heap: 19.53278 MB
+
+===== 第 2 轮测试 =====
+平均延迟: 49.20957 ms
+标准差: 7.70562 ms
+P50延迟: 47.21440 ms
+P90延迟: 62.78640 ms
+P95延迟: 62.88750 ms
+最小延迟: 31.32930 ms
+最大延迟: 63.09340 ms
+Start RSS: 59.68359 MB
+Peak RSS: 59.98438 MB
+Stable RSS: 59.59766 MB
+RSS Drift: -0.08594 MB
+Go Heap: 19.54632 MB
+
+===== 第 3 轮测试 =====
+平均延迟: 49.92441 ms
+标准差: 8.24091 ms
+P50延迟: 47.23700 ms
+P90延迟: 62.83040 ms
+P95延迟: 62.92890 ms
+最小延迟: 27.24550 ms
+最大延迟: 63.26570 ms
+Start RSS: 59.75781 MB
+Peak RSS: 60.08594 MB
+Stable RSS: 59.80859 MB
+RSS Drift: 0.05078 MB
+Go Heap: 19.54833 MB
+
+===== 第 4 轮测试 =====
+平均延迟: 49.59155 ms
+标准差: 8.95483 ms
+P50延迟: 47.21110 ms
+P90延迟: 62.80600 ms
+P95延迟: 62.92930 ms
+最小延迟: 31.33990 ms
+最大延迟: 63.02110 ms
+Start RSS: 59.64453 MB
+Peak RSS: 59.91406 MB
+Stable RSS: 59.56641 MB
+RSS Drift: -0.07812 MB
+Go Heap: 19.55233 MB
+
+===== 第 5 轮测试 =====
+平均延迟: 49.33553 ms
+标准差: 7.73519 ms
+P50延迟: 47.19890 ms
+P90延迟: 62.69850 ms
+P95延迟: 62.88300 ms
+最小延迟: 28.09250 ms
+最大延迟: 63.13420 ms
+Start RSS: 59.60938 MB
+Peak RSS: 59.78125 MB
+Stable RSS: 59.54297 MB
+RSS Drift: -0.06641 MB
+Go Heap: 19.56335 MB
+
+===== 第 6 轮测试 =====
+平均延迟: 48.93717 ms
+标准差: 8.69238 ms
+P50延迟: 47.20850 ms
+P90延迟: 62.77340 ms
+P95延迟: 62.91400 ms
+最小延迟: 26.72560 ms
+最大延迟: 63.35110 ms
+Start RSS: 59.73047 MB
+Peak RSS: 60.26953 MB
+Stable RSS: 59.79297 MB
+RSS Drift: 0.06250 MB
+Go Heap: 19.56736 MB
+
+===== 第 7 轮测试 =====
+平均延迟: 50.03419 ms
+标准差: 8.54095 ms
+P50延迟: 47.27010 ms
+P90延迟: 62.79830 ms
+P95延迟: 62.97620 ms
+最小延迟: 31.32300 ms
+最大延迟: 63.10360 ms
+Start RSS: 59.70703 MB
+Peak RSS: 60.01953 MB
+Stable RSS: 59.50391 MB
+RSS Drift: -0.20312 MB
+Go Heap: 19.57201 MB
+
+===== 第 8 轮测试 =====
+平均延迟: 50.21834 ms
+标准差: 7.33145 ms
+P50延迟: 47.24750 ms
+P90延迟: 62.78660 ms
+P95延迟: 62.89970 ms
+最小延迟: 31.29560 ms
+最大延迟: 63.08500 ms
+Start RSS: 59.71875 MB
+Peak RSS: 60.88281 MB
+Stable RSS: 59.83984 MB
+RSS Drift: 0.12109 MB
+Go Heap: 19.57656 MB
+
+===== 第 9 轮测试 =====
+平均延迟: 48.58175 ms
+标准差: 8.04077 ms
+P50延迟: 47.19840 ms
+P90延迟: 62.71770 ms
+P95延迟: 62.79240 ms
+最小延迟: 28.31340 ms
+最大延迟: 63.06770 ms
+Start RSS: 59.53125 MB
+Peak RSS: 59.91016 MB
+Stable RSS: 59.44531 MB
+RSS Drift: -0.08594 MB
+Go Heap: 19.58659 MB
+
+===== 第 10 轮测试 =====
+平均延迟: 49.65798 ms
+标准差: 8.36745 ms
+P50延迟: 47.25130 ms
+P90延迟: 62.87490 ms
+P95延迟: 62.94780 ms
+最小延迟: 31.31500 ms
+最大延迟: 63.40410 ms
+Start RSS: 59.74219 MB
+Peak RSS: 60.08594 MB
+Stable RSS: 59.58203 MB
+RSS Drift: -0.16016 MB
+Go Heap: 19.59312 MB
+
+===== 10轮测试平均值 =====
+平均延迟: 49.59508 ms
+标准差: 8.21074 ms
+P50延迟: 47.22920 ms
+P90延迟: 62.78147 ms
+P95延迟: 62.90449 ms
+最小延迟: 29.83200 ms
+最大延迟: 63.19010 ms
+Start RSS: 59.69492 MB
+Peak RSS: 60.09531 MB
+Stable RSS: 59.62422 MB
+RSS Drift: -0.07070 MB
+Go Heap: 19.56387 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_reinforced_small_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_reinforced_small_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_reinforced_small_latency_data.txt
+测试完成!
+
+[15/39] Python cold start decomposition...
+===== Python 冷启动分解测试（20次运行）=====
+
+===== 测试大模型 (YOLO11x) =====
+
+===== 第 1 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 988.785 ms
+模型加载时间: 988.785 ms
+首次推理时间: 8190.104 ms
+总冷启动时间: 9178.889 ms
+Start RSS: 48.30 MB
+Peak RSS: 522.79 MB
+
+===== 第 2 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 966.762 ms
+模型加载时间: 966.762 ms
+首次推理时间: 7418.949 ms
+总冷启动时间: 8385.711 ms
+Start RSS: 57.16 MB
+Peak RSS: 522.66 MB
+
+===== 第 3 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 981.792 ms
+模型加载时间: 981.792 ms
+首次推理时间: 7464.535 ms
+总冷启动时间: 8446.327 ms
+Start RSS: 57.47 MB
+Peak RSS: 528.54 MB
+
+===== 第 4 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 973.158 ms
+模型加载时间: 973.158 ms
+首次推理时间: 9374.043 ms
+总冷启动时间: 10347.201 ms
+Start RSS: 58.09 MB
+Peak RSS: 523.70 MB
+
+===== 第 5 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 989.678 ms
+模型加载时间: 989.678 ms
+首次推理时间: 6822.273 ms
+总冷启动时间: 7811.951 ms
+Start RSS: 58.11 MB
+Peak RSS: 527.84 MB
+
+===== 第 6 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 987.499 ms
+模型加载时间: 987.499 ms
+首次推理时间: 7415.959 ms
+总冷启动时间: 8403.458 ms
+Start RSS: 57.19 MB
+Peak RSS: 524.57 MB
+
+===== 第 7 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 960.937 ms
+模型加载时间: 960.937 ms
+首次推理时间: 8432.735 ms
+总冷启动时间: 9393.672 ms
+Start RSS: 57.33 MB
+Peak RSS: 523.34 MB
+
+===== 第 8 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 979.318 ms
+模型加载时间: 979.318 ms
+首次推理时间: 7724.556 ms
+总冷启动时间: 8703.874 ms
+Start RSS: 57.80 MB
+Peak RSS: 525.36 MB
+
+===== 第 9 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 977.823 ms
+模型加载时间: 977.823 ms
+首次推理时间: 7814.689 ms
+总冷启动时间: 8792.511 ms
+Start RSS: 57.38 MB
+Peak RSS: 525.31 MB
+
+===== 第 10 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 996.850 ms
+模型加载时间: 996.850 ms
+首次推理时间: 7196.800 ms
+总冷启动时间: 8193.650 ms
+Start RSS: 57.63 MB
+Peak RSS: 527.41 MB
+
+===== 第 11 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 985.872 ms
+模型加载时间: 985.872 ms
+首次推理时间: 8171.771 ms
+总冷启动时间: 9157.643 ms
+Start RSS: 58.01 MB
+Peak RSS: 528.58 MB
+
+===== 第 12 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 949.719 ms
+模型加载时间: 949.719 ms
+首次推理时间: 8349.453 ms
+总冷启动时间: 9299.171 ms
+Start RSS: 58.89 MB
+Peak RSS: 524.19 MB
+
+===== 第 13 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 959.042 ms
+模型加载时间: 959.042 ms
+首次推理时间: 6815.706 ms
+总冷启动时间: 7774.749 ms
+Start RSS: 58.99 MB
+Peak RSS: 529.50 MB
+
+===== 第 14 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 990.806 ms
+模型加载时间: 990.806 ms
+首次推理时间: 7037.388 ms
+总冷启动时间: 8028.194 ms
+Start RSS: 58.62 MB
+Peak RSS: 529.55 MB
+
+===== 第 15 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 981.771 ms
+模型加载时间: 981.771 ms
+首次推理时间: 6899.552 ms
+总冷启动时间: 7881.324 ms
+Start RSS: 59.06 MB
+Peak RSS: 529.41 MB
+
+===== 第 16 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 1002.011 ms
+模型加载时间: 1002.011 ms
+首次推理时间: 7359.709 ms
+总冷启动时间: 8361.719 ms
+Start RSS: 59.56 MB
+Peak RSS: 528.04 MB
+
+===== 第 17 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 975.511 ms
+模型加载时间: 975.511 ms
+首次推理时间: 7382.844 ms
+总冷启动时间: 8358.355 ms
+Start RSS: 58.95 MB
+Peak RSS: 523.55 MB
+
+===== 第 18 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 991.216 ms
+模型加载时间: 991.216 ms
+首次推理时间: 7582.105 ms
+总冷启动时间: 8573.321 ms
+Start RSS: 58.85 MB
+Peak RSS: 523.34 MB
+
+===== 第 19 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 956.053 ms
+模型加载时间: 956.053 ms
+首次推理时间: 8885.749 ms
+总冷启动时间: 9841.802 ms
+Start RSS: 59.35 MB
+Peak RSS: 569.79 MB
+
+===== 第 20 次测试 =====
+
+===== Python 冷启动测试 - YOLO11x ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 939.852 ms
+模型加载时间: 939.852 ms
+首次推理时间: 8470.809 ms
+总冷启动时间: 9410.661 ms
+Start RSS: 104.75 MB
+Peak RSS: 524.05 MB
+
+===== 测试轻模型 (YOLO11n) =====
+
+===== 第 1 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 249.687 ms
+模型加载时间: 249.687 ms
+首次推理时间: 510.333 ms
+总冷启动时间: 760.020 ms
+Start RSS: 59.24 MB
+Peak RSS: 131.50 MB
+
+===== 第 2 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 236.030 ms
+模型加载时间: 236.030 ms
+首次推理时间: 584.131 ms
+总冷启动时间: 820.161 ms
+Start RSS: 80.80 MB
+Peak RSS: 130.30 MB
+
+===== 第 3 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 251.402 ms
+模型加载时间: 251.402 ms
+首次推理时间: 822.892 ms
+总冷启动时间: 1074.294 ms
+Start RSS: 80.49 MB
+Peak RSS: 131.73 MB
+
+===== 第 4 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 255.688 ms
+模型加载时间: 255.688 ms
+首次推理时间: 533.406 ms
+总冷启动时间: 789.094 ms
+Start RSS: 82.07 MB
+Peak RSS: 132.35 MB
+
+===== 第 5 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 230.448 ms
+模型加载时间: 230.448 ms
+首次推理时间: 601.855 ms
+总冷启动时间: 832.303 ms
+Start RSS: 82.95 MB
+Peak RSS: 133.80 MB
+
+===== 第 6 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 251.896 ms
+模型加载时间: 251.896 ms
+首次推理时间: 596.480 ms
+总冷启动时间: 848.376 ms
+Start RSS: 82.96 MB
+Peak RSS: 132.36 MB
+
+===== 第 7 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 241.712 ms
+模型加载时间: 241.712 ms
+首次推理时间: 515.592 ms
+总冷启动时间: 757.304 ms
+Start RSS: 82.98 MB
+Peak RSS: 132.36 MB
+
+===== 第 8 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 241.869 ms
+模型加载时间: 241.869 ms
+首次推理时间: 582.485 ms
+总冷启动时间: 824.354 ms
+Start RSS: 82.99 MB
+Peak RSS: 133.45 MB
+
+===== 第 9 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 237.705 ms
+模型加载时间: 237.705 ms
+首次推理时间: 518.294 ms
+总冷启动时间: 755.999 ms
+Start RSS: 83.82 MB
+Peak RSS: 134.42 MB
+
+===== 第 10 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 242.659 ms
+模型加载时间: 242.659 ms
+首次推理时间: 523.912 ms
+总冷启动时间: 766.571 ms
+Start RSS: 83.84 MB
+Peak RSS: 113.71 MB
+
+===== 第 11 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 267.511 ms
+模型加载时间: 267.511 ms
+首次推理时间: 496.555 ms
+总冷启动时间: 764.066 ms
+Start RSS: 58.62 MB
+Peak RSS: 130.64 MB
+
+===== 第 12 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 237.872 ms
+模型加载时间: 237.872 ms
+首次推理时间: 513.406 ms
+总冷启动时间: 751.278 ms
+Start RSS: 81.29 MB
+Peak RSS: 130.79 MB
+
+===== 第 13 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 237.266 ms
+模型加载时间: 237.266 ms
+首次推理时间: 524.775 ms
+总冷启动时间: 762.041 ms
+Start RSS: 81.40 MB
+Peak RSS: 132.36 MB
+
+===== 第 14 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 249.542 ms
+模型加载时间: 249.542 ms
+首次推理时间: 860.928 ms
+总冷启动时间: 1110.470 ms
+Start RSS: 81.64 MB
+Peak RSS: 131.22 MB
+
+===== 第 15 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 243.790 ms
+模型加载时间: 243.790 ms
+首次推理时间: 913.944 ms
+总冷启动时间: 1157.734 ms
+Start RSS: 81.16 MB
+Peak RSS: 131.46 MB
+
+===== 第 16 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 258.025 ms
+模型加载时间: 258.025 ms
+首次推理时间: 592.262 ms
+总冷启动时间: 850.288 ms
+Start RSS: 82.01 MB
+Peak RSS: 131.36 MB
+
+===== 第 17 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 247.735 ms
+模型加载时间: 247.735 ms
+首次推理时间: 640.365 ms
+总冷启动时间: 888.099 ms
+Start RSS: 82.04 MB
+Peak RSS: 132.89 MB
+
+===== 第 18 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 247.442 ms
+模型加载时间: 247.442 ms
+首次推理时间: 597.357 ms
+总冷启动时间: 844.799 ms
+Start RSS: 82.16 MB
+Peak RSS: 132.39 MB
+
+===== 第 19 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 249.475 ms
+模型加载时间: 249.475 ms
+首次推理时间: 503.060 ms
+总冷启动时间: 752.535 ms
+Start RSS: 82.97 MB
+Peak RSS: 133.15 MB
+
+===== 第 20 次测试 =====
+
+===== Python 冷启动测试 - YOLO11n ====
+创建 InferenceSession...
+执行首次推理...
+会话创建时间: 216.377 ms
+模型加载时间: 216.377 ms
+首次推理时间: 500.001 ms
+总冷启动时间: 716.379 ms
+Start RSS: 83.85 MB
+Peak RSS: 133.17 MB
+
+===== 大模型 (YOLO11x) 20次测试平均值 =====
+会话创建时间: 976.723 ms
+模型加载时间: 976.723 ms
+首次推理时间: 7740.486 ms
+总冷启动时间: 8717.209 ms
+Start RSS: 60.08 MB
+Peak RSS: 528.08 MB
+
+===== 轻模型 (YOLO11n) 20次测试平均值 =====
+会话创建时间: 244.707 ms
+模型加载时间: 244.707 ms
+首次推理时间: 596.602 ms
+总冷启动时间: 841.308 ms
+Start RSS: 79.96 MB
+Peak RSS: 131.27 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_cold_start_decomposition_result.txt
+测试完成!
+
+[16/39] Go cold start decomposition...
+===== Go 冷启动分解测试（20次运行）=====
+
+===== 测试大模型 (YOLO11x) =====
+
+===== 第 1 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 897.91510 ms
+模型加载时间: 897.91510 ms
+首次推理时间: 954.00380 ms
+总冷启动时间: 1917.72020 ms
+Start RSS: 59.89453 MB
+Peak RSS: 59.60156 MB
+
+===== 第 2 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 899.44080 ms
+模型加载时间: 899.44080 ms
+首次推理时间: 906.71610 ms
+总冷启动时间: 1860.91890 ms
+Start RSS: 59.77734 MB
+Peak RSS: 59.51953 MB
+
+===== 第 3 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 865.89680 ms
+模型加载时间: 865.89680 ms
+首次推理时间: 829.22370 ms
+总冷启动时间: 1752.08920 ms
+Start RSS: 59.78516 MB
+Peak RSS: 59.57812 MB
+
+===== 第 4 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 851.27530 ms
+模型加载时间: 851.27530 ms
+首次推理时间: 1016.16650 ms
+总冷启动时间: 1919.83560 ms
+Start RSS: 60.05859 MB
+Peak RSS: 59.62109 MB
+
+===== 第 5 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 838.84290 ms
+模型加载时间: 838.84290 ms
+首次推理时间: 922.28460 ms
+总冷启动时间: 1822.46450 ms
+Start RSS: 59.70312 MB
+Peak RSS: 59.70312 MB
+
+===== 第 6 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 853.76810 ms
+模型加载时间: 853.76810 ms
+首次推理时间: 969.42410 ms
+总冷启动时间: 1884.08130 ms
+Start RSS: 59.87891 MB
+Peak RSS: 59.47656 MB
+
+===== 第 7 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 856.18680 ms
+模型加载时间: 856.18680 ms
+首次推理时间: 907.07940 ms
+总冷启动时间: 1824.17310 ms
+Start RSS: 59.44922 MB
+Peak RSS: 59.42969 MB
+
+===== 第 8 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 855.97070 ms
+模型加载时间: 855.97070 ms
+首次推理时间: 890.97070 ms
+总冷启动时间: 1808.90520 ms
+Start RSS: 59.89453 MB
+Peak RSS: 59.64062 MB
+
+===== 第 9 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 852.05940 ms
+模型加载时间: 852.05940 ms
+首次推理时间: 875.49790 ms
+总冷启动时间: 1778.85610 ms
+Start RSS: 59.70312 MB
+Peak RSS: 60.03516 MB
+
+===== 第 10 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 861.87360 ms
+模型加载时间: 861.87360 ms
+首次推理时间: 969.58850 ms
+总冷启动时间: 1892.25170 ms
+Start RSS: 59.44531 MB
+Peak RSS: 59.62500 MB
+
+===== 第 11 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 850.15890 ms
+模型加载时间: 850.15890 ms
+首次推理时间: 953.78940 ms
+总冷启动时间: 1856.24730 ms
+Start RSS: 59.71875 MB
+Peak RSS: 59.44531 MB
+
+===== 第 12 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 838.78380 ms
+模型加载时间: 838.78380 ms
+首次推理时间: 969.68950 ms
+总冷启动时间: 1869.06170 ms
+Start RSS: 59.94531 MB
+Peak RSS: 59.64844 MB
+
+===== 第 13 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 849.32500 ms
+模型加载时间: 849.32500 ms
+首次推理时间: 891.12150 ms
+总冷启动时间: 1798.12990 ms
+Start RSS: 59.72266 MB
+Peak RSS: 59.69141 MB
+
+===== 第 14 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 848.82050 ms
+模型加载时间: 848.82050 ms
+首次推理时间: 954.05870 ms
+总冷启动时间: 1856.11160 ms
+Start RSS: 59.60547 MB
+Peak RSS: 59.68359 MB
+
+===== 第 15 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 848.90230 ms
+模型加载时间: 848.90230 ms
+首次推理时间: 938.18870 ms
+总冷启动时间: 1844.60120 ms
+Start RSS: 59.67188 MB
+Peak RSS: 59.57812 MB
+
+===== 第 16 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 836.73240 ms
+模型加载时间: 836.73240 ms
+首次推理时间: 922.52280 ms
+总冷启动时间: 1809.84450 ms
+Start RSS: 59.71484 MB
+Peak RSS: 59.85156 MB
+
+===== 第 17 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 844.52430 ms
+模型加载时间: 844.52430 ms
+首次推理时间: 922.07130 ms
+总冷启动时间: 1817.31770 ms
+Start RSS: 59.72656 MB
+Peak RSS: 59.64844 MB
+
+===== 第 18 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 833.38110 ms
+模型加载时间: 833.38110 ms
+首次推理时间: 984.47180 ms
+总冷启动时间: 1868.82150 ms
+Start RSS: 59.84766 MB
+Peak RSS: 59.83984 MB
+
+===== 第 19 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 836.66470 ms
+模型加载时间: 836.66470 ms
+首次推理时间: 938.43670 ms
+总冷启动时间: 1829.78550 ms
+Start RSS: 59.66797 MB
+Peak RSS: 59.83594 MB
+
+===== 第 20 次测试 =====
+
+===== Go 冷启动测试 - YOLO11x ====
+会话创建时间: 850.58310 ms
+模型加载时间: 850.58310 ms
+首次推理时间: 906.83900 ms
+总冷启动时间: 1814.45930 ms
+Start RSS: 59.82422 MB
+Peak RSS: 59.73828 MB
+
+===== 测试轻模型 (YOLO11n) =====
+
+===== 第 1 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 93.35760 ms
+模型加载时间: 93.35760 ms
+首次推理时间: 47.15640 ms
+总冷启动时间: 190.00970 ms
+Start RSS: 59.46094 MB
+Peak RSS: 60.04688 MB
+
+===== 第 2 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 86.60590 ms
+模型加载时间: 86.60590 ms
+首次推理时间: 47.11980 ms
+总冷启动时间: 188.05790 ms
+Start RSS: 59.67188 MB
+Peak RSS: 59.46484 MB
+
+===== 第 3 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 84.11420 ms
+模型加载时间: 84.11420 ms
+首次推理时间: 47.12400 ms
+总冷启动时间: 183.51670 ms
+Start RSS: 59.55469 MB
+Peak RSS: 59.60938 MB
+
+===== 第 4 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 81.66360 ms
+模型加载时间: 81.66360 ms
+首次推理时间: 47.26790 ms
+总冷启动时间: 188.01630 ms
+Start RSS: 59.63281 MB
+Peak RSS: 59.44531 MB
+
+===== 第 5 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 86.27430 ms
+模型加载时间: 86.27430 ms
+首次推理时间: 46.94070 ms
+总冷启动时间: 187.72760 ms
+Start RSS: 60.17969 MB
+Peak RSS: 59.56641 MB
+
+===== 第 6 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 84.47200 ms
+模型加载时间: 84.47200 ms
+首次推理时间: 47.10120 ms
+总冷启动时间: 187.84970 ms
+Start RSS: 59.62500 MB
+Peak RSS: 59.65625 MB
+
+===== 第 7 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 70.88740 ms
+模型加载时间: 70.88740 ms
+首次推理时间: 46.98770 ms
+总冷启动时间: 168.89570 ms
+Start RSS: 59.71875 MB
+Peak RSS: 59.52734 MB
+
+===== 第 8 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 85.55740 ms
+模型加载时间: 85.55740 ms
+首次推理时间: 47.08170 ms
+总冷启动时间: 187.95840 ms
+Start RSS: 59.79297 MB
+Peak RSS: 59.58203 MB
+
+===== 第 9 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 84.05780 ms
+模型加载时间: 84.05780 ms
+首次推理时间: 47.02760 ms
+总冷启动时间: 181.45420 ms
+Start RSS: 59.58594 MB
+Peak RSS: 59.72266 MB
+
+===== 第 10 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 81.48630 ms
+模型加载时间: 81.48630 ms
+首次推理时间: 47.20820 ms
+总冷启动时间: 187.97080 ms
+Start RSS: 59.41406 MB
+Peak RSS: 59.67578 MB
+
+===== 第 11 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 87.88040 ms
+模型加载时间: 87.88040 ms
+首次推理时间: 50.61810 ms
+总冷启动时间: 189.01810 ms
+Start RSS: 59.52344 MB
+Peak RSS: 59.60547 MB
+
+===== 第 12 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 91.59370 ms
+模型加载时间: 91.59370 ms
+首次推理时间: 52.53150 ms
+总冷启动时间: 199.88000 ms
+Start RSS: 59.79688 MB
+Peak RSS: 59.74219 MB
+
+===== 第 13 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 92.08490 ms
+模型加载时间: 92.08490 ms
+首次推理时间: 56.55100 ms
+总冷启动时间: 205.22520 ms
+Start RSS: 59.61719 MB
+Peak RSS: 59.40625 MB
+
+===== 第 14 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 91.83090 ms
+模型加载时间: 91.83090 ms
+首次推理时间: 58.67000 ms
+总冷启动时间: 204.86660 ms
+Start RSS: 59.55859 MB
+Peak RSS: 59.73438 MB
+
+===== 第 15 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 91.80330 ms
+模型加载时间: 91.80330 ms
+首次推理时间: 50.02050 ms
+总冷启动时间: 194.96050 ms
+Start RSS: 59.66406 MB
+Peak RSS: 59.46484 MB
+
+===== 第 16 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 76.01530 ms
+模型加载时间: 76.01530 ms
+首次推理时间: 47.08540 ms
+总冷启动时间: 182.31940 ms
+Start RSS: 59.55078 MB
+Peak RSS: 59.49609 MB
+
+===== 第 17 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 77.36520 ms
+模型加载时间: 77.36520 ms
+首次推理时间: 62.85970 ms
+总冷启动时间: 197.66420 ms
+Start RSS: 59.49219 MB
+Peak RSS: 59.69922 MB
+
+===== 第 18 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 74.32650 ms
+模型加载时间: 74.32650 ms
+首次推理时间: 62.85020 ms
+总冷启动时间: 189.07320 ms
+Start RSS: 59.57812 MB
+Peak RSS: 59.69141 MB
+
+===== 第 19 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 75.50020 ms
+模型加载时间: 75.50020 ms
+首次推理时间: 47.34570 ms
+总冷启动时间: 173.10410 ms
+Start RSS: 59.82422 MB
+Peak RSS: 59.63672 MB
+
+===== 第 20 次测试 =====
+
+===== Go 冷启动测试 - YOLO11n ====
+会话创建时间: 72.68150 ms
+模型加载时间: 72.68150 ms
+首次推理时间: 62.90660 ms
+总冷启动时间: 189.02810 ms
+Start RSS: 59.80078 MB
+Peak RSS: 59.54297 MB
+
+===== 大模型 (YOLO11x) 20次测试平均值 =====
+会话创建时间: 853.55528 ms
+模型加载时间: 853.55528 ms
+首次推理时间: 931.10723 ms
+总冷启动时间: 1841.28380 ms
+Start RSS: 59.75176 MB
+Peak RSS: 59.65957 MB
+
+===== 轻模型 (YOLO11n) 20次测试平均值 =====
+会话创建时间: 83.47792 ms
+模型加载时间: 83.47792 ms
+首次推理时间: 51.12270 ms
+总冷启动时间: 188.82982 ms
+Start RSS: 59.65215 MB
+Peak RSS: 59.61582 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_cold_start_decomposition_result.txt
+测试完成!
+
+[17/39] Python memory test...
+===== Python 内存标准化测试（10次运行）=====
+
+===== 测试大模型 (YOLO11x) =====
+
+===== 第 1 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 48.24 MB
+加载模型...
+模型加载后内存: 289.52 MB
+执行推理...
+推理后内存: 546.34 MB
+内存增加量: 498.09 MB
+
+===== 第 2 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.03 MB
+加载模型...
+模型加载后内存: 289.82 MB
+执行推理...
+推理后内存: 550.94 MB
+内存增加量: 493.91 MB
+
+===== 第 3 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 56.89 MB
+加载模型...
+模型加载后内存: 289.88 MB
+执行推理...
+推理后内存: 541.70 MB
+内存增加量: 484.80 MB
+
+===== 第 4 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.09 MB
+加载模型...
+模型加载后内存: 290.45 MB
+执行推理...
+推理后内存: 556.58 MB
+内存增加量: 499.49 MB
+
+===== 第 5 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.76 MB
+加载模型...
+模型加载后内存: 290.59 MB
+执行推理...
+推理后内存: 551.76 MB
+内存增加量: 494.00 MB
+
+===== 第 6 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 58.11 MB
+加载模型...
+模型加载后内存: 290.22 MB
+执行推理...
+推理后内存: 551.36 MB
+内存增加量: 493.25 MB
+
+===== 第 7 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.45 MB
+加载模型...
+模型加载后内存: 290.97 MB
+执行推理...
+推理后内存: 542.80 MB
+内存增加量: 485.35 MB
+
+===== 第 8 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.00 MB
+加载模型...
+模型加载后内存: 291.63 MB
+执行推理...
+推理后内存: 552.95 MB
+内存增加量: 495.96 MB
+
+===== 第 9 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.93 MB
+加载模型...
+模型加载后内存: 290.88 MB
+执行推理...
+推理后内存: 547.17 MB
+内存增加量: 489.25 MB
+
+===== 第 10 次测试 =====
+
+===== Python 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 57.57 MB
+加载模型...
+模型加载后内存: 291.68 MB
+执行推理...
+推理后内存: 557.46 MB
+内存增加量: 499.89 MB
+
+===== 测试轻模型 (YOLO11n) =====
+
+===== 第 1 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 57.59 MB
+加载模型...
+模型加载后内存: 72.50 MB
+执行推理...
+推理后内存: 148.07 MB
+内存增加量: 90.49 MB
+
+===== 第 2 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 57.98 MB
+加载模型...
+模型加载后内存: 72.41 MB
+执行推理...
+推理后内存: 148.46 MB
+内存增加量: 90.48 MB
+
+===== 第 3 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 57.68 MB
+加载模型...
+模型加载后内存: 72.93 MB
+执行推理...
+推理后内存: 149.91 MB
+内存增加量: 92.23 MB
+
+===== 第 4 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 58.09 MB
+加载模型...
+模型加载后内存: 73.09 MB
+执行推理...
+推理后内存: 148.69 MB
+内存增加量: 90.60 MB
+
+===== 第 5 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 58.25 MB
+加载模型...
+模型加载后内存: 74.19 MB
+执行推理...
+推理后内存: 151.04 MB
+内存增加量: 92.79 MB
+
+===== 第 6 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.03 MB
+加载模型...
+模型加载后内存: 74.80 MB
+执行推理...
+推理后内存: 151.57 MB
+内存增加量: 92.54 MB
+
+===== 第 7 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.62 MB
+加载模型...
+模型加载后内存: 74.59 MB
+执行推理...
+推理后内存: 149.68 MB
+内存增加量: 90.05 MB
+
+===== 第 8 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 58.93 MB
+加载模型...
+模型加载后内存: 74.28 MB
+执行推理...
+推理后内存: 150.43 MB
+内存增加量: 91.51 MB
+
+===== 第 9 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.31 MB
+加载模型...
+模型加载后内存: 74.53 MB
+执行推理...
+推理后内存: 151.29 MB
+内存增加量: 91.98 MB
+
+===== 第 10 次测试 =====
+
+===== Python 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.36 MB
+加载模型...
+模型加载后内存: 74.75 MB
+执行推理...
+推理后内存: 150.11 MB
+内存增加量: 90.75 MB
+
+===== 大模型 (YOLO11x) 10次测试平均值 =====
+解释器常驻内存: 56.51 MB
+模型加载后内存: 290.56 MB
+推理后内存: 549.91 MB
+内存增加量: 493.40 MB
+
+===== 轻模型 (YOLO11n) 10次测试平均值 =====
+解释器常驻内存: 58.58 MB
+模型加载后内存: 73.81 MB
+推理后内存: 149.92 MB
+内存增加量: 91.34 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_memory_standardization_result.txt
+测试完成!
+
+[18/39] Go memory test...
+===== Go 内存标准化测试（10次运行）=====
+
+===== 测试大模型 (YOLO11x) =====
+
+===== 第 1 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.85 MB
+Go堆内存: 0.26 MB
+加载模型...
+模型加载后内存: 59.98 MB
+执行推理...
+推理后内存: 59.50 MB
+内存增加量: -0.35 MB
+
+===== 第 2 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.62 MB
+Go堆内存: 225.31 MB
+加载模型...
+模型加载后内存: 59.63 MB
+执行推理...
+推理后内存: 59.64 MB
+内存增加量: 0.02 MB
+
+===== 第 3 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.68 MB
+Go堆内存: 225.32 MB
+加载模型...
+模型加载后内存: 59.81 MB
+执行推理...
+推理后内存: 59.45 MB
+内存增加量: -0.23 MB
+
+===== 第 4 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.58 MB
+Go堆内存: 225.32 MB
+加载模型...
+模型加载后内存: 59.73 MB
+执行推理...
+推理后内存: 59.63 MB
+内存增加量: 0.05 MB
+
+===== 第 5 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.62 MB
+Go堆内存: 225.32 MB
+加载模型...
+模型加载后内存: 59.62 MB
+执行推理...
+推理后内存: 59.61 MB
+内存增加量: -0.01 MB
+
+===== 第 6 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.75 MB
+Go堆内存: 225.33 MB
+加载模型...
+模型加载后内存: 59.56 MB
+执行推理...
+推理后内存: 59.50 MB
+内存增加量: -0.24 MB
+
+===== 第 7 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.70 MB
+Go堆内存: 225.33 MB
+加载模型...
+模型加载后内存: 59.81 MB
+执行推理...
+推理后内存: 59.88 MB
+内存增加量: 0.18 MB
+
+===== 第 8 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.75 MB
+Go堆内存: 225.33 MB
+加载模型...
+模型加载后内存: 59.50 MB
+执行推理...
+推理后内存: 59.61 MB
+内存增加量: -0.14 MB
+
+===== 第 9 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.71 MB
+Go堆内存: 225.33 MB
+加载模型...
+模型加载后内存: 59.50 MB
+执行推理...
+推理后内存: 59.85 MB
+内存增加量: 0.14 MB
+
+===== 第 10 次测试 =====
+
+===== Go 内存测试 - YOLO11x ====
+测量解释器常驻内存...
+解释器常驻内存: 59.64 MB
+Go堆内存: 225.33 MB
+加载模型...
+模型加载后内存: 60.03 MB
+执行推理...
+推理后内存: 59.82 MB
+内存增加量: 0.18 MB
+
+===== 测试轻模型 (YOLO11n) =====
+
+===== 第 1 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.62 MB
+Go堆内存: 225.33 MB
+加载模型...
+模型加载后内存: 59.32 MB
+执行推理...
+推理后内存: 59.63 MB
+内存增加量: 0.01 MB
+
+===== 第 2 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.55 MB
+Go堆内存: 247.89 MB
+加载模型...
+模型加载后内存: 59.78 MB
+执行推理...
+推理后内存: 59.86 MB
+内存增加量: 0.31 MB
+
+===== 第 3 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.65 MB
+Go堆内存: 270.46 MB
+加载模型...
+模型加载后内存: 59.84 MB
+执行推理...
+推理后内存: 59.50 MB
+内存增加量: -0.15 MB
+
+===== 第 4 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.70 MB
+Go堆内存: 293.02 MB
+加载模型...
+模型加载后内存: 59.84 MB
+执行推理...
+推理后内存: 59.77 MB
+内存增加量: 0.06 MB
+
+===== 第 5 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.60 MB
+Go堆内存: 315.58 MB
+加载模型...
+模型加载后内存: 59.84 MB
+执行推理...
+推理后内存: 59.54 MB
+内存增加量: -0.05 MB
+
+===== 第 6 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.41 MB
+Go堆内存: 338.15 MB
+加载模型...
+模型加载后内存: 59.52 MB
+执行推理...
+推理后内存: 59.52 MB
+内存增加量: 0.11 MB
+
+===== 第 7 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 60.05 MB
+Go堆内存: 360.71 MB
+加载模型...
+模型加载后内存: 59.64 MB
+执行推理...
+推理后内存: 59.66 MB
+内存增加量: -0.39 MB
+
+===== 第 8 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.62 MB
+Go堆内存: 383.27 MB
+加载模型...
+模型加载后内存: 59.91 MB
+执行推理...
+推理后内存: 59.84 MB
+内存增加量: 0.21 MB
+
+===== 第 9 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.63 MB
+Go堆内存: 405.84 MB
+加载模型...
+模型加载后内存: 59.39 MB
+执行推理...
+推理后内存: 59.70 MB
+内存增加量: 0.07 MB
+
+===== 第 10 次测试 =====
+
+===== Go 内存测试 - YOLO11n ====
+测量解释器常驻内存...
+解释器常驻内存: 59.51 MB
+Go堆内存: 428.40 MB
+加载模型...
+模型加载后内存: 59.95 MB
+执行推理...
+推理后内存: 59.72 MB
+内存增加量: 0.21 MB
+
+===== 大模型 (YOLO11x) 10次测试平均值 =====
+解释器常驻内存: 59.69 MB
+模型加载后内存: 59.72 MB
+推理后内存: 59.65 MB
+内存增加量: -0.04 MB
+Go堆内存: 202.82 MB
+
+===== 轻模型 (YOLO11n) 10次测试平均值 =====
+解释器常驻内存: 59.63 MB
+模型加载后内存: 59.70 MB
+推理后内存: 59.67 MB
+内存增加量: 0.04 MB
+Go堆内存: 326.86 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_memory_standardization_result.txt
+测试完成!
+
+[19/39] Python output consistency...
+===== Python 输出一致性验证测试 =====
+
+===== Python 输出一致性测试 - yolo11x ====
+预处理图像...
+创建 InferenceSession...
+执行推理...
+后处理输出...
+检测到 5 个目标
+目标 1: 类别=5, 置信度=0.9415, 坐标=(11.665, 230.927, 792.607, 505.405)
+目标 2: 类别=0, 置信度=0.9196, 坐标=(50.250, 402.114, 196.798, 500.762)
+目标 3: 类别=0, 置信度=0.9169, 坐标=(668.840, 392.355, 141.001, 488.624)
+目标 4: 类别=0, 置信度=0.9104, 坐标=(223.323, 406.067, 121.330, 454.222)
+目标 5: 类别=0, 置信度=0.8577, 坐标=(0.254, 550.191, 78.890, 322.563)
+
+===== Python 输出一致性测试 - yolo11n ====
+预处理图像...
+创建 InferenceSession...
+执行推理...
+后处理输出...
+检测到 5 个目标
+目标 1: 类别=5, 置信度=0.9399, 坐标=(16.345, 228.437, 781.738, 505.719)
+目标 2: 类别=0, 置信度=0.9014, 坐标=(48.265, 398.698, 194.590, 506.575)
+目标 3: 类别=0, 置信度=0.8454, 坐标=(670.616, 394.121, 139.325, 485.654)
+目标 4: 类别=0, 置信度=0.8258, 坐标=(220.367, 403.661, 124.627, 456.073)
+目标 5: 类别=0, 置信度=0.3818, 坐标=(0.000, 550.191, 66.600, 321.077)
+检测结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_yolo11x_detections.txt
+检测结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_yolo11n_detections.txt
+
+测试完成!
+
+[20/39] Go output consistency...
+===== Go 输出一致性验证测试 =====
+
+===== Go 输出一致性测试 - yolo11x ====
+预处理图像...
+执行推理...
+后处理输出...
+检测到 5 个目标
+目标 1: 类别=5, 置信度=0.9428, 坐标=(11.859, 231.135, 792.463, 505.225)
+目标 2: 类别=0, 置信度=0.9196, 坐标=(50.150, 402.033, 196.782, 500.730)
+目标 3: 类别=0, 置信度=0.9164, 坐标=(668.850, 392.724, 141.004, 488.274)
+目标 4: 类别=0, 置信度=0.9119, 坐标=(223.271, 406.040, 121.214, 454.264)
+目标 5: 类别=0, 置信度=0.8577, 坐标=(0.239, 550.204, 78.880, 322.186)
+
+===== Go 输出一致性测试 - yolo11n ====
+预处理图像...
+执行推理...
+后处理输出...
+检测到 5 个目标
+目标 1: 类别=5, 置信度=0.9379, 坐标=(15.976, 228.394, 782.000, 505.545)
+目标 2: 类别=0, 置信度=0.9008, 坐标=(48.090, 398.912, 194.456, 506.395)
+目标 3: 类别=0, 置信度=0.8465, 坐标=(670.770, 394.388, 139.161, 485.264)
+目标 4: 类别=0, 置信度=0.8231, 坐标=(220.058, 403.708, 124.861, 456.062)
+目标 5: 类别=0, 置信度=0.3638, 坐标=(0.004, 550.690, 67.057, 320.664)
+检测结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11x_detections.txt
+检测结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_detections.txt
+
+测试完成!
+
+[21/39] Python YOLO11n light model test...
+===== Python YOLO11n 强化测试（10轮运行）=====
+
+===== 第 1 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.429 ms
+标准差: 1.567 ms
+P50延迟: 43.994 ms
+P90延迟: 45.341 ms
+P95延迟: 46.594 ms
+最小延迟: 43.384 ms
+最大延迟: 56.854 ms
+Start RSS: 76.08 MB
+Peak RSS: 147.74 MB
+Stable RSS: 147.74 MB
+RSS Drift: 71.66 MB
+
+===== 第 2 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.497 ms
+标准差: 1.933 ms
+P50延迟: 44.066 ms
+P90延迟: 45.460 ms
+P95延迟: 46.582 ms
+最小延迟: 43.194 ms
+最大延迟: 60.561 ms
+Start RSS: 78.32 MB
+Peak RSS: 150.45 MB
+Stable RSS: 150.45 MB
+RSS Drift: 72.12 MB
+
+===== 第 3 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 46.217 ms
+标准差: 6.423 ms
+P50延迟: 44.184 ms
+P90延迟: 49.023 ms
+P95延迟: 57.982 ms
+最小延迟: 43.270 ms
+最大延迟: 95.731 ms
+Start RSS: 78.10 MB
+Peak RSS: 150.70 MB
+Stable RSS: 150.70 MB
+RSS Drift: 72.61 MB
+
+===== 第 4 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.664 ms
+标准差: 1.878 ms
+P50延迟: 44.185 ms
+P90延迟: 45.472 ms
+P95延迟: 47.446 ms
+最小延迟: 43.387 ms
+最大延迟: 57.526 ms
+Start RSS: 77.95 MB
+Peak RSS: 150.14 MB
+Stable RSS: 150.14 MB
+RSS Drift: 72.19 MB
+
+===== 第 5 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.513 ms
+标准差: 1.830 ms
+P50延迟: 44.009 ms
+P90延迟: 45.828 ms
+P95延迟: 47.083 ms
+最小延迟: 43.306 ms
+最大延迟: 55.403 ms
+Start RSS: 78.36 MB
+Peak RSS: 149.40 MB
+Stable RSS: 149.40 MB
+RSS Drift: 71.04 MB
+
+===== 第 6 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.982 ms
+标准差: 3.372 ms
+P50延迟: 44.187 ms
+P90延迟: 45.859 ms
+P95延迟: 47.536 ms
+最小延迟: 43.169 ms
+最大延迟: 72.600 ms
+Start RSS: 78.58 MB
+Peak RSS: 149.77 MB
+Stable RSS: 149.71 MB
+RSS Drift: 71.14 MB
+
+===== 第 7 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 45.303 ms
+标准差: 3.130 ms
+P50延迟: 44.411 ms
+P90延迟: 47.625 ms
+P95延迟: 49.622 ms
+最小延迟: 43.534 ms
+最大延迟: 74.286 ms
+Start RSS: 78.59 MB
+Peak RSS: 150.79 MB
+Stable RSS: 150.79 MB
+RSS Drift: 72.20 MB
+
+===== 第 8 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.866 ms
+标准差: 1.869 ms
+P50延迟: 44.257 ms
+P90延迟: 47.136 ms
+P95延迟: 48.097 ms
+最小延迟: 43.455 ms
+最大延迟: 56.124 ms
+Start RSS: 78.84 MB
+Peak RSS: 150.02 MB
+Stable RSS: 150.02 MB
+RSS Drift: 71.18 MB
+
+===== 第 9 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 44.946 ms
+标准差: 2.751 ms
+P50延迟: 44.262 ms
+P90延迟: 45.910 ms
+P95延迟: 48.472 ms
+最小延迟: 43.389 ms
+最大延迟: 67.987 ms
+Start RSS: 77.99 MB
+Peak RSS: 150.13 MB
+Stable RSS: 150.13 MB
+RSS Drift: 72.14 MB
+
+===== 第 10 轮测试 =====
+===== Python YOLO11n 强化测试 ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running benchmark...
+平均延迟: 45.116 ms
+标准差: 1.877 ms
+P50延迟: 44.605 ms
+P90延迟: 46.725 ms
+P95延迟: 47.972 ms
+最小延迟: 43.724 ms
+最大延迟: 57.362 ms
+Start RSS: 78.84 MB
+Peak RSS: 150.16 MB
+Stable RSS: 150.16 MB
+RSS Drift: 71.33 MB
+
+===== 10轮测试平均值 =====
+平均延迟: 44.953 ms
+标准差: 2.663 ms
+P50延迟: 44.216 ms
+P90延迟: 46.438 ms
+P95延迟: 48.739 ms
+最小延迟: 43.381 ms
+最大延迟: 65.443 ms
+吞吐量: 22.25 images/sec
+Start RSS: 78.16 MB
+Peak RSS: 149.93 MB
+Stable RSS: 149.92 MB
+RSS Drift: 71.76 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_yolo11n_reinforced_12threads_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_yolo11n_reinforced_result.txt
+
+[22/39] Go YOLO11n light model test...
+===== Go YOLO11n 强化测试（10轮运行） =====
+
+===== 第 1 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.712 ms
+标准差: 7.530 ms
+P50延迟: 47.243 ms
+P90延迟: 62.759 ms
+P95延迟: 62.852 ms
+最小延迟: 31.322 ms
+最大延迟: 63.066 ms
+Start RSS: 59.58 MB
+Peak RSS: 60.15 MB
+Stable RSS: 59.95 MB
+RSS Drift: 0.36 MB
+Go Heap: 19.55 MB
+前10次推理延迟 (ms):
+第 1 次 -> 31.322 ms
+第 2 次 -> 31.328 ms
+第 3 次 -> 31.546 ms
+第 4 次 -> 31.670 ms
+第 5 次 -> 31.681 ms
+第 6 次 -> 31.752 ms
+第 7 次 -> 31.758 ms
+第 8 次 -> 31.775 ms
+第 9 次 -> 31.784 ms
+第 10 次 -> 40.625 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run1.csv
+
+===== 第 2 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.501 ms
+标准差: 8.747 ms
+P50延迟: 47.236 ms
+P90延迟: 62.792 ms
+P95延迟: 62.907 ms
+最小延迟: 31.348 ms
+最大延迟: 63.080 ms
+Start RSS: 59.48 MB
+Peak RSS: 60.11 MB
+Stable RSS: 59.71 MB
+RSS Drift: 0.23 MB
+Go Heap: 19.55 MB
+前10次推理延迟 (ms):
+第 1 次 -> 31.348 ms
+第 2 次 -> 31.358 ms
+第 3 次 -> 31.422 ms
+第 4 次 -> 31.455 ms
+第 5 次 -> 31.455 ms
+第 6 次 -> 31.457 ms
+第 7 次 -> 31.465 ms
+第 8 次 -> 31.474 ms
+第 9 次 -> 31.533 ms
+第 10 次 -> 31.617 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run2.csv
+
+===== 第 3 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.390 ms
+标准差: 8.771 ms
+P50延迟: 47.285 ms
+P90延迟: 62.869 ms
+P95延迟: 62.946 ms
+最小延迟: 27.249 ms
+最大延迟: 63.082 ms
+Start RSS: 59.86 MB
+Peak RSS: 60.03 MB
+Stable RSS: 59.76 MB
+RSS Drift: -0.10 MB
+Go Heap: 19.56 MB
+前10次推理延迟 (ms):
+第 1 次 -> 27.249 ms
+第 2 次 -> 31.324 ms
+第 3 次 -> 31.375 ms
+第 4 次 -> 31.377 ms
+第 5 次 -> 31.390 ms
+第 6 次 -> 31.400 ms
+第 7 次 -> 31.405 ms
+第 8 次 -> 31.430 ms
+第 9 次 -> 31.448 ms
+第 10 次 -> 31.650 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run3.csv
+
+===== 第 4 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 50.467 ms
+标准差: 7.628 ms
+P50延迟: 47.275 ms
+P90延迟: 62.838 ms
+P95延迟: 62.923 ms
+最小延迟: 31.504 ms
+最大延迟: 63.285 ms
+Start RSS: 59.62 MB
+Peak RSS: 59.90 MB
+Stable RSS: 59.46 MB
+RSS Drift: -0.17 MB
+Go Heap: 19.56 MB
+前10次推理延迟 (ms):
+第 1 次 -> 31.504 ms
+第 2 次 -> 31.518 ms
+第 3 次 -> 31.705 ms
+第 4 次 -> 31.737 ms
+第 5 次 -> 31.783 ms
+第 6 次 -> 31.815 ms
+第 7 次 -> 31.824 ms
+第 8 次 -> 31.886 ms
+第 9 次 -> 42.662 ms
+第 10 次 -> 43.319 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run4.csv
+
+===== 第 5 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.704 ms
+标准差: 7.869 ms
+P50延迟: 47.230 ms
+P90延迟: 62.779 ms
+P95延迟: 62.885 ms
+最小延迟: 29.220 ms
+最大延迟: 63.055 ms
+Start RSS: 59.54 MB
+Peak RSS: 59.89 MB
+Stable RSS: 59.61 MB
+RSS Drift: 0.07 MB
+Go Heap: 19.57 MB
+前10次推理延迟 (ms):
+第 1 次 -> 29.220 ms
+第 2 次 -> 31.056 ms
+第 3 次 -> 31.381 ms
+第 4 次 -> 31.409 ms
+第 5 次 -> 31.430 ms
+第 6 次 -> 31.474 ms
+第 7 次 -> 31.553 ms
+第 8 次 -> 31.604 ms
+第 9 次 -> 31.605 ms
+第 10 次 -> 31.701 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run5.csv
+
+===== 第 6 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.951 ms
+标准差: 8.667 ms
+P50延迟: 47.189 ms
+P90延迟: 62.828 ms
+P95延迟: 62.938 ms
+最小延迟: 31.278 ms
+最大延迟: 63.311 ms
+Start RSS: 59.82 MB
+Peak RSS: 60.03 MB
+Stable RSS: 59.53 MB
+RSS Drift: -0.29 MB
+Go Heap: 19.58 MB
+前10次推理延迟 (ms):
+第 1 次 -> 31.278 ms
+第 2 次 -> 31.284 ms
+第 3 次 -> 31.341 ms
+第 4 次 -> 31.341 ms
+第 5 次 -> 31.343 ms
+第 6 次 -> 31.392 ms
+第 7 次 -> 31.404 ms
+第 8 次 -> 31.426 ms
+第 9 次 -> 31.518 ms
+第 10 次 -> 31.556 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run6.csv
+
+===== 第 7 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.548 ms
+标准差: 7.752 ms
+P50延迟: 47.254 ms
+P90延迟: 62.784 ms
+P95延迟: 62.878 ms
+最小延迟: 31.526 ms
+最大延迟: 63.006 ms
+Start RSS: 59.64 MB
+Peak RSS: 60.18 MB
+Stable RSS: 59.73 MB
+RSS Drift: 0.08 MB
+Go Heap: 19.58 MB
+前10次推理延迟 (ms):
+第 1 次 -> 31.526 ms
+第 2 次 -> 31.585 ms
+第 3 次 -> 31.591 ms
+第 4 次 -> 31.627 ms
+第 5 次 -> 31.653 ms
+第 6 次 -> 31.681 ms
+第 7 次 -> 31.699 ms
+第 8 次 -> 31.704 ms
+第 9 次 -> 31.730 ms
+第 10 次 -> 31.762 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run7.csv
+
+===== 第 8 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 49.875 ms
+标准差: 7.557 ms
+P50延迟: 47.231 ms
+P90延迟: 62.823 ms
+P95延迟: 62.930 ms
+最小延迟: 28.242 ms
+最大延迟: 63.013 ms
+Start RSS: 59.96 MB
+Peak RSS: 60.07 MB
+Stable RSS: 59.50 MB
+RSS Drift: -0.46 MB
+Go Heap: 19.59 MB
+前10次推理延迟 (ms):
+第 1 次 -> 28.242 ms
+第 2 次 -> 31.382 ms
+第 3 次 -> 31.415 ms
+第 4 次 -> 31.514 ms
+第 5 次 -> 31.542 ms
+第 6 次 -> 31.689 ms
+第 7 次 -> 31.788 ms
+第 8 次 -> 31.801 ms
+第 9 次 -> 39.316 ms
+第 10 次 -> 40.110 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run8.csv
+
+===== 第 9 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 48.995 ms
+标准差: 8.285 ms
+P50延迟: 47.218 ms
+P90延迟: 62.779 ms
+P95延迟: 62.936 ms
+最小延迟: 29.719 ms
+最大延迟: 63.439 ms
+Start RSS: 59.68 MB
+Peak RSS: 59.78 MB
+Stable RSS: 59.61 MB
+RSS Drift: -0.07 MB
+Go Heap: 19.59 MB
+前10次推理延迟 (ms):
+第 1 次 -> 29.719 ms
+第 2 次 -> 31.225 ms
+第 3 次 -> 31.313 ms
+第 4 次 -> 31.363 ms
+第 5 次 -> 31.383 ms
+第 6 次 -> 31.385 ms
+第 7 次 -> 31.412 ms
+第 8 次 -> 31.424 ms
+第 9 次 -> 31.450 ms
+第 10 次 -> 31.477 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run9.csv
+
+===== 第 10 轮测试 =====
+Warming up...
+Running benchmark...
+平均延迟: 50.162 ms
+标准差: 8.013 ms
+P50延迟: 47.241 ms
+P90延迟: 62.792 ms
+P95延迟: 62.914 ms
+最小延迟: 31.397 ms
+最大延迟: 63.188 ms
+Start RSS: 59.74 MB
+Peak RSS: 59.94 MB
+Stable RSS: 59.72 MB
+RSS Drift: -0.02 MB
+Go Heap: 19.59 MB
+前10次推理延迟 (ms):
+第 1 次 -> 31.397 ms
+第 2 次 -> 31.461 ms
+第 3 次 -> 31.536 ms
+第 4 次 -> 31.562 ms
+第 5 次 -> 31.565 ms
+第 6 次 -> 31.696 ms
+第 7 次 -> 31.715 ms
+第 8 次 -> 31.720 ms
+第 9 次 -> 31.742 ms
+第 10 次 -> 31.780 ms
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_latency_run10.csv
+
+===== 10轮测试平均值 =====
+平均延迟: 49.731 ms
+标准差: 8.082 ms
+P50延迟: 47.240 ms
+P90延迟: 62.804 ms
+P95延迟: 62.911 ms
+最小延迟: 30.281 ms
+最大延迟: 63.152 ms
+吞吐量: 20.11 images/sec
+Start RSS: 59.69 MB
+Peak RSS: 60.01 MB
+Stable RSS: 59.66 MB
+RSS Drift: -0.03 MB
+Go Heap: 19.57 MB
+
+详细日志已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_reinforced_detailed_log.txt
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_reinforced_result.txt
+原始延迟数据已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_yolo11n_reinforced_latency_data.txt
+测试完成!
+
+[23/39] Python pure inference test...
+===== Python 纯推理测试 ====
+测试配置：
+- 线程数: 12
+- 输入数据: 只加载一次，循环复用
+- 推理次数: 2000次
+- Warmup: 20次
+
+
+===== 测试 YOLO11x 模型 =====
+===== Python 纯推理测试 - YOLO11x ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+输入数据形状: (1, 3, 640, 640)
+输入数据类型: float32
+Warming up...
+Running pure inference benchmark...
+
+YOLO11x 测试结果:
+平均延迟: 693.687 ms
+标准差: 33.215 ms
+P50延迟: 685.686 ms
+P90延迟: 700.242 ms
+P95延迟: 734.341 ms
+最小延迟: 673.188 ms
+最大延迟: 1018.446 ms
+Start RSS: 293.96 MB
+Peak RSS: 556.10 MB
+Stable RSS: 556.10 MB
+RSS Drift: 262.14 MB
+
+===== 测试 YOLO11n 模型 =====
+===== Python 纯推理测试 - YOLO11n ====
+CPU核心调度：系统默认
+创建 InferenceSession...
+InferenceSession 创建成功!
+输入形状: [1, 3, 640, 640]
+加载输入数据...
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+输入数据形状: (1, 3, 640, 640)
+输入数据类型: float32
+Warming up...
+Running pure inference benchmark...
+
+YOLO11n 测试结果:
+平均延迟: 49.737 ms
+标准差: 6.340 ms
+P50延迟: 48.486 ms
+P90延迟: 52.379 ms
+P95延迟: 55.414 ms
+最小延迟: 46.428 ms
+最大延迟: 179.568 ms
+Start RSS: 78.37 MB
+Peak RSS: 154.28 MB
+Stable RSS: 154.28 MB
+RSS Drift: 75.91 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_pure_inference_result.txt
+测试完成!
+
+[24/39] Go pure inference test...
+===== Go 纯推理测试 ====
+测试配置：
+- 线程数: 12
+- 输入数据: 只加载一次，每次推理创建副本
+- 推理次数: 2000次
+- Warmup: 20次
+
+===== Go 纯推理测试 - YOLO11x =====
+CPU核心调度：系统默认
+InferenceSession 创建成功!
+输入形状: [1 3 640 640]
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running pure inference benchmark...
+
+===== YOLO11x 结果 =====
+平均延迟: 898.28100 ms
+标准差: 43.58613 ms
+P50延迟: 900.00000 ms
+P90延迟: 953.00000 ms
+P95延迟: 966.00000 ms
+最小延迟: 733.00000 ms
+最大延迟: 1044.00000 ms
+Start RSS: 59.69922 MB
+Peak RSS: 60.25000 MB
+Stable RSS: 59.85938 MB
+RSS Drift: 0.16016 MB
+Go Heap: 12.44506 MB
+===== Go 纯推理测试 - YOLO11n =====
+CPU核心调度：系统默认
+InferenceSession 创建成功!
+输入形状: [1 3 640 640]
+输入数据加载成功: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+Warming up...
+Running pure inference benchmark...
+
+===== YOLO11n 结果 =====
+平均延迟: 40.68650 ms
+标准差: 6.72140 ms
+P50延迟: 40.00000 ms
+P90延迟: 50.00000 ms
+P95延迟: 52.00000 ms
+最小延迟: 25.00000 ms
+最大延迟: 57.00000 ms
+Start RSS: 59.91406 MB
+Peak RSS: 60.32812 MB
+Stable RSS: 59.72656 MB
+RSS Drift: -0.18750 MB
+Go Heap: 17.17330 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_pure_inference_result.txt
+测试完成!
+
+[25/39] Python session creation test...
+===== Python Session创建时间测试 ====
+测试配置：
+- 线程数: 12
+- 创建次数: 100次
+
+
+===== 测试 YOLO11x 模型 =====
+===== Python Session创建时间测试 - YOLO11x ====
+CPU核心调度：系统默认
+测试YOLO11x模型的Session创建时间...
+
+YOLO11x Session创建时间结果:
+平均时间: 821.938 ms
+标准差: 15.222 ms
+P50时间: 820.319 ms
+P90时间: 843.824 ms
+最小时间: 777.964 ms
+最大时间: 857.971 ms
+
+===== 测试 YOLO11n 模型 =====
+===== Python Session创建时间测试 - YOLO11n ====
+CPU核心调度：系统默认
+测试YOLO11n模型的Session创建时间...
+
+YOLO11n Session创建时间结果:
+平均时间: 98.325 ms
+标准差: 4.448 ms
+P50时间: 96.905 ms
+P90时间: 104.443 ms
+最小时间: 93.178 ms
+最大时间: 121.755 ms
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_session_creation_result.txt
+测试完成!
+
+[26/39] Go session creation test...
+===== Go Session创建时间测试 ====
+测试配置：
+- 线程数: 12 (默认)
+- 创建次数: 100次
+
+===== 测试 YOLO11x 模型 =====
+===== Go Session创建时间测试 - YOLO11x =====
+CPU核心调度：系统默认
+测试YOLO11x模型的Session创建时间...
+
+YOLO11x Session创建时间结果:
+平均时间: 859.85000 ms
+标准差: 252.70750 ms
+P50时间: 859.00000 ms
+P90时间: 875.00000 ms
+最小时间: 842.00000 ms
+最大时间: 937.00000 ms
+
+===== 测试 YOLO11n 模型 =====
+===== Go Session创建时间测试 - YOLO11n =====
+CPU核心调度：系统默认
+测试YOLO11n模型的Session创建时间...
+
+YOLO11n Session创建时间结果:
+平均时间: 85.33000 ms
+标准差: 39.42110 ms
+P50时间: 85.00000 ms
+P90时间: 95.00000 ms
+最小时间: 72.00000 ms
+最大时间: 109.00000 ms
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_session_creation_result.txt
+测试完成!
+
+[27/39] Go performance diagnostic test...
+===== Go 性能诊断 ======
+
+1. 线程配置验证:
+Go runtime GOMAXPROCS: 12
+
+2. 读取输入数据...
+输入数据大小: 4915200 字节
+设置 IntraOpNumThreads: 12
+设置 InterOpNumThreads: 1
+
+4. 预热...
+
+5. 性能测试...
+完成 10/200 次推理
+完成 20/200 次推理
+完成 30/200 次推理
+完成 40/200 次推理
+完成 50/200 次推理
+完成 60/200 次推理
+完成 70/200 次推理
+完成 80/200 次推理
+完成 90/200 次推理
+完成 100/200 次推理
+完成 110/200 次推理
+完成 120/200 次推理
+完成 130/200 次推理
+完成 140/200 次推理
+完成 150/200 次推理
+完成 160/200 次推理
+完成 170/200 次推理
+完成 180/200 次推理
+完成 190/200 次推理
+完成 200/200 次推理
+
+===== 诊断结果 =====
+
+1. 线程配置:
+Go runtime GOMAXPROCS: 12
+IntraOpNumThreads: 12
+InterOpNumThreads: 1
+
+2. 延迟统计:
+平均推理延迟: 913.60500 ms
+平均Tensor构造延迟: 4.93000 ms
+平均总延迟: 919.13000 ms
+推理延迟标准差: 40.65488 ms
+P50推理延迟: 915.00000 ms
+P90推理延迟: 963.00000 ms
+P95推理延迟: 978.00000 ms
+
+3. 内存统计:
+Start RSS: 0.00 MB
+Peak RSS: 0.00 MB
+Stable RSS: 0.00 MB
+Go Heap Alloc: 17.58 MB
+Go Heap Sys: 339.64 MB
+GC 次数: 8
+
+4. 延迟分布 (前20次):
+ 1: 推理=958.00ms, Tensor=3.00ms, 总=962.00ms
+ 2: 推理=986.00ms, Tensor=9.00ms, 总=996.00ms
+ 3: 推理=868.00ms, Tensor=6.00ms, 总=874.00ms
+ 4: 推理=901.00ms, Tensor=4.00ms, 总=906.00ms
+ 5: 推理=903.00ms, Tensor=2.00ms, 总=906.00ms
+ 6: 推理=924.00ms, Tensor=1.00ms, 总=926.00ms
+ 7: 推理=867.00ms, Tensor=7.00ms, 总=875.00ms
+ 8: 推理=955.00ms, Tensor=9.00ms, 总=964.00ms
+ 9: 推理=961.00ms, Tensor=7.00ms, 总=969.00ms
+10: 推理=897.00ms, Tensor=8.00ms, 总=906.00ms
+11: 推理=863.00ms, Tensor=1.00ms, 总=865.00ms
+12: 推理=972.00ms, Tensor=1.00ms, 总=974.00ms
+13: 推理=889.00ms, Tensor=9.00ms, 总=898.00ms
+14: 推理=869.00ms, Tensor=5.00ms, 总=874.00ms
+15: 推理=862.00ms, Tensor=8.00ms, 总=870.00ms
+16: 推理=899.00ms, Tensor=6.00ms, 总=906.00ms
+17: 推理=947.00ms, Tensor=1.00ms, 总=949.00ms
+18: 推理=887.00ms, Tensor=3.00ms, 总=890.00ms
+19: 推理=869.00ms, Tensor=5.00ms, 总=874.00ms
+20: 推理=856.00ms, Tensor=2.00ms, 总=859.00ms
+
+详细结果已保存到: ..\..\results\go_performance_diagnostic_result.txt
+
+诊断完成!
+
+[28/39] Go concurrent stress test...
+D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark>D:
+
+D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark>cd D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+
+D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark>go run go_concurrent_stress_fixed.go
+===== Go Session Pool 并发推理性能测试（学术版）=====
+关键修复：每个goroutine拥有独立的Session和绑定的Tensor，循环复用
+
+===== Session Pool 扩展性测试（并发度 vs CPU 核心数）=====
+
+===== 测试配置：1 并发 =====
+执行并发测试：1 并发，500 请求，intra_op_threads=1
+总请求数：500
+成功请求数：500
+失败请求数：0
+总时间：739.00000 ms
+平均延迟：2823.52200 ms
+P50延迟：2821.00000 ms
+P90延迟：2842.00000 ms
+P99延迟：2908.00000 ms
+最小延迟：2790.00000 ms
+最大延迟：2993.00000 ms
+吞吐量：676.58999 REQ/s
+初始RSS：59.66406 MB
+峰值RSS：60.27344 MB
+最终RSS：59.27734 MB
+RSS漂移：-0.38672 MB
+
+===== 测试配置：2 并发 =====
+执行并发测试：2 并发，500 请求，intra_op_threads=1
+总请求数：500
+成功请求数：500
+失败请求数：0
+总时间：1622.00000 ms
+平均延迟：3020.03400 ms
+P50延迟：3013.00000 ms
+P90延迟：3069.00000 ms
+P99延迟：3148.00000 ms
+最小延迟：2909.00000 ms
+最大延迟：3179.00000 ms
+吞吐量：308.26141 REQ/s
+初始RSS：59.54297 MB
+峰值RSS：60.69531 MB
+最终RSS：59.50000 MB
+RSS漂移：-0.04297 MB
+
+===== 测试配置：4 并发 =====
+执行并发测试：4 并发，500 请求，intra_op_threads=1
+总请求数：500
+成功请求数：500
+失败请求数：0
+总时间：3619.00000 ms
+平均延迟：3843.78000 ms
+P50延迟：3842.00000 ms
+P90延迟：3990.00000 ms
+P99延迟：4170.00000 ms
+最小延迟：3071.00000 ms
+最大延迟：4393.00000 ms
+吞吐量：138.15971 REQ/s
+初始RSS：59.80078 MB
+峰值RSS：60.71484 MB
+最终RSS：59.63672 MB
+RSS漂移：-0.16406 MB
+
+===== 测试配置：6 并发 =====
+执行并发测试：6 并发，500 请求，intra_op_threads=1
+总请求数：500
+成功请求数：498
+失败请求数：0
+总时间：6402.00000 ms
+平均延迟：5278.06024 ms
+P50延迟：5285.00000 ms
+P90延迟：5474.00000 ms
+P99延迟：5611.00000 ms
+最小延迟：3155.00000 ms
+最大延迟：5818.00000 ms
+吞吐量：77.78819 REQ/s
+初始RSS：59.65234 MB
+峰值RSS：60.62109 MB
+最终RSS：59.52734 MB
+RSS漂移：-0.12500 MB
+
+===== 测试配置：8 并发 =====
+执行并发测试：8 并发，500 请求，intra_op_threads=1
+总请求数：500
+成功请求数：496
+失败请求数：0
+总时间：10042.00000 ms
+平均延迟：6997.24597 ms
+P50延迟：7026.00000 ms
+P90延迟：7206.00000 ms
+P99延迟：7329.00000 ms
+最小延迟：3795.00000 ms
+最大延迟：7412.00000 ms
+吞吐量：49.39255 REQ/s
+初始RSS：59.42188 MB
+峰值RSS：60.77344 MB
+最终RSS：59.16406 MB
+RSS漂移：-0.25781 MB
+
+===== 测试配置：12 并发 =====
+执行并发测试：12 并发，500 请求，intra_op_threads=1
+总请求数：500
+成功请求数：492
+失败请求数：0
+总时间：19163.00000 ms
+平均延迟：10060.50000 ms
+P50延迟：10126.00000 ms
+P90延迟：10864.00000 ms
+P99延迟：11478.00000 ms
+最小延迟：3098.00000 ms
+最大延迟：12082.00000 ms
+吞吐量：25.67448 REQ/s
+初始RSS：59.85156 MB
+峰值RSS：60.79688 MB
+最终RSS：59.78906 MB
+RSS漂移：-0.06250 MB
+
+结果已保存到：D:\mlz\trae_projects\1\yolo-go-detector\results\go_session_pool_performance.txt
+
+===== 测试完成 =====
+
+[29/39] Python concurrent stress test...
+===== Python 并发推理性能测试（学术版）=====
+
+===== Session Pool 扩展性测试（并发度 vs CPU 核心数）=====
+
+===== 测试配置: 1 并发 =====
+执行并发测试: 1 并发, 500 请求, intra_op_threads=1
+总请求数: 500
+成功请求数: 500
+失败请求数: 0
+总时间: 1416625.07 ms
+平均延迟: 2831.36 ms
+P50延迟: 2831.73 ms
+P90延迟: 2843.98 ms
+P99延迟: 2871.76 ms
+最小延迟: 2797.15 ms
+最大延迟: 2916.96 ms
+吞吐量: 0.35 REQ/s
+初始RSS: 50.23 MB
+峰值RSS: 542.49 MB
+最终RSS: 58.64 MB
+RSS漂移: 8.41 MB
+
+===== 测试配置: 2 并发 =====
+执行并发测试: 2 并发, 500 请求, intra_op_threads=1
+总请求数: 500
+成功请求数: 500
+失败请求数: 0
+总时间: 756975.16 ms
+平均延迟: 3021.89 ms
+P50延迟: 3018.41 ms
+P90延迟: 3054.23 ms
+P99延迟: 3115.51 ms
+最小延迟: 2966.27 ms
+最大延迟: 3187.58 ms
+吞吐量: 0.66 REQ/s
+初始RSS: 58.64 MB
+峰值RSS: 1032.45 MB
+最终RSS: 59.62 MB
+RSS漂移: 0.97 MB
+
+===== 测试配置: 4 并发 =====
+执行并发测试: 4 并发, 500 请求, intra_op_threads=1
+总请求数: 500
+成功请求数: 500
+失败请求数: 0
+总时间: 489366.71 ms
+平均延迟: 3893.53 ms
+P50延迟: 3885.56 ms
+P90延迟: 4022.29 ms
+P99延迟: 4227.00 ms
+最小延迟: 3698.25 ms
+最大延迟: 4257.56 ms
+吞吐量: 1.02 REQ/s
+初始RSS: 59.62 MB
+峰值RSS: 2009.32 MB
+最终RSS: 61.18 MB
+RSS漂移: 1.56 MB
+
+===== 测试配置: 6 并发 =====
+执行并发测试: 6 并发, 500 请求, intra_op_threads=1
+总请求数: 500
+成功请求数: 498
+失败请求数: 0
+总时间: 456874.56 ms
+平均延迟: 5430.88 ms
+P50延迟: 5446.59 ms
+P90延迟: 5643.13 ms
+P99延迟: 5878.58 ms
+最小延迟: 3316.54 ms
+最大延迟: 5935.25 ms
+吞吐量: 1.09 REQ/s
+初始RSS: 59.36 MB
+峰值RSS: 2974.08 MB
+最终RSS: 63.35 MB
+RSS漂移: 3.99 MB
+
+===== 测试配置: 8 并发 =====
+执行并发测试: 8 并发, 500 请求, intra_op_threads=1
+总请求数: 500
+成功请求数: 496
+失败请求数: 0
+总时间: 465803.03 ms
+平均延迟: 7368.13 ms
+P50延迟: 7427.61 ms
+P90延迟: 7660.77 ms
+P99延迟: 7911.44 ms
+最小延迟: 3299.60 ms
+最大延迟: 8160.42 ms
+吞吐量: 1.06 REQ/s
+初始RSS: 61.43 MB
+峰值RSS: 3940.93 MB
+最终RSS: 65.83 MB
+RSS漂移: 4.40 MB
+
+===== 测试配置: 12 并发 =====
+执行并发测试: 12 并发, 500 请求, intra_op_threads=1
+总请求数: 500
+成功请求数: 492
+失败请求数: 0
+总时间: 497132.66 ms
+平均延迟: 11759.46 ms
+P50延迟: 11995.44 ms
+P90延迟: 12158.31 ms
+P99延迟: 12284.07 ms
+最小延迟: 3513.66 ms
+最大延迟: 12430.67 ms
+吞吐量: 0.99 REQ/s
+初始RSS: 62.11 MB
+峰值RSS: 5965.93 MB
+最终RSS: 67.41 MB
+RSS漂移: 5.30 MB
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_session_pool_performance.txt
+
+===== 测试完成 =====
+
+
+========================================
+Supplementary Tests
+========================================
+
+[30/39] Go architecture comparison test...
+===== Go 推理架构性能对比实验（论文级）=====
+库路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\onnxruntime.dll
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+输入数据路径: D:\mlz\trae_projects\1\yolo-go-detector\test\data\input_data.bin
+ONNX Runtime 环境初始化成功
+输入数据大小: 4915200 bytes
+
+===== 实验 1: Unsafe Shared 扩展性测试 =====
+测试 Unsafe Shared: 1 并发，500 请求
+并发=1, 吞吐量=0.21 REQ/s, 平均延迟=2825.54 ms, P99=2886.00 ms
+测试 Unsafe Shared: 2 并发，500 请求
+并发=2, 吞吐量=0.38 REQ/s, 平均延迟=3034.16 ms, P99=3125.00 ms
+测试 Unsafe Shared: 4 并发，500 请求
+并发=4, 吞吐量=0.63 REQ/s, 平均延迟=3906.74 ms, P99=4174.00 ms
+测试 Unsafe Shared: 8 并发，500 请求
+并发=8, 吞吐量=0.75 REQ/s, 平均延迟=6994.90 ms, P99=7488.00 ms
+测试 Unsafe Shared: 12 并发，500 请求
+并发=12, 吞吐量=0.73 REQ/s, 平均延迟=10341.94 ms, P99=11892.00 ms
+
+===== 实验 2: Mutex Shared 串行化测试 =====
+测试 Mutex Shared: 1 并发，500 请求
+并发=1, 吞吐量=0.21 REQ/s, 平均延迟=2828.07 ms, P99=2860.00 ms
+测试 Mutex Shared: 2 并发，500 请求
+并发=2, 吞吐量=0.34 REQ/s, 平均延迟=2969.67 ms, P99=3079.00 ms
+测试 Mutex Shared: 4 并发，500 请求
+并发=4, 吞吐量=0.34 REQ/s, 平均延迟=2967.80 ms, P99=3079.00 ms
+测试 Mutex Shared: 8 并发，500 请求
+并发=8, 吞吐量=0.34 REQ/s, 平均延迟=2966.95 ms, P99=3079.00 ms
+测试 Mutex Shared: 12 并发，500 请求
+并发=12, 吞吐量=0.34 REQ/s, 平均延迟=2967.47 ms, P99=3095.00 ms
+
+===== 实验 3: Session Pool 池大小优化测试 =====
+测试 Session Pool: pool_size=1, 500 请求
+池大小=1, 吞吐量=0.21 REQ/s, 平均延迟=2827.95 ms, P99=2860.00 ms
+测试 Session Pool: pool_size=2, 500 请求
+池大小=2, 吞吐量=0.38 REQ/s, 平均延迟=3041.73 ms, P99=3152.00 ms
+测试 Session Pool: pool_size=4, 500 请求
+池大小=4, 吞吐量=0.63 REQ/s, 平均延迟=3863.11 ms, P99=4139.00 ms
+测试 Session Pool: pool_size=6, 500 请求
+池大小=6, 吞吐量=0.72 REQ/s, 平均延迟=5290.40 ms, P99=5654.00 ms
+测试 Session Pool: pool_size=8, 500 请求
+池大小=8, 吞吐量=0.74 REQ/s, 平均延迟=7026.09 ms, P99=7645.00 ms
+测试 Session Pool: pool_size=12, 500 请求
+池大小=12, 吞吐量=0.73 REQ/s, 平均延迟=10379.59 ms, P99=12177.00 ms
+
+结果已保存到：D:\mlz\trae_projects\1\yolo-go-detector\results\go_architecture_comparison.txt
+
+===== 实验完成 =====
+
+[31/39] Python architecture comparison test...
+===== Python 推理架构性能对比实验（论文级）=====
+
+===== 实验 1: Shared Session 扩展性测试 =====
+测试 Shared Session: 1 并发，500 请求
+并发=1, 吞吐量=0.35 REQ/s, 平均延迟=2827.14 ms
+测试 Shared Session: 2 并发，500 请求
+并发=2, 吞吐量=0.66 REQ/s, 平均延迟=3017.07 ms
+测试 Shared Session: 4 并发，500 请求
+并发=4, 吞吐量=1.02 REQ/s, 平均延迟=3898.00 ms
+测试 Shared Session: 8 并发，500 请求
+并发=8, 吞吐量=1.07 REQ/s, 平均延迟=7464.44 ms
+测试 Shared Session: 12 并发，500 请求
+并发=12, 吞吐量=1.00 REQ/s, 平均延迟=11969.63 ms
+
+===== 实验 2: Mutex Protected 串行化测试 =====
+测试 Mutex Protected: 1 并发，500 请求
+并发=1, 吞吐量=0.35 REQ/s, 平均延迟=2822.67 ms
+测试 Mutex Protected: 2 并发，500 请求
+并发=2, 吞吐量=0.35 REQ/s, 平均延迟=2831.10 ms
+测试 Mutex Protected: 4 并发，500 请求
+并发=4, 吞吐量=0.35 REQ/s, 平均延迟=2824.21 ms
+测试 Mutex Protected: 8 并发，500 请求
+并发=8, 吞吐量=0.35 REQ/s, 平均延迟=2834.13 ms
+测试 Mutex Protected: 12 并发，500 请求
+并发=12, 吞吐量=0.35 REQ/s, 平均延迟=2825.45 ms
+
+===== 实验 3: Session Pool 池大小优化测试 =====
+测试 Session Pool: pool_size=1, 500 请求
+池大小=1, 吞吐量=0.35 REQ/s, 平均延迟=2826.59 ms
+测试 Session Pool: pool_size=2, 500 请求
+池大小=2, 吞吐量=0.66 REQ/s, 平均延迟=3017.74 ms
+测试 Session Pool: pool_size=4, 500 请求
+池大小=4, 吞吐量=1.02 REQ/s, 平均延迟=3918.39 ms
+测试 Session Pool: pool_size=6, 500 请求
+池大小=6, 吞吐量=1.09 REQ/s, 平均延迟=5482.64 ms
+测试 Session Pool: pool_size=8, 500 请求
+池大小=8, 吞吐量=1.06 REQ/s, 平均延迟=7519.75 ms
+测试 Session Pool: pool_size=12, 500 请求
+池大小=12, 吞吐量=1.00 REQ/s, 平均延迟=11965.02 ms
+
+结果已保存到：D:\mlz\trae_projects\1\yolo-go-detector\results\python_architecture_comparison.txt
+
+===== 实验完成 =====
+
+[32/39] Go CPU monitoring test...
+
+D:\>cd D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark
+
+D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark>go run go_cpu_monitoring.go
+===== Go CPU 使用率监控测试 =====
+
+===== 场景1：空闲状态CPU监控 =====
+监控空闲状态 30 秒...
+平均CPU使用率: 0.34%
+峰值CPU使用率: 1.38%
+CPU使用率标准差: 0.33%
+平均RSS: 21.84 MB
+峰值RSS: 21.89 MB
+
+===== 场景2：单次推理CPU监控 =====
+执行单次推理并监控CPU...
+平均CPU使用率: 17.81%
+峰值CPU使用率: 22.40%
+CPU使用率标准差: 5.73%
+平均RSS: 468.40 MB
+峰值RSS: 503.80 MB
+
+===== 场景3：连续推理CPU监控（100次推理，约2分钟） =====
+执行100次推理并监控CPU...
+已完成 0/100 次推理
+已完成 10/100 次推理
+已完成 20/100 次推理
+已完成 30/100 次推理
+已完成 40/100 次推理
+已完成 50/100 次推理
+已完成 60/100 次推理
+已完成 70/100 次推理
+已完成 80/100 次推理
+已完成 90/100 次推理
+平均CPU使用率: 352.61%
+峰值CPU使用率: 491.38%
+CPU使用率标准差: 119.30%
+平均RSS: 532.86 MB
+峰值RSS: 533.11 MB
+
+===== 场景4：并发推理CPU监控（10并发，50次请求） =====
+已完成 0/50 次请求
+已完成 10/50 次请求
+已完成 20/50 次请求
+已完成 30/50 次请求
+已完成 40/50 次请求
+平均CPU使用率: 672.71%
+峰值CPU使用率: 800.65%
+CPU使用率标准差: 89.95%
+平均RSS: 3639.68 MB
+峰值RSS: 4589.73 MB
+
+===== 所有测试完成 =====
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_cpu_monitoring_result.json
+
+===== CPU 监控汇总 =====
+
+场景: Idle
+  平均CPU: 0.34% | 峰值CPU: 1.38% | 平均RSS: 21.84 MB
+
+场景: Single_Inference
+  平均CPU: 17.81% | 峰值CPU: 22.40% | 平均RSS: 468.40 MB
+
+场景: Continuous_100_Inferences
+  平均CPU: 352.61% | 峰值CPU: 491.38% | 平均RSS: 532.86 MB
+
+场景: Concurrent_10x50
+  平均CPU: 672.71% | 峰值CPU: 800.65% | 平均RSS: 3639.68 MB
+
+
+[33/39] Python CPU monitoring test...
+===== Python CPU 监控测试 =====
+模型路径: D:\mlz\trae_projects\1\yolo-go-detector\third_party\yolo11x.onnx
+
+系统 CPU 信息:
+  物理核心数: 6
+  逻辑核心数: 12
+  当前 CPU 频率: 2901 MHz
+
+创建 InferenceSession...
+预热...
+
+开始监测 CPU 使用率...
+  完成 10/50 次推理
+  完成 20/50 次推理
+  完成 30/50 次推理
+  完成 40/50 次推理
+  完成 50/50 次推理
+
+===== 测试结果 =====
+总请求数: 50
+平均延迟: 2825.31 ms
+平均 CPU 使用率: 98.19%
+峰值 CPU 使用率: 100.60%
+最低 CPU 使用率: 89.40%
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\python_cpu_monitoring_result.txt
+===== 测试完成 =====
+
+[34/39] Go long stability enhanced test...
+===== Go 长时间稳定性测试（增强版，带GC统计）=====
+
+===== 长时间稳定性测试（10m0s）=====
+开始RSS: 18.89453 MB
+初始GC次数: 2
+预热中...
+开始测试，持续 10m0s...
+检查点 100 次推理完成，当前RSS: 19.14453 MB
+检查点 500 次推理完成，当前RSS: 19.14453 MB
+
+===== 测试结果 =====
+总推理次数: 697
+平均延迟: 848.27834 ms
+延迟范围: 828.00000 - 875.00000 ms
+延迟标准差: 8.79171 ms
+起始RSS: 18.89453 MB
+结束RSS: 19.14453 MB
+RSS漂移: 0.25000 MB
+峰值RSS: 19.14453 MB
+GC次数: 4
+GC总停顿: 7.00010 ms
+平均GC停顿: 1.75002 ms
+性能衰减: 0.27%
+
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_long_stability_enhanced_result.json
+
+[35/39] Go memory breakdown test...
+===== Go 模型内存分解测试 =====
+
+===== 测量 YOLO11x 内存分解 =====
+1. Runtime 基础内存: 4.89 MB
+2. 模型权重内存: 7.38 MB (加载后: 12.27 MB)
+3. 输入张量: 4.69 MB, 输出张量: 2.69 MB
+4. 中间缓冲区: 0.00 MB (推理后: 12.27 MB)
+5. 清理后内存: 4.89 MB
+
+内存分解汇总:
+  Runtime 基础: 4.89 MB
+  模型权重: 7.38 MB
+  输入张量: 4.69 MB
+  输出张量: 2.69 MB
+  中间缓冲区: 0.00 MB
+  Session开销: 0.00 MB
+  总计: 19.65 MB
+  峰值RSS: 12.27 MB
+
+===== 测量 YOLO11n 内存分解 =====
+1. Runtime 基础内存: 4.90 MB
+2. 模型权重内存: 2.69 MB (加载后: 7.59 MB)
+3. 输入张量: 4.69 MB, 输出张量: 2.69 MB
+4. 中间缓冲区: -0.00 MB (推理后: 7.59 MB)
+5. 清理后内存: 0.21 MB
+
+内存分解汇总:
+  Runtime 基础: 4.90 MB
+  模型权重: 2.69 MB
+  输入张量: 4.69 MB
+  输出张量: 2.69 MB
+  中间缓冲区: -0.00 MB
+  Session开销: 0.00 MB
+  总计: 14.96 MB
+  峰值RSS: 7.59 MB
+
+===== 测试完成 =====
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_memory_breakdown_result.json
+
+===== YOLO11x vs YOLO11n 内存对比 =====
+模型权重: 7.38 MB vs 2.69 MB (节省 63.5%)
+总内存: 19.65 MB vs 14.96 MB (节省 23.8%)
+
+[36/39] Go batch inference test...
+===== Go 批处理性能测试 =====
+===== 批处理性能测试 =====
+
+===== 测试 Batch Size = 1 =====
+总时间: 848.00000 ms
+每张图片: 848.00000 ms
+吞吐量: 1.17902 images/sec
+峰值RSS: 18.89453 MB
+
+===== 测试 Batch Size = 4 =====
+总时间: 3407.00000 ms
+每张图片: 851.75000 ms
+吞吐量: 1.17404 images/sec
+峰值RSS: 18.89453 MB
+
+===== 测试 Batch Size = 8 =====
+总时间: 6752.00000 ms
+每张图片: 844.00000 ms
+吞吐量: 1.18469 images/sec
+峰值RSS: 18.89453 MB
+
+===== 测试 Batch Size = 16 =====
+总时间: 13505.00000 ms
+每张图片: 844.06250 ms
+吞吐量: 1.18466 images/sec
+峰值RSS: 18.89453 MB
+
+===== 测试 Batch Size = 32 =====
+总时间: 27084.00000 ms
+每张图片: 846.37500 ms
+吞吐量: 1.18148 images/sec
+峰值RSS: 19.14453 MB
+
+===== 批处理性能汇总 =====
+Batch      Total(ms)       PerImg(ms)      Throughput(img/s)    PeakRSS(MB)
+
+1          848.00000       848.00000       1.17902              18.89453
+4          3407.00000      851.75000       1.17404              18.89453
+8          6752.00000      844.00000       1.18469              18.89453
+16         13505.00000     844.06250       1.18466              18.89453
+32         27084.00000     846.37500       1.18148              19.14453
+
+最优Batch Size: 8 (吞吐量: 1.18469 images/sec)
+结果已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\go_batch_inference_result.json
+
+[37/39] Go warmup effect test...
+===== Go 首次推理预热效应测试 =====
+===== 首次推理预热效应测试 =====
+
+执行 20 次连续推理...
+推理 # 1: 912.00000 ms, RSS: 18.89453 MB
+推理 # 2: 837.00000 ms, RSS: 18.89453 MB
+推理 # 3: 844.00000 ms, RSS: 18.89453 MB
+推理 # 4: 849.00000 ms, RSS: 18.89453 MB
+推理 # 5: 851.00000 ms, RSS: 18.89453 MB
+推理 # 6: 836.00000 ms, RSS: 18.89453 MB
+推理 # 7: 849.00000 ms, RSS: 18.89453 MB
+推理 # 8: 839.00000 ms, RSS: 18.89453 MB
+推理 # 9: 838.00000 ms, RSS: 18.89453 MB
+推理 #10: 847.00000 ms, RSS: 18.89453 MB
+推理 #11: 884.00000 ms, RSS: 18.89453 MB
+推理 #12: 900.00000 ms, RSS: 18.89453 MB
+推理 #13: 858.00000 ms, RSS: 18.89453 MB
+推理 #14: 858.00000 ms, RSS: 18.89453 MB
+推理 #15: 853.00000 ms, RSS: 18.89453 MB
+推理 #16: 850.00000 ms, RSS: 18.89453 MB
+推理 #17: 837.00000 ms, RSS: 18.89453 MB
+推理 #18: 839.00000 ms, RSS: 18.89453 MB
+推理 #19: 847.00000 ms, RSS: 18.89453 MB
+推理 #20: 848.00000 ms, RSS: 18.89453 MB
+
+===== 预热效应分析 =====
+首次推理延迟: 912.00000 ms
+第二次推理延迟: 837.00000 ms
+稳定状态平均延迟: 857.40000 ms
+首次 vs 稳定差距: 6.37%
+预热所需次数: 1
+稳定状态变异系数: 2.20%
+
+===== 测试完成 =====
+详细结果: D:\mlz\trae_projects\1\yolo-go-detector\results\go_warmup_effect_detailed.json
+汇总结果: D:\mlz\trae_projects\1\yolo-go-detector\results\go_warmup_effect_summary.json
+
+[38/39] Data analysis and chart generation...
+===== 数据分析 =====
+加载测试数据...
+警告: 文件不存在: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_latency_data.txt
+执行t-test分析...
+警告: 缺少yolo11x的测试数据
+
+轻模型 (YOLO11n):
+t-statistic: 157.3504
+p-value: 0.0000
+95% 置信区间: [437.7251, 448.7707] ms
+平均差异: 443.2479 ms
+显著性: 显著
+
+===== 冷启动数据分析 =====
+警告: 冷启动数据文件不存在
+
+===== 内存使用数据分析 =====
+警告: 内存数据文件不存在
+分析报告已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\analysis_report.txt
+
+分析完成!
+
+[39/39] Chart generation...
+开始生成所有图片...
+图表保存目录: D:\mlz\trae_projects\1\yolo-go-detector\results\charts
+============================================================
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\yolo_evolution_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\yolo_evolution_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\inference_flow_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\inference_flow_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\memory_comparison_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\memory_comparison_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\latency_boxplot_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\latency_boxplot_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\rss_curve_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\rss_curve_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\cold_start_vs_stable_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\cold_start_vs_stable_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\cold_start_factor_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\cold_start_factor_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_config_avg_latency_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_config_avg_latency_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_config_memory_usage_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_config_memory_usage_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_config_latency_distribution_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_config_latency_distribution_color.pdf 已保存
+警告: 无法读取基准测试结果，使用默认值
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\latency_comparison_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\latency_comparison_color.pdf 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_scalability_color.png 已保存
+D:\mlz\trae_projects\1\yolo-go-detector\results\charts\thread_scalability_color.pdf 已保存
+
+============================================================
+开始生成强化实验图表...
+===== 开始生成强化实验图表 =====
+
+生成强化性能对比图表...
+强化性能对比图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_performance_comparison.png
+强化性能对比图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_performance_comparison.pdf
+
+生成t-test可视化图表...
+警告: 文件不存在: D:\mlz\trae_projects\1\yolo-go-detector\results\python_reinforced_latency_data.txt
+t-test可视化图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_ttest_visualization.png
+t-test可视化图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_ttest_visualization.pdf
+
+生成冷启动分解图表...
+警告: 文件不存在: D:\mlz\trae_projects\1\yolo-go-detector\results\go_cold_start_decomposition_log.txt
+冷启动分解图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_cold_start_decomposition.png
+冷启动分解图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_cold_start_decomposition.pdf
+
+生成内存对比图表...
+警告: 文件不存在: D:\mlz\trae_projects\1\yolo-go-detector\results\python_memory_detailed_log.txt
+警告: 文件不存在: D:\mlz\trae_projects\1\yolo-go-detector\results\go_memory_detailed_log.txt
+内存对比图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_memory_comparison.png
+内存对比图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_memory_comparison.pdf
+
+生成输出一致性图表...
+输出一致性图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_output_consistency.png
+输出一致性图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts\reinforced_output_consistency.pdf
+
+===== 强化实验图表生成完成 =====
+所有图表已保存到: D:\mlz\trae_projects\1\yolo-go-detector\results\charts
+============================================================
+所有图片生成完成！
+图表保存目录: D:\mlz\trae_projects\1\yolo-go-detector\results\charts
+
+========================================
+Test Summary
+========================================
+
+
+
+
+
+D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark>
+D:\mlz\trae_projects\1\yolo-go-detector\test\benchmark>
