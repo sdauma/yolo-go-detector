@@ -198,21 +198,8 @@ func main() {
 				continue
 			}
 
-			// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-			// 线程配置
 			opts.SetIntraOpNumThreads(numThreads)
 			opts.SetInterOpNumThreads(1)
-
-			// 日志配置（关闭所有日志，避免日志IO干扰性能）
-			opts.SetLogSeverityLevel(3) // 3 = ORT_LOGGING_LEVEL_ERROR
-
-			// 性能分析配置（关闭性能分析，避免额外开销）
-			opts.SetExecutionMode(0) // 0 = ORT_SEQUENTIAL
-
-			// 内存池配置（启用内存池复用）
-			opts.SetGraphOptimizationLevel(3) // 3 = ORT_ENABLE_ALL
-
-			// 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
 
 			// 创建输入张量
 			inputShape := ort.NewShape(1, 3, 640, 640)
@@ -249,8 +236,8 @@ func main() {
 				continue
 			}
 
-			// 使用与 Python 相同的默认执行路径
-			session, err := ort.NewSession(modelPath, []string{"images"}, []string{"output0"}, []*ort.Tensor[float32]{inputTensor}, []*ort.Tensor[float32]{outputTensor})
+			// 使用 AdvancedSession 以支持传入 opts（线程配置）
+			session, err := ort.NewAdvancedSession(modelPath, []string{"images"}, []string{"output0"}, []ort.Value{inputTensor}, []ort.Value{outputTensor}, opts)
 			if err != nil {
 				fmt.Printf("创建会话失败: %v\n", err)
 				inputTensor.Destroy()
@@ -325,7 +312,7 @@ func main() {
 			avg_latency := sum / float64(runs)
 			min_latency := times[0]
 			max_latency := times[runs-1]
-			p50_latency := times[runs/2]
+			p50_latency := times[int(float64(runs)*0.5)]
 			p90_latency := times[int(float64(runs)*0.9)]
 			p99_latency := times[int(float64(runs)*0.99)]
 
@@ -340,7 +327,7 @@ func main() {
 			allPeakRSS = append(allPeakRSS, peakRSS)
 			allStableRSS = append(allStableRSS, stableRSS)
 
-			fmt.Printf("测试 %d 完成: 平均延迟=%.3f ms\n", testIdx, avg_latency)
+			fmt.Printf("测试 %d 完成: 平均延迟=%.5f ms\n", testIdx, avg_latency)
 
 			// 释放资源
 			session.Destroy()
@@ -386,21 +373,21 @@ func main() {
 		runtime.ReadMemStats(&m)
 
 		fmt.Printf("\n===== 测试结果 =====\n")
-		fmt.Printf("平均延迟: %.3f ms\n", avgLatency)
-		fmt.Printf("标准差: %.3f ms\n", stdDevLatency)
+		fmt.Printf("平均延迟: %.5f ms\n", avgLatency)
+		fmt.Printf("标准差: %.5f ms\n", stdDevLatency)
 		fmt.Printf("变异系数: %.2f%%\n", coeffVarLatency)
 		fmt.Printf("FPS: %.2f\n", fps)
-		fmt.Printf("P50延迟: %.3f ms\n", p50Latency)
-		fmt.Printf("P90延迟: %.3f ms\n", p90Latency)
-		fmt.Printf("P99延迟: %.3f ms\n", p99Latency)
-		fmt.Printf("最小延迟: %.3f ms\n", minLatency)
-		fmt.Printf("最大延迟: %.3f ms\n", maxLatency)
+		fmt.Printf("P50延迟: %.5f ms\n", p50Latency)
+		fmt.Printf("P90延迟: %.5f ms\n", p90Latency)
+		fmt.Printf("P99延迟: %.5f ms\n", p99Latency)
+		fmt.Printf("最小延迟: %.5f ms\n", minLatency)
+		fmt.Printf("最大延迟: %.5f ms\n", maxLatency)
 		fmt.Printf("\n===== 内存使用情况 =====\n")
-		fmt.Printf("Start RSS: %.2f MB\n", startRSS)
-		fmt.Printf("Peak RSS: %.2f MB\n", peakRSS)
-		fmt.Printf("Stable RSS: %.2f MB\n", stableRSS)
-		fmt.Printf("RSS Drift: %.2f MB\n", stableRSS-startRSS)
-		fmt.Printf("Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
+		fmt.Printf("Start RSS: %.5f MB\n", startRSS)
+		fmt.Printf("Peak RSS: %.5f MB\n", peakRSS)
+		fmt.Printf("Stable RSS: %.5f MB\n", stableRSS)
+		fmt.Printf("RSS Drift: %.5f MB\n", stableRSS-startRSS)
+		fmt.Printf("Go Heap: %.5f MB\n", float64(m.Alloc)/1024/1024)
 
 		// 保存结果
 		result := ThreadConfigResult{
@@ -428,34 +415,34 @@ func main() {
 		} else {
 			for i := 0; i < len(allAvgLatencies); i++ {
 				fmt.Fprintf(logFile, "===== 第 %d 次测试 =====\n", i+1)
-				fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", allAvgLatencies[i])
-				fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", allMinLatencies[i])
-				fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", allMaxLatencies[i])
-				fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", allP50Latencies[i])
-				fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", allP90Latencies[i])
-				fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", allP99Latencies[i])
-				fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", allStartRSS[i])
-				fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", allPeakRSS[i])
-				fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", allStableRSS[i])
+				fmt.Fprintf(logFile, "平均延迟: %.5f ms\n", allAvgLatencies[i])
+				fmt.Fprintf(logFile, "最小延迟: %.5f ms\n", allMinLatencies[i])
+				fmt.Fprintf(logFile, "最大延迟: %.5f ms\n", allMaxLatencies[i])
+				fmt.Fprintf(logFile, "P50延迟: %.5f ms\n", allP50Latencies[i])
+				fmt.Fprintf(logFile, "P90延迟: %.5f ms\n", allP90Latencies[i])
+				fmt.Fprintf(logFile, "P99延迟: %.5f ms\n", allP99Latencies[i])
+				fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", allStartRSS[i])
+				fmt.Fprintf(logFile, "Peak RSS: %.5f MB\n", allPeakRSS[i])
+				fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", allStableRSS[i])
 				fmt.Fprintf(logFile, "\n")
 			}
 
 			fmt.Fprintf(logFile, "===== 5次测试平均值 =====\n")
-			fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", avgLatency)
-			fmt.Fprintf(logFile, "标准差: %.3f ms\n", stdDevLatency)
+			fmt.Fprintf(logFile, "平均延迟: %.5f ms\n", avgLatency)
+			fmt.Fprintf(logFile, "标准差: %.5f ms\n", stdDevLatency)
 			fmt.Fprintf(logFile, "变异系数: %.2f%%\n", coeffVarLatency)
 			fmt.Fprintf(logFile, "FPS: %.2f\n", fps)
-			fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", p50Latency)
-			fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", p90Latency)
-			fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", p99Latency)
-			fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", minLatency)
-			fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", maxLatency)
+			fmt.Fprintf(logFile, "P50延迟: %.5f ms\n", p50Latency)
+			fmt.Fprintf(logFile, "P90延迟: %.5f ms\n", p90Latency)
+			fmt.Fprintf(logFile, "P99延迟: %.5f ms\n", p99Latency)
+			fmt.Fprintf(logFile, "最小延迟: %.5f ms\n", minLatency)
+			fmt.Fprintf(logFile, "最大延迟: %.5f ms\n", maxLatency)
 			fmt.Fprintf(logFile, "\n===== 内存使用情况 =====\n")
-			fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", startRSS)
-			fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", peakRSS)
-			fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", stableRSS)
-			fmt.Fprintf(logFile, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
-			fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
+			fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", startRSS)
+			fmt.Fprintf(logFile, "Peak RSS: %.5f MB\n", peakRSS)
+			fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", stableRSS)
+			fmt.Fprintf(logFile, "RSS Drift: %.5f MB\n", stableRSS-startRSS)
+			fmt.Fprintf(logFile, "Go Heap: %.5f MB\n", float64(m.Alloc)/1024/1024)
 
 			logFile.Close()
 			fmt.Printf("详细日志已保存到: %s\n", logPath)
@@ -470,21 +457,21 @@ func main() {
 		} else {
 			// 写入结果
 			fmt.Fprintf(file, "===== 线程配置测试结果（5次运行平均值）: intra_op_num_threads=%d =====\n", numThreads)
-			fmt.Fprintf(file, "平均延迟: %.3f ms\n", avgLatency)
-			fmt.Fprintf(file, "标准差: %.3f ms\n", stdDevLatency)
+			fmt.Fprintf(file, "平均延迟: %.5f ms\n", avgLatency)
+			fmt.Fprintf(file, "标准差: %.5f ms\n", stdDevLatency)
 			fmt.Fprintf(file, "变异系数: %.2f%%\n", coeffVarLatency)
 			fmt.Fprintf(file, "FPS: %.2f\n", fps)
-			fmt.Fprintf(file, "P50延迟: %.3f ms\n", p50Latency)
-			fmt.Fprintf(file, "P90延迟: %.3f ms\n", p90Latency)
-			fmt.Fprintf(file, "P99延迟: %.3f ms\n", p99Latency)
-			fmt.Fprintf(file, "最小延迟: %.3f ms\n", minLatency)
-			fmt.Fprintf(file, "最大延迟: %.3f ms\n", maxLatency)
+			fmt.Fprintf(file, "P50延迟: %.5f ms\n", p50Latency)
+			fmt.Fprintf(file, "P90延迟: %.5f ms\n", p90Latency)
+			fmt.Fprintf(file, "P99延迟: %.5f ms\n", p99Latency)
+			fmt.Fprintf(file, "最小延迟: %.5f ms\n", minLatency)
+			fmt.Fprintf(file, "最大延迟: %.5f ms\n", maxLatency)
 			fmt.Fprintf(file, "\n===== 内存使用情况 =====\n")
-			fmt.Fprintf(file, "Start RSS: %.2f MB\n", startRSS)
-			fmt.Fprintf(file, "Peak RSS: %.2f MB\n", peakRSS)
-			fmt.Fprintf(file, "Stable RSS: %.2f MB\n", stableRSS)
-			fmt.Fprintf(file, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
-			fmt.Fprintf(file, "Go Heap: %.2f MB\n", float64(m.Alloc)/1024/1024)
+			fmt.Fprintf(file, "Start RSS: %.5f MB\n", startRSS)
+			fmt.Fprintf(file, "Peak RSS: %.5f MB\n", peakRSS)
+			fmt.Fprintf(file, "Stable RSS: %.5f MB\n", stableRSS)
+			fmt.Fprintf(file, "RSS Drift: %.5f MB\n", stableRSS-startRSS)
+			fmt.Fprintf(file, "Go Heap: %.5f MB\n", float64(m.Alloc)/1024/1024)
 			file.Close()
 			fmt.Printf("文件写入成功!\n")
 		}

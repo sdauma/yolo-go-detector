@@ -26,6 +26,10 @@ def run_baseline_test(model_path, num_threads):
     print(f"===== 实验编号 S-B{num_threads}: intra_op_num_threads={num_threads} =====")
     print("执行路径：Baseline InferenceSession（不启用 io_binding，不预分配输出）")
     
+    # 计算项目根路径
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    base_path = os.path.dirname(os.path.dirname(current_dir))
+    
     sess_options = ort.SessionOptions()
     sess_options.intra_op_num_threads = num_threads
     sess_options.inter_op_num_threads = 1
@@ -49,19 +53,24 @@ def run_baseline_test(model_path, num_threads):
     print(f"输入名称: {input_name}")
     print(f"输入形状: {input_shape}")
     
-    print("生成固定随机输入数据...")
-    np.random.seed(42)
-    input_data = np.random.randn(*input_shape).astype(np.float32)
+    print("从预生成的二进制文件加载输入数据...")
+    input_data_path = os.path.join(base_path, "test", "data", "input_data.bin")
+    try:
+        input_data = np.fromfile(input_data_path, dtype=np.float32).reshape(input_shape)
+        print(f"输入数据加载成功: {input_data_path}")
+    except Exception as e:
+        print(f"加载输入数据失败: {e}")
+        return None, None
     
     start_rss = get_process_rss()
-    print(f"Start RSS: {start_rss:.2f} MB")
+    print(f"Start RSS: {start_rss:.5f} MB")
     
     print("Warming up...")
     for i in range(10):
         outputs = sess.run(None, {input_name: input_data})
     
     warmup_rss = get_process_rss()
-    print(f"Warmup 后 RSS: {warmup_rss:.2f} MB")
+    print(f"Warmup 后 RSS: {warmup_rss:.5f} MB")
     
     print("开始基准测试...")
     latencies = []
@@ -72,13 +81,13 @@ def run_baseline_test(model_path, num_threads):
         latencies.append(elapsed)
     
     peak_rss = get_process_rss()
-    print(f"Peak RSS: {peak_rss:.2f} MB")
+    print(f"Peak RSS: {peak_rss:.5f} MB")
     
     metrics = calculate_metrics(latencies)
     
-    print(f"性能指标: avg={metrics['avg']:.2f} ms, p50={metrics['p50']:.2f} ms, "
-          f"p90={metrics['p90']:.2f} ms, p99={metrics['p99']:.2f} ms, "
-          f"min={metrics['min']:.2f} ms, max={metrics['max']:.2f} ms")
+    print(f"性能指标: avg={metrics['avg']:.5f} ms, p50={metrics['p50']:.5f} ms, "
+          f"p90={metrics['p90']:.5f} ms, p99={metrics['p99']:.5f} ms, "
+          f"min={metrics['min']:.5f} ms, max={metrics['max']:.5f} ms")
     
     engineering_metrics = {
         'tensor_allocation_count': 'N/A (baseline)',
@@ -90,7 +99,7 @@ def run_baseline_test(model_path, num_threads):
     print(f"工程指标: Tensor分配次数={engineering_metrics['tensor_allocation_count']}, "
           f"I/O Binding={engineering_metrics['io_binding_enabled']}, "
           f"Session创建次数={engineering_metrics['session_creation_count']}, "
-          f"峰值RSS={engineering_metrics['peak_rss']:.2f} MB")
+          f"峰值RSS={engineering_metrics['peak_rss']:.5f} MB")
     
     return metrics, engineering_metrics
 
@@ -147,9 +156,9 @@ def save_results(results, engineering_results):
         for num_threads in [1, 2, 4, 8]:
             if num_threads in results:
                 metrics = results[num_threads]
-                f.write(f"{num_threads}\t{metrics['avg']:.2f}\t{metrics['p50']:.2f}\t"
-                       f"{metrics['p90']:.2f}\t{metrics['p99']:.2f}\t"
-                       f"{metrics['min']:.2f}\t{metrics['max']:.2f}\n")
+                f.write(f"{num_threads}\t{metrics['avg']:.5f}\t{metrics['p50']:.5f}\t"
+                       f"{metrics['p90']:.5f}\t{metrics['p99']:.5f}\t"
+                       f"{metrics['min']:.5f}\t{metrics['max']:.5f}\n")
         
         f.write("\n工程指标：\n")
         f.write("线程配置\tTensor分配次数\tI/O Binding\tSession创建次数\t峰值RSS(MB)\n")
@@ -158,7 +167,7 @@ def save_results(results, engineering_results):
                 metrics = engineering_results[num_threads]
                 f.write(f"{num_threads}\t{metrics['tensor_allocation_count']}\t"
                        f"{metrics['io_binding_enabled']}\t{metrics['session_creation_count']}\t"
-                       f"{metrics['peak_rss']:.2f}\n")
+                       f"{metrics['peak_rss']:.5f}\n")
         
         f.write("\n不可比声明：\n")
         f.write("本节实验通过 AdvancedSession 与 I/O Binding 引入了工程级执行路径优化，\n")

@@ -10,10 +10,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	_ "image/gif"
 	"image/jpeg"
-	_ "image/jpeg"
-	_ "image/png"
 	"math"
 	"os"
 	"path/filepath"
@@ -26,11 +23,10 @@ import (
 
 	"math/rand/v2"
 
-	"github.com/flopp/go-findfont" // 添加字体查找库
+	"github.com/flopp/go-findfont"
 	"github.com/nfnt/resize"
-	ort "github.com/yalue/onnxruntime_go"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/inconsolata" // 用于回退的默认字体
+	"golang.org/x/image/font/inconsolata"
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
 )
@@ -39,65 +35,25 @@ import (
 var (
 	// 模型路径配置
 	modelPath = "./third_party/yolo11x.onnx" // YOLO模型文件路径
-	useCoreML = false                        // 是否使用CoreML加速（仅限iOS/macOS）
 
 	// 输入输出路径参数
-	inputImagePath = flag.String("img", "./assets/bus.jpg", "输入图像路径、目录、视频文件或.txt文件")
-	//inputImagePath  = flag.String("img", "../yolo/camera", "输入图像路径、目录、视频文件或.txt文件")
+	inputImagePath  = flag.String("img", "./assets/bus.jpg", "输入图像路径、目录、视频文件或.txt文件")
 	outputImagePath = flag.String("output", "./assets/bus_11x_false.jpg", "输出图像路径（仅在输入单个图像时有效）")
 
 	// 检测参数配置
 	confidenceThreshold = flag.Float64("conf", 0.25, "置信度阈值，过滤低置信度检测结果")
 	iouThreshold        = flag.Float64("iou", 0.7, "IOU阈值，用于非极大值抑制(NMS)")
 	modelInputSize      = flag.Int("size", 640, "模型输入尺寸，通常为640x640")
-	// rect	bool	True	如果启用，则对图像较短的一边进行最小填充，直到可以被步长整除，以提高推理速度。如果禁用，则在推理期间将图像填充为正方形。
-	useRectScaling = flag.Bool("rect", false, "是否使用矩形缩放（保持长宽比）")
-	// augment	bool	False	启用测试时增强 (TTA) 进行预测，可能会提高检测的鲁棒性，但会降低推理速度。
-	useAugment = flag.Bool("augment", false, "是否启用测试时增强 (TTA) 进行预测")
-	// batch	int	1	指定推理的批处理大小（仅在源为以下情况时有效： 一个目录、视频文件，或 .txt 文件)。
-	batchSize = flag.Int("batch", 1, "指定推理的批处理大小")
-
-	// 系统显示参数（用于监控系统等应用场景）
-	systemTextLocation = flag.String("text-location", "bottom-left", "系统文本位置 (top-left, bottom-left, top-right, bottom-right)")
-	systemTextContent  = flag.String("system-text", "重要设施危险场景监测系统", "系统显示文本")
-	systemTextEnabled  = flag.Bool("enable-system-text", true, "是否显示系统文本")
+	useRectScaling      = flag.Bool("rect", false, "是否使用矩形缩放（保持长宽比）")
+	useAugment          = flag.Bool("augment", false, "是否启用测试时增强 (TTA) 进行预测")
 
 	// 并发处理相关参数
 	workerCount = flag.Int("workers", max(1, runtime.NumCPU()/2), "并发工作协程数量")
 	queueSize   = flag.Int("queue-size", 100, "任务队列大小")
 	taskTimeout = flag.Duration("timeout", 30*time.Second, "单个任务超时时间")
-
-	// 中文字体变量
-	chineseFont font.Face
-
-	// ONNX Runtime 初始化状态控制（线程安全）
-	ortInitialized bool
-	ortInitMutex   sync.Mutex
-
-	//步长
-	stride = 32
-
-	// 内存池优化
-	boundingBoxPool = sync.Pool{
-		New: func() interface{} {
-			return &boundingBox{}
-		},
-	}
-
-	// 图像对象池，用于重用RGBA图像
-	// 使用map存储不同尺寸的图像池，提高内存使用效率
-	imagePools     map[imageSizeKey]*sync.Pool
-	imagePoolMutex sync.RWMutex
 )
 
-// imageSizeKey 用于标识不同尺寸的图像
-
-type imageSizeKey struct {
-	width  int
-	height int
-}
-
-// 定义支持的图像和视频扩展名常量，提升可维护性
+// 支持的图像和视频扩展名
 var (
 	supportedImageExts = map[string]bool{
 		".jpg":  true,
@@ -114,67 +70,19 @@ var (
 	}
 )
 
-// 缩放和填充信息结构体，用于坐标转换
-// 在图像预处理过程中记录缩放参数，以便将模型输出坐标转换回原图坐标
-type ScaleInfo struct {
-	ScaleX    float32 // X轴缩放比例
-	ScaleY    float32 // Y轴缩放比例
-	PadLeft   int     // 左侧填充像素数
-	PadTop    int     // 顶部填充像素数
-	NewWidth  int     // 缩放后宽度
-	NewHeight int     // 缩放后高度
+// 辅助函数
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
-// GetImageFromPool 从图像池中获取指定尺寸的图像
-func GetImageFromPool(width, height int) *image.RGBA {
-	key := imageSizeKey{width: width, height: height}
-
-	// 先尝试读取现有池
-	imagePoolMutex.RLock()
-	pool, exists := imagePools[key]
-	imagePoolMutex.RUnlock()
-
-	if !exists {
-		// 如果池不存在，创建一个新池
-		imagePoolMutex.Lock()
-		// 再次检查，防止并发创建
-		if pool, exists = imagePools[key]; !exists {
-			pool = &sync.Pool{
-				New: func() interface{} {
-					return image.NewRGBA(image.Rect(0, 0, width, height))
-				},
-			}
-			imagePools[key] = pool
-		}
-		imagePoolMutex.Unlock()
+func max(a, b int) int {
+	if a > b {
+		return a
 	}
-
-	// 从池中获取图像
-	img := pool.Get().(*image.RGBA)
-	// 清空图像数据
-	for i := range img.Pix {
-		img.Pix[i] = 0
-	}
-	return img
-}
-
-// PutImageToPool 将图像归还到对应的尺寸池中
-func PutImageToPool(img *image.RGBA) {
-	if img == nil {
-		return
-	}
-
-	bounds := img.Bounds()
-	key := imageSizeKey{width: bounds.Dx(), height: bounds.Dy()}
-
-	// 检查池是否存在
-	imagePoolMutex.RLock()
-	pool, exists := imagePools[key]
-	imagePoolMutex.RUnlock()
-
-	if exists {
-		pool.Put(img)
-	}
+	return b
 }
 
 // 主函数：程序入口点

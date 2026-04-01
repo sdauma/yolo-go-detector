@@ -18,7 +18,9 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -118,9 +120,11 @@ func runBenchmark() (*BenchmarkResult, error) {
 	defer opts.Destroy()
 
 	// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-	// 线程配置
-	opts.SetIntraOpNumThreads(4)
+	// 线程配置 - 12线程，与其他测试保持一致
+	opts.SetIntraOpNumThreads(12)
 	opts.SetInterOpNumThreads(1)
+
+	// 执行提供者配置 - 使用默认执行提供者（CPU）
 
 	// 日志配置（关闭所有日志，避免日志IO干扰性能）
 	opts.SetLogSeverityLevel(3)
@@ -139,12 +143,25 @@ func runBenchmark() (*BenchmarkResult, error) {
 	}
 	defer inputTensor.Destroy()
 
-	// 准备输入数据（使用固定种子生成随机数）
+	// 从预生成的二进制文件加载输入数据
+	inputDataPath := filepath.Join(basePath, "test", "data", "input_data.bin")
+	inputDataFile, err := os.ReadFile(inputDataPath)
+	if err != nil {
+		return nil, fmt.Errorf("读取输入数据文件失败: %v", err)
+	}
+
+	// 转换为 float32 并填充到张量
 	inputData := inputTensor.GetData()
-	seed := 12345
-	rng := &Rand{seed: uint64(seed)}
-	for i := range inputData {
-		inputData[i] = rng.Float32()
+	expectedSize := 1 * 3 * 640 * 640 * 4 // float32 = 4 bytes
+	if len(inputDataFile) != expectedSize {
+		return nil, fmt.Errorf("输入数据文件大小不匹配: 期望 %d 字节，实际 %d 字节", expectedSize, len(inputDataFile))
+	}
+
+	// 将字节数据转换为 float32 并复制到张量
+	for i := 0; i < len(inputData); i += 4 {
+		bits := binary.LittleEndian.Uint32(inputDataFile[i : i+4])
+		value := math.Float32frombits(bits)
+		inputData[i/4] = value
 	}
 
 	// 创建输出张量
@@ -166,14 +183,14 @@ func runBenchmark() (*BenchmarkResult, error) {
 	startRSS := getProcessRSS()
 
 	// Warmup
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
 		if err := session.Run(); err != nil {
 			return nil, fmt.Errorf("Warmup 运行失败: %v", err)
 		}
 	}
 
 	// Benchmark
-	runs := 100
+	runs := 200
 	var sum float64
 	times := make([]float64, runs)
 	peakRSS := startRSS
@@ -204,7 +221,7 @@ func runBenchmark() (*BenchmarkResult, error) {
 	avg_latency := sum / float64(runs)
 	min_latency := times[0]
 	max_latency := times[runs-1]
-	p50_latency := times[runs/2]
+	p50_latency := times[int(float64(runs)*0.5)]
 	p90_latency := times[int(float64(runs)*0.9)]
 	p99_latency := times[int(float64(runs)*0.99)]
 
@@ -228,7 +245,14 @@ func runBenchmark() (*BenchmarkResult, error) {
 }
 
 func main() {
-	fmt.Println("===== Go 基准测试（5次运行） =====")
+	// 强制设置 12 线程
+	runtime.GOMAXPROCS(12)
+
+	// 强制垃圾回收，避免影响测试
+	runtime.GC()
+
+	fmt.Println("===== Go 基准测试（10次运行） =====")
+	fmt.Printf("Go 线程数设置: %d\n", runtime.GOMAXPROCS(0))
 
 	// 获取当前工作目录
 	wd, err := os.Getwd()
@@ -240,11 +264,13 @@ func main() {
 	// 构建项目根路径
 	basePath := filepath.Dir(filepath.Dir(wd))
 
-	// 运行5次测试
-	numRuns := 5
+	// 运行10次测试
+	numRuns := 10
 	results := make([]*BenchmarkResult, numRuns)
 
 	for i := 0; i < numRuns; i++ {
+		// 每次测试前强制垃圾回收
+		runtime.GC()
 		fmt.Printf("\n===== 第 %d 次测试 =====\n", i+1)
 		result, err := runBenchmark()
 		if err != nil {
@@ -253,17 +279,18 @@ func main() {
 		}
 		results[i] = result
 
-		fmt.Printf("平均延迟: %.3f ms\n", result.AvgLatency)
-		fmt.Printf("P50延迟: %.3f ms\n", result.P50Latency)
-		fmt.Printf("P90延迟: %.3f ms\n", result.P90Latency)
-		fmt.Printf("P99延迟: %.3f ms\n", result.P99Latency)
-		fmt.Printf("最小延迟: %.3f ms\n", result.MinLatency)
-		fmt.Printf("最大延迟: %.3f ms\n", result.MaxLatency)
-		fmt.Printf("Start RSS: %.2f MB\n", result.StartRSS)
-		fmt.Printf("Peak RSS: %.2f MB\n", result.PeakRSS)
-		fmt.Printf("Stable RSS: %.2f MB\n", result.StableRSS)
-		fmt.Printf("RSS Drift: %.2f MB\n", result.StableRSS-result.StartRSS)
-		fmt.Printf("Go Heap: %.2f MB\n", result.GoHeap)
+		fmt.Printf("平均延迟: %.5f ms\n", result.AvgLatency)
+		fmt.Printf("P50延迟: %.5f ms\n", result.P50Latency)
+		fmt.Printf("P90延迟: %.5f ms\n", result.P90Latency)
+		fmt.Printf("P99延迟: %.5f ms\n", result.P99Latency)
+		fmt.Printf("最小延迟: %.5f ms\n", result.MinLatency)
+		fmt.Printf("最大延迟: %.5f ms\n", result.MaxLatency)
+		// 中间数据保留5位小数，符合核心期刊规范
+		fmt.Printf("Start RSS: %.5f MB\n", result.StartRSS)
+		fmt.Printf("Peak RSS: %.5f MB\n", result.PeakRSS)
+		fmt.Printf("Stable RSS: %.5f MB\n", result.StableRSS)
+		fmt.Printf("RSS Drift: %.5f MB\n", result.StableRSS-result.StartRSS)
+		fmt.Printf("Go Heap: %.5f MB\n", result.GoHeap)
 	}
 
 	// 计算平均值
@@ -295,18 +322,19 @@ func main() {
 	stableRSS /= float64(numRuns)
 	goHeap /= float64(numRuns)
 
-	fmt.Printf("\n===== 5次测试平均值 =====\n")
-	fmt.Printf("平均延迟: %.3f ms\n", avgLatency)
-	fmt.Printf("P50延迟: %.3f ms\n", p50Latency)
-	fmt.Printf("P90延迟: %.3f ms\n", p90Latency)
-	fmt.Printf("P99延迟: %.3f ms\n", p99Latency)
-	fmt.Printf("最小延迟: %.3f ms\n", minLatency)
-	fmt.Printf("最大延迟: %.3f ms\n", maxLatency)
-	fmt.Printf("Start RSS: %.2f MB\n", startRSS)
-	fmt.Printf("Peak RSS: %.2f MB\n", peakRSS)
-	fmt.Printf("Stable RSS: %.2f MB\n", stableRSS)
-	fmt.Printf("RSS Drift: %.2f MB\n", stableRSS-startRSS)
-	fmt.Printf("Go Heap: %.2f MB\n", goHeap)
+	fmt.Printf("\n===== 10 次测试平均值 =====\n")
+	fmt.Printf("平均延迟：%.5f ms\n", avgLatency)
+	fmt.Printf("P50 延迟：%.5f ms\n", p50Latency)
+	fmt.Printf("P90 延迟：%.5f ms\n", p90Latency)
+	fmt.Printf("P99 延迟：%.5f ms\n", p99Latency)
+	fmt.Printf("最小延迟：%.5f ms\n", minLatency)
+	fmt.Printf("最大延迟：%.5f ms\n", maxLatency)
+	// 中间数据保留5位小数，符合核心期刊规范
+	fmt.Printf("Start RSS: %.5f MB\n", startRSS)
+	fmt.Printf("Peak RSS: %.5f MB\n", peakRSS)
+	fmt.Printf("Stable RSS: %.5f MB\n", stableRSS)
+	fmt.Printf("RSS Drift: %.5f MB\n", stableRSS-startRSS)
+	fmt.Printf("Go Heap: %.5f MB\n", goHeap)
 
 	// 保存详细日志
 	logPath := filepath.Join(basePath, "results", "go_baseline_detailed_log.txt")
@@ -319,32 +347,34 @@ func main() {
 
 	for i, r := range results {
 		fmt.Fprintf(logFile, "===== 第 %d 次测试 =====\n", i+1)
-		fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", r.AvgLatency)
-		fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", r.P50Latency)
-		fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", r.P90Latency)
-		fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", r.P99Latency)
-		fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", r.MinLatency)
-		fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", r.MaxLatency)
-		fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", r.StartRSS)
-		fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", r.PeakRSS)
-		fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", r.StableRSS)
-		fmt.Fprintf(logFile, "RSS Drift: %.2f MB\n", r.StableRSS-r.StartRSS)
-		fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", r.GoHeap)
+		fmt.Fprintf(logFile, "平均延迟: %.5f ms\n", r.AvgLatency)
+		fmt.Fprintf(logFile, "P50延迟: %.5f ms\n", r.P50Latency)
+		fmt.Fprintf(logFile, "P90延迟: %.5f ms\n", r.P90Latency)
+		fmt.Fprintf(logFile, "P99延迟: %.5f ms\n", r.P99Latency)
+		fmt.Fprintf(logFile, "最小延迟: %.5f ms\n", r.MinLatency)
+		fmt.Fprintf(logFile, "最大延迟: %.5f ms\n", r.MaxLatency)
+		// 中间数据保留5位小数，符合核心期刊规范
+		fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", r.StartRSS)
+		fmt.Fprintf(logFile, "Peak RSS: %.5f MB\n", r.PeakRSS)
+		fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", r.StableRSS)
+		fmt.Fprintf(logFile, "RSS Drift: %.5f MB\n", r.StableRSS-r.StartRSS)
+		fmt.Fprintf(logFile, "Go Heap: %.5f MB\n", r.GoHeap)
 		fmt.Fprintf(logFile, "\n")
 	}
 
-	fmt.Fprintf(logFile, "===== 5次测试平均值 =====\n")
-	fmt.Fprintf(logFile, "平均延迟: %.3f ms\n", avgLatency)
-	fmt.Fprintf(logFile, "P50延迟: %.3f ms\n", p50Latency)
-	fmt.Fprintf(logFile, "P90延迟: %.3f ms\n", p90Latency)
-	fmt.Fprintf(logFile, "P99延迟: %.3f ms\n", p99Latency)
-	fmt.Fprintf(logFile, "最小延迟: %.3f ms\n", minLatency)
-	fmt.Fprintf(logFile, "最大延迟: %.3f ms\n", maxLatency)
-	fmt.Fprintf(logFile, "Start RSS: %.2f MB\n", startRSS)
-	fmt.Fprintf(logFile, "Peak RSS: %.2f MB\n", peakRSS)
-	fmt.Fprintf(logFile, "Stable RSS: %.2f MB\n", stableRSS)
-	fmt.Fprintf(logFile, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
-	fmt.Fprintf(logFile, "Go Heap: %.2f MB\n", goHeap)
+	fmt.Fprintf(logFile, "===== 10 次测试平均值 =====\n")
+	fmt.Fprintf(logFile, "平均延迟：%.5f ms\n", avgLatency)
+	fmt.Fprintf(logFile, "P50 延迟：%.5f ms\n", p50Latency)
+	fmt.Fprintf(logFile, "P90 延迟：%.5f ms\n", p90Latency)
+	fmt.Fprintf(logFile, "P99 延迟：%.5f ms\n", p99Latency)
+	fmt.Fprintf(logFile, "最小延迟：%.5f ms\n", minLatency)
+	fmt.Fprintf(logFile, "最大延迟：%.5f ms\n", maxLatency)
+	// 中间数据保留5位小数，符合核心期刊规范
+	fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", startRSS)
+	fmt.Fprintf(logFile, "Peak RSS: %.5f MB\n", peakRSS)
+	fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", stableRSS)
+	fmt.Fprintf(logFile, "RSS Drift: %.5f MB\n", stableRSS-startRSS)
+	fmt.Fprintf(logFile, "Go Heap: %.5f MB\n", goHeap)
 
 	fmt.Printf("\n详细日志已保存到: %s\n", logPath)
 
@@ -357,19 +387,20 @@ func main() {
 	}
 	defer resultFile.Close()
 
-	fmt.Fprintf(resultFile, "===== Go 基准测试结果（5次运行平均值） =====\n")
-	fmt.Fprintf(resultFile, "平均延迟: %.3f ms\n", avgLatency)
-	fmt.Fprintf(resultFile, "P50延迟: %.3f ms\n", p50Latency)
-	fmt.Fprintf(resultFile, "P90延迟: %.3f ms\n", p90Latency)
-	fmt.Fprintf(resultFile, "P99延迟: %.3f ms\n", p99Latency)
-	fmt.Fprintf(resultFile, "最小延迟: %.3f ms\n", minLatency)
-	fmt.Fprintf(resultFile, "最大延迟: %.3f ms\n", maxLatency)
-	fmt.Fprintf(resultFile, "\n===== 内存使用情况（5次运行平均值） =====\n")
-	fmt.Fprintf(resultFile, "Start RSS: %.2f MB\n", startRSS)
-	fmt.Fprintf(resultFile, "Peak RSS: %.2f MB\n", peakRSS)
-	fmt.Fprintf(resultFile, "Stable RSS: %.2f MB\n", stableRSS)
-	fmt.Fprintf(resultFile, "RSS Drift: %.2f MB\n", stableRSS-startRSS)
-	fmt.Fprintf(resultFile, "Go Heap: %.2f MB\n", goHeap)
+	fmt.Fprintf(resultFile, "===== Go 基准测试结果（10 次运行平均值） =====\n")
+	fmt.Fprintf(resultFile, "平均延迟：%.5f ms\n", avgLatency)
+	fmt.Fprintf(resultFile, "P50 延迟：%.5f ms\n", p50Latency)
+	fmt.Fprintf(resultFile, "P90 延迟：%.5f ms\n", p90Latency)
+	fmt.Fprintf(resultFile, "P99 延迟：%.5f ms\n", p99Latency)
+	fmt.Fprintf(resultFile, "最小延迟：%.5f ms\n", minLatency)
+	fmt.Fprintf(resultFile, "最大延迟：%.5f ms\n", maxLatency)
+	fmt.Fprintf(resultFile, "\n===== 内存使用情况（10 次运行平均值） =====\n")
+	// 中间数据保留5位小数，符合核心期刊规范
+	fmt.Fprintf(resultFile, "Start RSS: %.5f MB\n", startRSS)
+	fmt.Fprintf(resultFile, "Peak RSS: %.5f MB\n", peakRSS)
+	fmt.Fprintf(resultFile, "Stable RSS: %.5f MB\n", stableRSS)
+	fmt.Fprintf(resultFile, "RSS Drift: %.5f MB\n", stableRSS-startRSS)
+	fmt.Fprintf(resultFile, "Go Heap: %.5f MB\n", goHeap)
 
 	fmt.Printf("结果已保存到: %s\n", resultPath)
 
@@ -383,7 +414,7 @@ func main() {
 	defer latencyFile.Close()
 
 	for _, t := range results[numRuns-1].Times {
-		fmt.Fprintf(latencyFile, "%.3f\n", t)
+		fmt.Fprintf(latencyFile, "%.5f\n", t)
 	}
 
 	fmt.Printf("原始延迟数据已保存到: %s\n", latencyDataPath)

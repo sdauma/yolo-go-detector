@@ -50,8 +50,8 @@ try:
     sess_options = ort.SessionOptions()
     
     # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-    # 线程配置
-    sess_options.intra_op_num_threads = 4
+    # 线程配置 - 12线程，与其他测试保持一致
+    sess_options.intra_op_num_threads = 12
     sess_options.inter_op_num_threads = 1
     
     # 日志配置（关闭所有日志，避免日志IO干扰性能）
@@ -127,7 +127,7 @@ rss_samples.append({
     'elapsed': 0,
     'rss': initial_rss
 })
-print(f"初始 RSS: {initial_rss:.2f} MB")
+print(f"初始 RSS: {initial_rss:.5f} MB")
 
 # 推理计数器
 inference_count = 0
@@ -159,7 +159,7 @@ while time.time() < end_time:
     # 每分钟输出一次进度
     if inference_count % 60 == 0:
         remaining = end_time - time.time()
-        print(f"进度: {inference_count} 次推理, 已运行: {elapsed:.0f}秒, 剩余: {remaining:.0f}秒, 当前RSS: {current_rss:.2f} MB")
+        print(f"进度: {inference_count} 次推理, 已运行: {elapsed:.0f}秒, 剩余: {remaining:.0f}秒, 当前RSS: {current_rss:.5f} MB")
 
     # 等待1秒（确保采样间隔）
     time.sleep(sample_interval)
@@ -195,21 +195,21 @@ print(f"推理次数: {inference_count}")
 print(f"推理频率: {inference_count / total_duration:.2f} 次/秒")
 
 print(f"\n===== 推理性能统计 =====")
-print(f"平均推理时间: {avg_inference_time:.3f} ms")
-print(f"P50推理时间: {p50_inference_time:.3f} ms")
-print(f"P90推理时间: {p90_inference_time:.3f} ms")
-print(f"P99推理时间: {p99_inference_time:.3f} ms")
-print(f"最小推理时间: {min_inference_time:.3f} ms")
-print(f"最大推理时间: {max_inference_time:.3f} ms")
+print(f"平均推理时间: {avg_inference_time:.5f} ms")
+print(f"P50推理时间: {p50_inference_time:.5f} ms")
+print(f"P90推理时间: {p90_inference_time:.5f} ms")
+print(f"P99推理时间: {p99_inference_time:.5f} ms")
+print(f"最小推理时间: {min_inference_time:.5f} ms")
+print(f"最大推理时间: {max_inference_time:.5f} ms")
 
 print(f"\n===== 内存使用统计 =====")
-print(f"初始 RSS: {initial_rss:.2f} MB")
-print(f"最终 RSS: {final_rss:.2f} MB")
-print(f"平均 RSS: {avg_rss:.2f} MB")
-print(f"峰值 RSS: {peak_rss:.2f} MB")
-print(f"最小 RSS: {min_rss:.2f} MB")
-print(f"RSS Drift: {rss_drift:.2f} MB")
-print(f"RSS 波动范围: {rss_range:.2f} MB ({rss_range_percent:.2f}%)")
+print(f"初始 RSS: {initial_rss:.5f} MB")
+print(f"最终 RSS: {final_rss:.5f} MB")
+print(f"平均 RSS: {avg_rss:.5f} MB")
+print(f"峰值 RSS: {peak_rss:.5f} MB")
+print(f"最小 RSS: {min_rss:.5f} MB")
+print(f"RSS Drift: {rss_drift:.5f} MB")
+print(f"RSS 波动范围: {rss_range:.5f} MB ({rss_range_percent:.2f}%)")
 
 # 保存详细结果
 result_path = os.path.join(current_dir, '..', '..', 'results', 'python_long_stability_result.txt')
@@ -222,20 +222,20 @@ try:
         f.write(f"推理次数: {inference_count}\n")
         f.write(f"推理频率: {inference_count / total_duration:.2f} 次/秒\n")
         f.write(f"\n===== 推理性能统计 =====\n")
-        f.write(f"平均推理时间: {avg_inference_time:.3f} ms\n")
-        f.write(f"P50推理时间: {p50_inference_time:.3f} ms\n")
-        f.write(f"P90推理时间: {p90_inference_time:.3f} ms\n")
-        f.write(f"P99推理时间: {p99_inference_time:.3f} ms\n")
-        f.write(f"最小推理时间: {min_inference_time:.3f} ms\n")
-        f.write(f"最大推理时间: {max_inference_time:.3f} ms\n")
+        f.write(f"平均推理时间: {avg_inference_time:.5f} ms\n")
+        f.write(f"P50推理时间: {p50_inference_time:.5f} ms\n")
+        f.write(f"P90推理时间: {p90_inference_time:.5f} ms\n")
+        f.write(f"P99推理时间: {p99_inference_time:.5f} ms\n")
+        f.write(f"最小推理时间: {min_inference_time:.5f} ms\n")
+        f.write(f"最大推理时间: {max_inference_time:.5f} ms\n")
         f.write(f"\n===== 内存使用统计 =====\n")
-        f.write(f"初始 RSS: {initial_rss:.2f} MB\n")
-        f.write(f"最终 RSS: {final_rss:.2f} MB\n")
-        f.write(f"平均 RSS: {avg_rss:.2f} MB\n")
-        f.write(f"峰值 RSS: {peak_rss:.2f} MB\n")
-        f.write(f"最小 RSS: {min_rss:.2f} MB\n")
-        f.write(f"RSS Drift: {rss_drift:.2f} MB\n")
-        f.write(f"RSS 波动范围: {rss_range:.2f} MB ({rss_range_percent:.2f}%)\n")
+        f.write(f"初始 RSS: {initial_rss:.5f} MB\n")
+        f.write(f"最终 RSS: {final_rss:.5f} MB\n")
+        f.write(f"平均 RSS: {avg_rss:.5f} MB\n")
+        f.write(f"峰值 RSS: {peak_rss:.5f} MB\n")
+        f.write(f"最小 RSS: {min_rss:.5f} MB\n")
+        f.write(f"RSS Drift: {rss_drift:.5f} MB\n")
+        f.write(f"RSS 波动范围: {rss_range:.5f} MB ({rss_range_percent:.2f}%)\n")
     print("结果保存成功!")
 except Exception as e:
     print(f"保存结果时出错: {e}")
@@ -254,7 +254,7 @@ try:
             writer.writerow([
                 sample['timestamp'].strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
                 f"{sample['elapsed']:.3f}",
-                f"{sample['rss']:.2f}"
+                f"{sample['rss']:.5f}"
             ])
     print(f"RSS曲线数据已保存: {len(rss_samples)} 个采样点")
 except Exception as e:

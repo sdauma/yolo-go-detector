@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -35,8 +38,8 @@ func main() {
 	currentDir, _ := os.Getwd()
 	projectRoot := findProjectRoot(currentDir)
 
-	modelPath := projectRoot + "\\third_party\\yolo11x.onnx"
-	libraryPath := projectRoot + "\\third_party\\onnxruntime.dll"
+	modelPath := filepath.Join(projectRoot, "third_party", "yolo11x.onnx")
+	libraryPath := filepath.Join(projectRoot, "third_party", "onnxruntime.dll")
 
 	fmt.Printf("当前目录: %s\n", currentDir)
 	fmt.Printf("项目根路径: %s\n", projectRoot)
@@ -65,13 +68,13 @@ func main() {
 	for i, numThreads := range threadConfigs {
 		fmt.Printf("===== 实验编号 S-A%d: intra_op_num_threads=%d =====\n", i+1, numThreads)
 
-		perfMetrics, engMetrics := runAdvancedSessionTest(modelPath, numThreads)
+		perfMetrics, engMetrics := runAdvancedSessionTest(modelPath, numThreads, projectRoot)
 		results[numThreads] = perfMetrics
 		engineeringResults[numThreads] = engMetrics
 
-		fmt.Printf("性能指标: avg=%.2f ms, p50=%.2f ms, p90=%.2f ms, p99=%.2f ms, min=%.2f ms, max=%.2f ms\n",
+		fmt.Printf("性能指标: avg=%.5f ms, p50=%.5f ms, p90=%.5f ms, p99=%.5f ms, min=%.5f ms, max=%.5f ms\n",
 			perfMetrics.Avg, perfMetrics.P50, perfMetrics.P90, perfMetrics.P99, perfMetrics.Min, perfMetrics.Max)
-		fmt.Printf("工程指标: Tensor分配次数=%d, I/O Binding=%t, Session创建次数=%d, 峰值RSS=%.2f MB\n",
+		fmt.Printf("工程指标: Tensor分配次数=%d, I/O Binding=%t, Session创建次数=%d, 峰值RSS=%.5f MB\n",
 			engMetrics.TensorAllocationCount, engMetrics.IOBindingEnabled, engMetrics.SessionCreationCount, engMetrics.PeakRSS)
 		fmt.Println()
 	}
@@ -80,7 +83,7 @@ func main() {
 	fmt.Println("===== 补充实验完成 =====")
 }
 
-func runAdvancedSessionTest(modelPath string, numThreads int) (PerformanceMetrics, EngineeringMetrics) {
+func runAdvancedSessionTest(modelPath string, numThreads int, projectRoot string) (PerformanceMetrics, EngineeringMetrics) {
 	engMetrics := EngineeringMetrics{
 		TensorAllocationCount: 0,
 		IOBindingEnabled:      true,
@@ -105,6 +108,29 @@ func runAdvancedSessionTest(modelPath string, numThreads int) (PerformanceMetric
 	}
 	defer inputTensor.Destroy()
 
+	// 从预生成的二进制文件加载输入数据
+	inputDataPath := filepath.Join(projectRoot, "test", "data", "input_data.bin")
+	inputDataFile, err := os.ReadFile(inputDataPath)
+	if err != nil {
+		fmt.Printf("读取输入数据文件失败: %v\n", err)
+		return PerformanceMetrics{}, engMetrics
+	}
+
+	// 转换为 float32 并填充到张量
+	inputData := inputTensor.GetData()
+	expectedSize := 1 * 3 * 640 * 640 * 4 // float32 = 4 bytes
+	if len(inputDataFile) != expectedSize {
+		fmt.Printf("输入数据文件大小不匹配: 期望 %d 字节，实际 %d 字节\n", expectedSize, len(inputDataFile))
+		return PerformanceMetrics{}, engMetrics
+	}
+
+	// 将字节数据转换为 float32 并复制到张量
+	for i := 0; i < len(inputData); i += 4 {
+		bits := binary.LittleEndian.Uint32(inputDataFile[i : i+4])
+		value := math.Float32frombits(bits)
+		inputData[i/4] = value
+	}
+
 	outputShape := ort.NewShape(1, 84, 8400)
 	outputTensor, err := ort.NewEmptyTensor[float32](outputShape)
 	if err != nil {
@@ -117,7 +143,7 @@ func runAdvancedSessionTest(modelPath string, numThreads int) (PerformanceMetric
 
 	session, err := ort.NewAdvancedSession(modelPath,
 		[]string{"images"}, []string{"output0"},
-		[]ort.ArbitraryTensor{inputTensor}, []ort.ArbitraryTensor{outputTensor}, opts)
+		[]ort.Value{inputTensor}, []ort.Value{outputTensor}, opts)
 	if err != nil {
 		fmt.Printf("创建AdvancedSession失败: %v\n", err)
 		return PerformanceMetrics{}, engMetrics
@@ -128,7 +154,7 @@ func runAdvancedSessionTest(modelPath string, numThreads int) (PerformanceMetric
 	fmt.Printf("线程配置: intra_op_num_threads=%d, inter_op_num_threads=1\n", numThreads)
 
 	startRSS := getProcessRSS()
-	fmt.Printf("Start RSS: %.2f MB\n", startRSS)
+	fmt.Printf("Start RSS: %.5f MB\n", startRSS)
 
 	fmt.Println("Warming up...")
 	for i := 0; i < 10; i++ {
@@ -140,7 +166,7 @@ func runAdvancedSessionTest(modelPath string, numThreads int) (PerformanceMetric
 	}
 
 	warmupRSS := getProcessRSS()
-	fmt.Printf("Warmup 后 RSS: %.2f MB\n", warmupRSS)
+	fmt.Printf("Warmup 后 RSS: %.5f MB\n", warmupRSS)
 
 	fmt.Println("开始基准测试...")
 	latencies := make([]float64, 100)
@@ -151,12 +177,15 @@ func runAdvancedSessionTest(modelPath string, numThreads int) (PerformanceMetric
 			fmt.Printf("运行失败: %v\n", err)
 			return PerformanceMetrics{}, engMetrics
 		}
-		elapsed := time.Since(start).Milliseconds()
-		latencies[i] = float64(elapsed)
+		elapsed := time.Since(start).Seconds() * 1000.0
+		latencies[i] = elapsed
+		if i < 5 {
+			fmt.Printf("  推理 %d: %.5f ms\n", i+1, elapsed)
+		}
 	}
 
 	engMetrics.PeakRSS = getProcessRSS()
-	fmt.Printf("Peak RSS: %.2f MB\n", engMetrics.PeakRSS)
+	fmt.Printf("Peak RSS: %.5f MB\n", engMetrics.PeakRSS)
 
 	return calculateMetrics(latencies), engMetrics
 }
@@ -190,9 +219,9 @@ func calculateMetrics(latencies []float64) PerformanceMetrics {
 		}
 	}
 
-	p50 := sorted[len(sorted)*50/100]
-	p90 := sorted[len(sorted)*90/100]
-	p99 := sorted[len(sorted)*99/100]
+	p50 := sorted[int(float64(len(sorted))*0.5)]
+	p90 := sorted[int(float64(len(sorted))*0.9)]
+	p99 := sorted[int(float64(len(sorted))*0.99)]
 
 	return PerformanceMetrics{
 		Avg: avg,
@@ -222,19 +251,18 @@ func getProcessRSS() float64 {
 func findProjectRoot(currentDir string) string {
 	fmt.Printf("调试: 开始查找项目根目录，当前目录: %s\n", currentDir)
 	for {
-		testPath := currentDir + "\\third_party\\yolo11x.onnx"
+		testPath := filepath.Join(currentDir, "third_party", "yolo11x.onnx")
 		fmt.Printf("调试: 检查路径: %s\n", testPath)
 		if _, err := os.Stat(testPath); err == nil {
 			fmt.Printf("调试: 找到项目根目录: %s\n", currentDir)
 			return currentDir
 		}
 
-		lastSlashIndex := lastIndexOf(currentDir, "\\")
-		if lastSlashIndex <= 0 {
+		currentDir = filepath.Dir(currentDir)
+		if currentDir == "." || currentDir == "/" {
 			fmt.Printf("调试: 已到达根目录，返回: %s\n", currentDir)
 			return currentDir
 		}
-		currentDir = currentDir[:lastSlashIndex]
 	}
 }
 
@@ -245,19 +273,10 @@ func max(a, b int) int {
 	return b
 }
 
-func lastIndexOf(s, substr string) int {
-	for i := len(s) - len(substr); i >= 0; i-- {
-		if len(s) >= i+len(substr) && s[i:i+len(substr)] == substr {
-			return i
-		}
-	}
-	return -1
-}
-
 func saveResults(results map[int]PerformanceMetrics, engineeringResults map[int]EngineeringMetrics) {
 	currentDir, _ := os.Getwd()
 	projectRoot := findProjectRoot(currentDir)
-	resultPath := projectRoot + "\\results\\go_advanced_session_supplementary.txt"
+	resultPath := filepath.Join(projectRoot, "results", "go_advanced_session_supplementary.txt")
 
 	file, err := os.Create(resultPath)
 	if err != nil {
@@ -275,7 +294,7 @@ func saveResults(results map[int]PerformanceMetrics, engineeringResults map[int]
 	file.WriteString("线程配置\t平均延迟\tP50\tP90\tP99\t最小值\t最大值\n")
 	for _, numThreads := range []int{1, 2, 4, 8} {
 		metrics := results[numThreads]
-		file.WriteString(fmt.Sprintf("%d\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\n",
+		file.WriteString(fmt.Sprintf("%d\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\t%.5f\n",
 			numThreads, metrics.Avg, metrics.P50, metrics.P90, metrics.P99, metrics.Min, metrics.Max))
 	}
 
@@ -283,7 +302,7 @@ func saveResults(results map[int]PerformanceMetrics, engineeringResults map[int]
 	file.WriteString("线程配置\tTensor分配次数\tI/O Binding\tSession创建次数\t峰值RSS(MB)\n")
 	for _, numThreads := range []int{1, 2, 4, 8} {
 		metrics := engineeringResults[numThreads]
-		file.WriteString(fmt.Sprintf("%d\t%d\t%t\t%d\t%.2f\n",
+		file.WriteString(fmt.Sprintf("%d\t%d\t%t\t%d\t%.5f\n",
 			numThreads, metrics.TensorAllocationCount, metrics.IOBindingEnabled,
 			metrics.SessionCreationCount, metrics.PeakRSS))
 	}

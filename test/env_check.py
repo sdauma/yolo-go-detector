@@ -89,13 +89,6 @@ def get_python_info():
     except ImportError:
         info['numpy_version'] = 'Not installed'
     
-    # 检查opencv版本
-    try:
-        import cv2
-        info['opencv_version'] = cv2.__version__
-    except ImportError:
-        info['opencv_version'] = 'Not installed'
-    
     return info
 
 # 收集Go信息
@@ -106,6 +99,52 @@ def get_go_info():
         info['go_version'] = output.strip()
     except:
         info['go_version'] = 'Not installed'
+    
+    return info
+
+# 收集DLL信息
+def get_dll_info():
+    info = {}
+    dll_path = os.path.join(base_path, 'third_party', 'onnxruntime.dll')
+    
+    if os.path.exists(dll_path):
+        try:
+            if sys.platform == 'win32':
+                # Windows: 使用 PowerShell 获取 DLL 版本
+                cmd = f'(Get-Item "{dll_path}").VersionInfo.FileVersion'
+                output = subprocess.check_output(['powershell', '-Command', cmd], 
+                                           universal_newlines=True)
+                version = output.strip()
+                # 解析版本号: 1.23.20251021.3.a83fc4d -> 1.23.25
+                if '.' in version:
+                    parts = version.split('.')
+                    # 尝试多种格式解析
+                    if len(parts) >= 2:
+                        # 格式1: 1.23.20251021.3.a83fc4d
+                        # 格式2: 1.23.25
+                        # 格式3: 1.23.0
+                        try:
+                            # 尝试将第三部分转换为整数
+                            third_part = int(parts[2]) if len(parts) > 2 else 0
+                            if third_part > 10000:
+                                # 如果第三部分是日期（如20251021），则版本可能是1.23.25
+                                # 或者显示完整版本号
+                                info['dll_version'] = version
+                            else:
+                                # 否则使用前两部分
+                                info['dll_version'] = f"{parts[0]}.{parts[1]}"
+                        except:
+                            info['dll_version'] = version
+                    else:
+                        info['dll_version'] = version
+                else:
+                    info['dll_version'] = version
+            else:
+                info['dll_version'] = 'Not supported on this platform'
+        except:
+            info['dll_version'] = 'Unknown'
+    else:
+        info['dll_version'] = 'Not found'
     
     return info
 
@@ -131,6 +170,7 @@ def generate_env_check():
     system_info = get_system_info()
     python_info = get_python_info()
     go_info = get_go_info()
+    dll_info = get_dll_info()
     model_info = get_model_info()
     
     # 生成结果内容
@@ -149,11 +189,14 @@ def generate_env_check():
     content.append(f"Python可执行文件: {python_info['python_executable']}")
     content.append(f"ONNX Runtime版本: {python_info['onnxruntime_version']}")
     content.append(f"NumPy版本: {python_info['numpy_version']}")
-    content.append(f"OpenCV版本: {python_info['opencv_version']}")
     content.append("")
     
     content.append("===== Go环境检查结果 =====")
     content.append(f"Go版本: {go_info['go_version']}")
+    content.append("")
+    
+    content.append("===== DLL文件检查结果 =====")
+    content.append(f"ONNX Runtime DLL版本: {dll_info['dll_version']}")
     content.append("")
     
     content.append("===== 模型检查结果 =====")

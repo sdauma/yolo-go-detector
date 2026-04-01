@@ -63,8 +63,8 @@ for test_idx in range(1, test_count + 1):
         sess_options = ort.SessionOptions()
         
         # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-        # 线程配置
-        sess_options.intra_op_num_threads = 4
+        # 线程配置 - 12线程，与其他测试保持一致
+        sess_options.intra_op_num_threads = 12
         sess_options.inter_op_num_threads = 1
         
         # 日志配置（关闭所有日志，避免日志IO干扰性能）
@@ -105,7 +105,7 @@ for test_idx in range(1, test_count + 1):
     # 内存采样点 1：Session 创建后（Start RSS）
     process = psutil.Process(os.getpid())
     start_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
-    print(f"Start RSS: {start_rss:.2f} MB")
+    print(f"Start RSS: {start_rss:.5f} MB")
 
     # 测试冷启动时间
     print("\n===== 测试冷启动时间 =====")
@@ -113,11 +113,11 @@ for test_idx in range(1, test_count + 1):
     sess.run(None, {input_name: input_data})
     t1 = time.perf_counter()
     cold_start_time = (t1 - t0) * 1000.0
-    print(f"冷启动时间: {cold_start_time:.3f} ms")
+    print(f"冷启动时间: {cold_start_time:.5f} ms")
 
     # 内存采样点 2：冷启动后（Cold Start RSS）
     cold_start_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
-    print(f"Cold Start RSS: {cold_start_rss:.2f} MB")
+    print(f"Cold Start RSS: {cold_start_rss:.5f} MB")
 
     # 预热阶段
     print("\n===== 预热阶段 =====")
@@ -151,8 +151,8 @@ for test_idx in range(1, test_count + 1):
 
     # 内存采样点 3：稳定状态后（Stable RSS）
     stable_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
-    print(f"\nStable RSS: {stable_rss:.2f} MB")
-    print(f"Peak RSS: {peak_rss:.2f} MB")
+    print(f"\nStable RSS: {stable_rss:.5f} MB")
+    print(f"Peak RSS: {peak_rss:.5f} MB")
 
     # 计算稳定状态的统计数据
     avg_stable_latency = sum(stable_latencies) / len(stable_latencies)
@@ -174,7 +174,7 @@ for test_idx in range(1, test_count + 1):
     all_cold_start_rss.append(cold_start_rss)
     all_stable_rss.append(stable_rss)
 
-    print(f"测试 {test_idx} 完成: 冷启动时间={cold_start_time:.3f} ms, 稳定状态平均时间={avg_stable_latency:.3f} ms")
+    print(f"测试 {test_idx} 完成: 冷启动时间={cold_start_time:.5f} ms, 稳定状态平均时间={avg_stable_latency:.5f} ms")
 
 # 计算3次测试的平均值
 cold_start_time = np.mean(all_cold_start_times)
@@ -197,65 +197,65 @@ fps = 1000.0 / avg_stable_latency
 
 # 输出结果
 print("\n===== 冷启动与稳定状态对比结果 =====")
-print(f"冷启动时间: {cold_start_time:.3f} ms")
-print(f"稳定状态平均时间: {avg_stable_latency:.3f} ms")
+print(f"冷启动时间: {cold_start_time:.5f} ms")
+print(f"稳定状态平均时间: {avg_stable_latency:.5f} ms")
 print(f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍")
 print("\n===== 稳定状态详细统计 =====")
-print(f"平均延迟: {avg_stable_latency:.3f} ms")
-print(f"标准差: {std_dev_stable:.3f} ms")
+print(f"平均延迟: {avg_stable_latency:.5f} ms")
+print(f"标准差: {std_dev_stable:.5f} ms")
 print(f"变异系数: {coeff_var_stable:.2f}%")
 print(f"FPS: {fps:.2f}")
-print(f"最小延迟: {min_stable_latency:.3f} ms")
-print(f"最大延迟: {max_stable_latency:.3f} ms")
-print(f"P50延迟: {p50_stable_latency:.3f} ms")
-print(f"P90延迟: {p90_stable_latency:.3f} ms")
-print(f"P99延迟: {p99_stable_latency:.3f} ms")
+print(f"最小延迟: {min_stable_latency:.5f} ms")
+print(f"最大延迟: {max_stable_latency:.5f} ms")
+print(f"P50延迟: {p50_stable_latency:.5f} ms")
+print(f"P90延迟: {p90_stable_latency:.5f} ms")
+print(f"P99延迟: {p99_stable_latency:.5f} ms")
 print("\n===== 内存使用情况 =====")
-print(f"Start RSS: {start_rss:.2f} MB")
-print(f"Cold Start RSS: {cold_start_rss:.2f} MB")
-print(f"Stable RSS: {stable_rss:.2f} MB")
-print(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.2f} MB")
-print(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.2f} MB")
+print(f"Start RSS: {start_rss:.5f} MB")
+print(f"Cold Start RSS: {cold_start_rss:.5f} MB")
+print(f"Stable RSS: {stable_rss:.5f} MB")
+print(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB")
+print(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB")
 
 # 保存详细日志
 log_path = os.path.join(current_dir, '..', '..', 'results', 'python_cold_start_detailed_log.txt')
 with open(log_path, 'w', encoding='utf-8') as f:
     for i in range(len(all_cold_start_times)):
         f.write(f"===== 第 {i+1} 次测试 =====\n")
-        f.write(f"冷启动时间: {all_cold_start_times[i]:.3f} ms\n")
-        f.write(f"稳定状态平均时间: {all_avg_stable_latencies[i]:.3f} ms\n")
-        f.write(f"最小延迟: {all_min_stable_latencies[i]:.3f} ms\n")
-        f.write(f"最大延迟: {all_max_stable_latencies[i]:.3f} ms\n")
-        f.write(f"P50延迟: {all_p50_stable_latencies[i]:.3f} ms\n")
-        f.write(f"P90延迟: {all_p90_stable_latencies[i]:.3f} ms\n")
-        f.write(f"P99延迟: {all_p99_stable_latencies[i]:.3f} ms\n")
-        f.write(f"Start RSS: {all_start_rss[i]:.2f} MB\n")
-        f.write(f"Cold Start RSS: {all_cold_start_rss[i]:.2f} MB\n")
-        f.write(f"Stable RSS: {all_stable_rss[i]:.2f} MB\n")
+        f.write(f"冷启动时间: {all_cold_start_times[i]:.5f} ms\n")
+        f.write(f"稳定状态平均时间: {all_avg_stable_latencies[i]:.5f} ms\n")
+        f.write(f"最小延迟: {all_min_stable_latencies[i]:.5f} ms\n")
+        f.write(f"最大延迟: {all_max_stable_latencies[i]:.5f} ms\n")
+        f.write(f"P50延迟: {all_p50_stable_latencies[i]:.5f} ms\n")
+        f.write(f"P90延迟: {all_p90_stable_latencies[i]:.5f} ms\n")
+        f.write(f"P99延迟: {all_p99_stable_latencies[i]:.5f} ms\n")
+        f.write(f"Start RSS: {all_start_rss[i]:.5f} MB\n")
+        f.write(f"Cold Start RSS: {all_cold_start_rss[i]:.5f} MB\n")
+        f.write(f"Stable RSS: {all_stable_rss[i]:.5f} MB\n")
         f.write("\n")
 
     f.write("===== 5次测试平均值 =====\n")
-    f.write(f"冷启动时间: {cold_start_time:.3f} ms\n")
-    f.write(f"稳定状态平均时间: {avg_stable_latency:.3f} ms\n")
+    f.write(f"冷启动时间: {cold_start_time:.5f} ms\n")
+    f.write(f"稳定状态平均时间: {avg_stable_latency:.5f} ms\n")
     f.write(f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍\n\n")
 
     f.write("===== 稳定状态详细统计 =====\n")
-    f.write(f"平均延迟: {avg_stable_latency:.3f} ms\n")
-    f.write(f"标准差: {std_dev_stable:.3f} ms\n")
+    f.write(f"平均延迟: {avg_stable_latency:.5f} ms\n")
+    f.write(f"标准差: {std_dev_stable:.5f} ms\n")
     f.write(f"变异系数: {coeff_var_stable:.2f}%\n")
     f.write(f"FPS: {fps:.2f}\n")
-    f.write(f"最小延迟: {min_stable_latency:.3f} ms\n")
-    f.write(f"最大延迟: {max_stable_latency:.3f} ms\n")
-    f.write(f"P50延迟: {p50_stable_latency:.3f} ms\n")
-    f.write(f"P90延迟: {p90_stable_latency:.3f} ms\n")
-    f.write(f"P99延迟: {p99_stable_latency:.3f} ms\n")
+    f.write(f"最小延迟: {min_stable_latency:.5f} ms\n")
+    f.write(f"最大延迟: {max_stable_latency:.5f} ms\n")
+    f.write(f"P50延迟: {p50_stable_latency:.5f} ms\n")
+    f.write(f"P90延迟: {p90_stable_latency:.5f} ms\n")
+    f.write(f"P99延迟: {p99_stable_latency:.5f} ms\n")
 
     f.write("\n===== 内存使用情况 =====\n")
-    f.write(f"Start RSS: {start_rss:.2f} MB\n")
-    f.write(f"Cold Start RSS: {cold_start_rss:.2f} MB\n")
-    f.write(f"Stable RSS: {stable_rss:.2f} MB\n")
-    f.write(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.2f} MB\n")
-    f.write(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.2f} MB\n")
+    f.write(f"Start RSS: {start_rss:.5f} MB\n")
+    f.write(f"Cold Start RSS: {cold_start_rss:.5f} MB\n")
+    f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
+    f.write(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB\n")
+    f.write(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB\n")
 
 print(f"\n详细日志已保存到: {log_path}")
 
@@ -266,27 +266,27 @@ print(f"\n保存结果到: {result_path}")
 # 构建结果字符串
 result_lines = [
     "===== Python 冷启动时间对比分析测试结果（5次运行平均值） =====",
-    f"冷启动时间: {cold_start_time:.3f} ms",
-    f"稳定状态平均时间: {avg_stable_latency:.3f} ms",
+    f"冷启动时间: {cold_start_time:.5f} ms",
+    f"稳定状态平均时间: {avg_stable_latency:.5f} ms",
     f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍",
     "",
     "===== 稳定状态详细统计 =====",
-    f"平均延迟: {avg_stable_latency:.3f} ms",
-    f"标准差: {std_dev_stable:.3f} ms",
+    f"平均延迟: {avg_stable_latency:.5f} ms",
+    f"标准差: {std_dev_stable:.5f} ms",
     f"变异系数: {coeff_var_stable:.2f}%",
     f"FPS: {fps:.2f}",
-    f"最小延迟: {min_stable_latency:.3f} ms",
-    f"最大延迟: {max_stable_latency:.3f} ms",
-    f"P50延迟: {p50_stable_latency:.3f} ms",
-    f"P90延迟: {p90_stable_latency:.3f} ms",
-    f"P99延迟: {p99_stable_latency:.3f} ms",
+    f"最小延迟: {min_stable_latency:.5f} ms",
+    f"最大延迟: {max_stable_latency:.5f} ms",
+    f"P50延迟: {p50_stable_latency:.5f} ms",
+    f"P90延迟: {p90_stable_latency:.5f} ms",
+    f"P99延迟: {p99_stable_latency:.5f} ms",
     "",
     "===== 内存使用情况 =====",
-    f"Start RSS: {start_rss:.2f} MB",
-    f"Cold Start RSS: {cold_start_rss:.2f} MB",
-    f"Stable RSS: {stable_rss:.2f} MB",
-    f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.2f} MB",
-    f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.2f} MB"
+    f"Start RSS: {start_rss:.5f} MB",
+    f"Cold Start RSS: {cold_start_rss:.5f} MB",
+    f"Stable RSS: {stable_rss:.5f} MB",
+    f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB",
+    f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB"
 ]
 
 # 尝试多种编码方式

@@ -150,8 +150,8 @@ func main() {
 	defer opts.Destroy()
 
 	// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-	// 线程配置
-	opts.SetIntraOpNumThreads(4)
+	// 线程配置 - 12线程，与其他测试保持一致
+	opts.SetIntraOpNumThreads(12)
 	opts.SetInterOpNumThreads(1)
 
 	// 日志配置（关闭所有日志，避免日志IO干扰性能）
@@ -242,7 +242,7 @@ func main() {
 		Timestamp: startTime,
 		RSS:       initialRSS,
 	})
-	fmt.Printf("初始 RSS: %.2f MB\n", initialRSS)
+	fmt.Printf("初始 RSS: %.5f MB\n", initialRSS)
 
 	// 推理计数器
 	inferenceCount := 0
@@ -256,9 +256,13 @@ func main() {
 			fmt.Printf("运行失败: %v\n", err)
 			return
 		}
-		dt := time.Since(t0).Milliseconds()
-		inferenceTimes = append(inferenceTimes, float64(dt))
+		dt := time.Since(t0).Seconds() * 1000.0
+		inferenceTimes = append(inferenceTimes, dt)
 		inferenceCount++
+
+		if inferenceCount <= 5 {
+			fmt.Printf("  推理 %d: %.5f ms\n", inferenceCount, dt)
+		}
 
 		// 每10次推理采样一次内存，减少开销
 		if inferenceCount%10 == 0 {
@@ -302,7 +306,7 @@ func main() {
 	avgInferenceTime /= float64(len(inferenceTimes))
 	minInferenceTime := inferenceTimes[0]
 	maxInferenceTime := inferenceTimes[len(inferenceTimes)-1]
-	p50InferenceTime := inferenceTimes[len(inferenceTimes)/2]
+	p50InferenceTime := inferenceTimes[int(float64(len(inferenceTimes))*0.5)]
 	p90InferenceTime := inferenceTimes[int(float64(len(inferenceTimes))*0.9)]
 	p99InferenceTime := inferenceTimes[int(float64(len(inferenceTimes))*0.99)]
 
@@ -321,21 +325,21 @@ func main() {
 	fmt.Printf("推理频率: %.2f 次/秒\n", float64(inferenceCount)/totalDuration.Seconds())
 
 	fmt.Printf("\n===== 推理性能统计 =====\n")
-	fmt.Printf("平均推理时间: %.3f ms\n", avgInferenceTime)
-	fmt.Printf("P50推理时间: %.3f ms\n", p50InferenceTime)
-	fmt.Printf("P90推理时间: %.3f ms\n", p90InferenceTime)
-	fmt.Printf("P99推理时间: %.3f ms\n", p99InferenceTime)
-	fmt.Printf("最小推理时间: %.3f ms\n", minInferenceTime)
-	fmt.Printf("最大推理时间: %.3f ms\n", maxInferenceTime)
+	fmt.Printf("平均推理时间: %.5f ms\n", avgInferenceTime)
+	fmt.Printf("P50推理时间: %.5f ms\n", p50InferenceTime)
+	fmt.Printf("P90推理时间: %.5f ms\n", p90InferenceTime)
+	fmt.Printf("P99推理时间: %.5f ms\n", p99InferenceTime)
+	fmt.Printf("最小推理时间: %.5f ms\n", minInferenceTime)
+	fmt.Printf("最大推理时间: %.5f ms\n", maxInferenceTime)
 
 	fmt.Printf("\n===== 内存使用统计 =====\n")
-	fmt.Printf("初始 RSS: %.2f MB\n", initialRSS)
-	fmt.Printf("最终 RSS: %.2f MB\n", finalRSS)
-	fmt.Printf("平均 RSS: %.2f MB\n", avgRSS)
-	fmt.Printf("峰值 RSS: %.2f MB\n", peakRSS)
-	fmt.Printf("最小 RSS: %.2f MB\n", minRSS)
-	fmt.Printf("RSS Drift: %.2f MB\n", rssDrift)
-	fmt.Printf("RSS 波动范围: %.2f MB (%.2f%%)\n", peakRSS-minRSS, (peakRSS-minRSS)/avgRSS*100)
+	fmt.Printf("初始 RSS: %.5f MB\n", initialRSS)
+	fmt.Printf("最终 RSS: %.5f MB\n", finalRSS)
+	fmt.Printf("平均 RSS: %.5f MB\n", avgRSS)
+	fmt.Printf("峰值 RSS: %.5f MB\n", peakRSS)
+	fmt.Printf("最小 RSS: %.5f MB\n", minRSS)
+	fmt.Printf("RSS Drift: %.5f MB\n", rssDrift)
+	fmt.Printf("RSS 波动范围: %.5f MB (%.2f%%)\n", peakRSS-minRSS, (peakRSS-minRSS)/avgRSS*100)
 
 	// 保存详细结果
 	resultPath := filepath.Join(basePath, "results", "go_long_stability_result.txt")
@@ -351,22 +355,22 @@ func main() {
 	fmt.Fprintf(file, "===== Go 长时间稳定性测试结果 =====\n")
 	fmt.Fprintf(file, "测试时长: %v\n", totalDuration.Round(time.Second))
 	fmt.Fprintf(file, "推理次数: %d\n", inferenceCount)
-	fmt.Fprintf(file, "推理频率: %.2f 次/秒\n", float64(inferenceCount)/totalDuration.Seconds())
+	fmt.Fprintf(file, "推理频率: %.5f 次/秒\n", float64(inferenceCount)/totalDuration.Seconds())
 	fmt.Fprintf(file, "\n===== 推理性能统计 =====\n")
-	fmt.Fprintf(file, "平均推理时间: %.3f ms\n", avgInferenceTime)
-	fmt.Fprintf(file, "P50推理时间: %.3f ms\n", p50InferenceTime)
-	fmt.Fprintf(file, "P90推理时间: %.3f ms\n", p90InferenceTime)
-	fmt.Fprintf(file, "P99推理时间: %.3f ms\n", p99InferenceTime)
-	fmt.Fprintf(file, "最小推理时间: %.3f ms\n", minInferenceTime)
-	fmt.Fprintf(file, "最大推理时间: %.3f ms\n", maxInferenceTime)
+	fmt.Fprintf(file, "平均推理时间: %.5f ms\n", avgInferenceTime)
+	fmt.Fprintf(file, "P50推理时间: %.5f ms\n", p50InferenceTime)
+	fmt.Fprintf(file, "P90推理时间: %.5f ms\n", p90InferenceTime)
+	fmt.Fprintf(file, "P99推理时间: %.5f ms\n", p99InferenceTime)
+	fmt.Fprintf(file, "最小推理时间: %.5f ms\n", minInferenceTime)
+	fmt.Fprintf(file, "最大推理时间: %.5f ms\n", maxInferenceTime)
 	fmt.Fprintf(file, "\n===== 内存使用统计 =====\n")
-	fmt.Fprintf(file, "初始 RSS: %.2f MB\n", initialRSS)
-	fmt.Fprintf(file, "最终 RSS: %.2f MB\n", finalRSS)
-	fmt.Fprintf(file, "平均 RSS: %.2f MB\n", avgRSS)
-	fmt.Fprintf(file, "峰值 RSS: %.2f MB\n", peakRSS)
-	fmt.Fprintf(file, "最小 RSS: %.2f MB\n", minRSS)
-	fmt.Fprintf(file, "RSS Drift: %.2f MB\n", rssDrift)
-	fmt.Fprintf(file, "RSS 波动范围: %.2f MB (%.2f%%)\n", peakRSS-minRSS, (peakRSS-minRSS)/avgRSS*100)
+	fmt.Fprintf(file, "初始 RSS: %.5f MB\n", initialRSS)
+	fmt.Fprintf(file, "最终 RSS: %.5f MB\n", finalRSS)
+	fmt.Fprintf(file, "平均 RSS: %.5f MB\n", avgRSS)
+	fmt.Fprintf(file, "峰值 RSS: %.5f MB\n", peakRSS)
+	fmt.Fprintf(file, "最小 RSS: %.5f MB\n", minRSS)
+	fmt.Fprintf(file, "RSS Drift: %.5f MB\n", rssDrift)
+	fmt.Fprintf(file, "RSS 波动范围: %.5f MB (%.2f%%)\n", peakRSS-minRSS, (peakRSS-minRSS)/avgRSS*100)
 
 	// 保存RSS曲线数据
 	rssDataPath := filepath.Join(basePath, "results", "go_rss_curve.csv")
@@ -384,7 +388,7 @@ func main() {
 	// 写入RSS采样数据
 	for _, sample := range rssSamples {
 		elapsed := sample.Timestamp.Sub(startTime).Seconds()
-		fmt.Fprintf(rssFile, "%s,%.3f,%.2f\n",
+		fmt.Fprintf(rssFile, "%s,%.5f,%.5f\n",
 			sample.Timestamp.Format("2006-01-02 15:04:05.000"),
 			elapsed,
 			sample.RSS)

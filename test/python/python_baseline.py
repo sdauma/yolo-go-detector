@@ -57,8 +57,8 @@ def run_benchmark():
         sess_options = ort.SessionOptions()
         
         # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-        # 线程配置
-        sess_options.intra_op_num_threads = 4
+        # 线程配置 - 12线程，与其他测试保持一致
+        sess_options.intra_op_num_threads = 12
         sess_options.inter_op_num_threads = 1
         
         # 日志配置（关闭所有日志，避免日志IO干扰性能）
@@ -102,7 +102,7 @@ def run_benchmark():
 
     # Warmup
     print("Warming up...")
-    for _ in range(10):
+    for _ in range(20):
         sess.run(None, {input_name: input_data})
 
     # 内存采样点 2：Warmup 后
@@ -110,7 +110,7 @@ def run_benchmark():
 
     # Benchmark
     print("Running benchmark...")
-    runs = 100
+    runs = 200
     times = []
     peak_rss = start_rss
 
@@ -151,10 +151,10 @@ def run_benchmark():
     )
 
 def main():
-    print("===== Python 基准测试（5次运行） =====")
+    print("===== Python 基准测试（10次运行） =====")
 
-    # 运行5次测试
-    num_runs = 5
+    # 运行10次测试
+    num_runs = 10
     results = []
 
     for i in range(num_runs):
@@ -162,16 +162,16 @@ def main():
         result = run_benchmark()
         results.append(result)
 
-        print(f"平均延迟: {result.avg_latency:.3f} ms")
-        print(f"P50延迟: {result.p50_latency:.3f} ms")
-        print(f"P90延迟: {result.p90_latency:.3f} ms")
-        print(f"P99延迟: {result.p99_latency:.3f} ms")
-        print(f"最小延迟: {result.min_latency:.3f} ms")
-        print(f"最大延迟: {result.max_latency:.3f} ms")
-        print(f"Start RSS: {result.start_rss:.2f} MB")
-        print(f"Peak RSS: {result.peak_rss:.2f} MB")
-        print(f"Stable RSS: {result.stable_rss:.2f} MB")
-        print(f"RSS Drift: {result.stable_rss - result.start_rss:.2f} MB")
+        print(f"平均延迟: {result.avg_latency:.5f} ms")
+        print(f"P50延迟: {result.p50_latency:.5f} ms")
+        print(f"P90延迟: {result.p90_latency:.5f} ms")
+        print(f"P99延迟: {result.p99_latency:.5f} ms")
+        print(f"最小延迟: {result.min_latency:.5f} ms")
+        print(f"最大延迟: {result.max_latency:.5f} ms")
+        print(f"Start RSS: {result.start_rss:.5f} MB")
+        print(f"Peak RSS: {result.peak_rss:.5f} MB")
+        print(f"Stable RSS: {result.stable_rss:.5f} MB")
+        print(f"RSS Drift: {result.stable_rss - result.start_rss:.5f} MB")
 
     # 计算平均值
     avg_latency = sum(r.avg_latency for r in results) / num_runs
@@ -184,72 +184,73 @@ def main():
     peak_rss = sum(r.peak_rss for r in results) / num_runs
     stable_rss = sum(r.stable_rss for r in results) / num_runs
 
-    print(f"\n===== 5次测试平均值 =====")
-    print(f"平均延迟: {avg_latency:.3f} ms")
-    print(f"P50延迟: {p50_latency:.3f} ms")
-    print(f"P90延迟: {p90_latency:.3f} ms")
-    print(f"P99延迟: {p99_latency:.3f} ms")
-    print(f"最小延迟: {min_latency:.3f} ms")
-    print(f"最大延迟: {max_latency:.3f} ms")
-    print(f"Start RSS: {start_rss:.2f} MB")
-    print(f"Peak RSS: {peak_rss:.2f} MB")
-    print(f"Stable RSS: {stable_rss:.2f} MB")
-    print(f"RSS Drift: {stable_rss - start_rss:.2f} MB")
+    print(f"\n===== 10次测试平均值 =====")
+    print(f"平均延迟: {avg_latency:.5f} ms")
+    print(f"P50延迟: {p50_latency:.5f} ms")
+    print(f"P90延迟: {p90_latency:.5f} ms")
+    print(f"P99延迟: {p99_latency:.5f} ms")
+    print(f"最小延迟: {min_latency:.5f} ms")
+    print(f"最大延迟: {max_latency:.5f} ms")
+    print(f"Start RSS: {start_rss:.5f} MB")
+    print(f"Peak RSS: {peak_rss:.5f} MB")
+    print(f"Stable RSS: {stable_rss:.5f} MB")
+    print(f"RSS Drift: {stable_rss - start_rss:.5f} MB")
 
     # 保存详细日志
     log_path = os.path.join(base_path, "results", "python_baseline_detailed_log.txt")
     with open(log_path, 'w', encoding='utf-8') as f:
         for i, r in enumerate(results):
             f.write(f"===== 第 {i+1} 次测试 =====\n")
-            f.write(f"平均延迟: {r.avg_latency:.3f} ms\n")
-            f.write(f"P50延迟: {r.p50_latency:.3f} ms\n")
-            f.write(f"P90延迟: {r.p90_latency:.3f} ms\n")
-            f.write(f"P99延迟: {r.p99_latency:.3f} ms\n")
-            f.write(f"最小延迟: {r.min_latency:.3f} ms\n")
-            f.write(f"最大延迟: {r.max_latency:.3f} ms\n")
-            f.write(f"Start RSS: {r.start_rss:.2f} MB\n")
-            f.write(f"Peak RSS: {r.peak_rss:.2f} MB\n")
-            f.write(f"Stable RSS: {r.stable_rss:.2f} MB\n")
-            f.write(f"RSS Drift: {r.stable_rss - r.start_rss:.2f} MB\n")
+            f.write(f"平均延迟: {r.avg_latency:.5f} ms\n")
+            f.write(f"P50延迟: {r.p50_latency:.5f} ms\n")
+            f.write(f"P90延迟: {r.p90_latency:.5f} ms\n")
+            f.write(f"P99延迟: {r.p99_latency:.5f} ms\n")
+            f.write(f"最小延迟: {r.min_latency:.5f} ms\n")
+            f.write(f"最大延迟: {r.max_latency:.5f} ms\n")
+            f.write(f"Start RSS: {r.start_rss:.5f} MB\n")
+            f.write(f"Peak RSS: {r.peak_rss:.5f} MB\n")
+            f.write(f"Stable RSS: {r.stable_rss:.5f} MB\n")
+            f.write(f"RSS Drift: {r.stable_rss - r.start_rss:.5f} MB\n")
             f.write("\n")
 
-        f.write("===== 5次测试平均值 =====\n")
-        f.write(f"平均延迟: {avg_latency:.3f} ms\n")
-        f.write(f"P50延迟: {p50_latency:.3f} ms\n")
-        f.write(f"P90延迟: {p90_latency:.3f} ms\n")
-        f.write(f"P99延迟: {p99_latency:.3f} ms\n")
-        f.write(f"最小延迟: {min_latency:.3f} ms\n")
-        f.write(f"最大延迟: {max_latency:.3f} ms\n")
-        f.write(f"Start RSS: {start_rss:.2f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.2f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.2f} MB\n")
-        f.write(f"RSS Drift: {stable_rss - start_rss:.2f} MB\n")
+        f.write("===== 10次测试平均值 =====\n")
+        f.write(f"平均延迟: {avg_latency:.5f} ms\n")
+        f.write(f"P50延迟: {p50_latency:.5f} ms\n")
+        f.write(f"P90延迟: {p90_latency:.5f} ms\n")
+        f.write(f"P99延迟: {p99_latency:.5f} ms\n")
+        f.write(f"最小延迟: {min_latency:.5f} ms\n")
+        f.write(f"最大延迟: {max_latency:.5f} ms\n")
+        f.write(f"Start RSS: {start_rss:.5f} MB\n")
+        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
+        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
+        f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
 
     print(f"\n详细日志已保存到: {log_path}")
 
     # 保存平均值结果
     result_path = os.path.join(base_path, "results", "python_baseline_result.txt")
     with open(result_path, 'w', encoding='utf-8') as f:
-        f.write("===== Python 基准测试结果（5次运行平均值） =====\n")
-        f.write(f"平均延迟: {avg_latency:.3f} ms\n")
-        f.write(f"P50延迟: {p50_latency:.3f} ms\n")
-        f.write(f"P90延迟: {p90_latency:.3f} ms\n")
-        f.write(f"P99延迟: {p99_latency:.3f} ms\n")
-        f.write(f"最小延迟: {min_latency:.3f} ms\n")
-        f.write(f"最大延迟: {max_latency:.3f} ms\n")
-        f.write("\n===== 内存使用情况（5次运行平均值） =====\n")
-        f.write(f"Start RSS: {start_rss:.2f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.2f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.2f} MB\n")
-        f.write(f"RSS Drift: {stable_rss - start_rss:.2f} MB\n")
+        f.write("===== Python 基准测试结果（10 次运行平均值） =====\n")
+        f.write(f"平均延迟：{avg_latency:.5f} ms\n")
+        f.write(f"P50 延迟：{p50_latency:.5f} ms\n")
+        f.write(f"P90 延迟：{p90_latency:.5f} ms\n")
+        f.write(f"P99 延迟：{p99_latency:.5f} ms\n")
+        f.write(f"最小延迟：{min_latency:.5f} ms\n")
+        f.write(f"最大延迟：{max_latency:.5f} ms\n")
+        f.write("\n===== 内存使用情况（10 次运行平均值） =====\n")
+        f.write(f"Start RSS: {start_rss:.5f} MB\n")
+        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
+        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
+        f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
 
     print(f"结果已保存到: {result_path}")
 
     # 保存最后一次测试的原始延迟数据（用于生成箱线图）
+    # 中间数据保留5位小数，符合核心期刊规范
     latency_data_path = os.path.join(base_path, "results", "python_baseline_latency_data.txt")
     with open(latency_data_path, 'w', encoding='utf-8') as f:
         for t in results[num_runs-1].times:
-            f.write(f"{t:.3f}\n")
+            f.write(f"{t:.5f}\n")
 
     print(f"原始延迟数据已保存到: {latency_data_path}")
     print("测试完成!")

@@ -1,0 +1,1196 @@
+[
+  {
+    "timestamp": "2026-03-10 09:50:43",
+    "cpu_percent": 494.21830823535885,
+    "memory_percent": 7.098641,
+    "rss_mb": 1152.109375
+  },
+  {
+    "timestamp": "2026-03-10 09:50:43",
+    "cpu_percent": 494.0449249095386,
+    "memory_percent": 14.664934,
+    "rss_mb": 2380.3203125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:44",
+    "cpu_percent": 494.8745730468617,
+    "memory_percent": 15.529702,
+    "rss_mb": 2520.67578125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:44",
+    "cpu_percent": 496.12157939806895,
+    "memory_percent": 18.841227,
+    "rss_mb": 3058.1953125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:45",
+    "cpu_percent": 496.8529009837118,
+    "memory_percent": 21.457983,
+    "rss_mb": 3482.95703125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:45",
+    "cpu_percent": 497.4328152492064,
+    "memory_percent": 23.525192,
+    "rss_mb": 3818.44921875
+  },
+  {
+    "timestamp": "2026-03-10 09:50:46",
+    "cpu_percent": 498.90897502004697,
+    "memory_percent": 26.117764,
+    "rss_mb": 4239.19921875
+  },
+  {
+    "timestamp": "2026-03-10 09:50:46",
+    "cpu_percent": 501.5053128232023,
+    "memory_percent": 19.225874,
+    "rss_mb": 3120.61328125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:47",
+    "cpu_percent": 504.67351488337,
+    "memory_percent": 18.57816,
+    "rss_mb": 3015.48046875
+  },
+  {
+    "timestamp": "2026-03-10 09:50:48",
+    "cpu_percent": 507.70229972737155,
+    "memory_percent": 18.859394,
+    "rss_mb": 3061.12890625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:48",
+    "cpu_percent": 510.7288356781056,
+    "memory_percent": 21.128952,
+    "rss_mb": 3429.5078125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:48",
+    "cpu_percent": 512.320660354843,
+    "memory_percent": 21.486622,
+    "rss_mb": 3487.5625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:49",
+    "cpu_percent": 515.1003862780512,
+    "memory_percent": 21.681269,
+    "rss_mb": 3519.15625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:50",
+    "cpu_percent": 518.9017629977524,
+    "memory_percent": 21.982674,
+    "rss_mb": 3568.078125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:50",
+    "cpu_percent": 520.3727108213424,
+    "memory_percent": 22.18483,
+    "rss_mb": 3600.890625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:50",
+    "cpu_percent": 522.9581290872484,
+    "memory_percent": 22.386984,
+    "rss_mb": 3633.703125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:51",
+    "cpu_percent": 525.5745816493633,
+    "memory_percent": 22.762415,
+    "rss_mb": 3694.640625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:51",
+    "cpu_percent": 528.1715945539961,
+    "memory_percent": 23.016747,
+    "rss_mb": 3735.921875
+  },
+  {
+    "timestamp": "2026-03-10 09:50:52",
+    "cpu_percent": 530.7699515977425,
+    "memory_percent": 23.321112,
+    "rss_mb": 3785.32421875
+  },
+  {
+    "timestamp": "2026-03-10 09:50:52",
+    "cpu_percent": 533.3388217313282,
+    "memory_percent": 23.350351,
+    "rss_mb": 3790.0703125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:53",
+    "cpu_percent": 535.8988595497402,
+    "memory_percent": 23.468685,
+    "rss_mb": 3809.27734375
+  },
+  {
+    "timestamp": "2026-03-10 09:50:53",
+    "cpu_percent": 538.4065198061359,
+    "memory_percent": 23.534819,
+    "rss_mb": 3820.01171875
+  },
+  {
+    "timestamp": "2026-03-10 09:50:54",
+    "cpu_percent": 540.9595561060592,
+    "memory_percent": 23.626316,
+    "rss_mb": 3834.86328125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:54",
+    "cpu_percent": 543.4611608231575,
+    "memory_percent": 23.800028,
+    "rss_mb": 3863.05859375
+  },
+  {
+    "timestamp": "2026-03-10 09:50:55",
+    "cpu_percent": 545.9565654256749,
+    "memory_percent": 23.992123,
+    "rss_mb": 3894.23828125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:55",
+    "cpu_percent": 548.3953273950793,
+    "memory_percent": 24.87583,
+    "rss_mb": 4037.67578125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:56",
+    "cpu_percent": 550.8614432536278,
+    "memory_percent": 25.05558,
+    "rss_mb": 4066.8515625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:56",
+    "cpu_percent": 553.1402011220205,
+    "memory_percent": 25.390318,
+    "rss_mb": 4121.18359375
+  },
+  {
+    "timestamp": "2026-03-10 09:50:57",
+    "cpu_percent": 555.6295988614252,
+    "memory_percent": 25.585276,
+    "rss_mb": 4152.828125
+  },
+  {
+    "timestamp": "2026-03-10 09:50:57",
+    "cpu_percent": 557.9279577551322,
+    "memory_percent": 26.546574,
+    "rss_mb": 4308.859375
+  },
+  {
+    "timestamp": "2026-03-10 09:50:58",
+    "cpu_percent": 560.3028374963632,
+    "memory_percent": 26.975529,
+    "rss_mb": 4378.484375
+  },
+  {
+    "timestamp": "2026-03-10 09:50:58",
+    "cpu_percent": 562.6540168912301,
+    "memory_percent": 27.40227,
+    "rss_mb": 4447.75
+  },
+  {
+    "timestamp": "2026-03-10 09:50:59",
+    "cpu_percent": 565.0077353937809,
+    "memory_percent": 28.276976,
+    "rss_mb": 4589.7265625
+  },
+  {
+    "timestamp": "2026-03-10 09:50:59",
+    "cpu_percent": 567.3674889071339,
+    "memory_percent": 26.0749,
+    "rss_mb": 4232.30078125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:00",
+    "cpu_percent": 569.608285558781,
+    "memory_percent": 26.30637,
+    "rss_mb": 4269.87109375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:00",
+    "cpu_percent": 571.8987379724103,
+    "memory_percent": 26.888842,
+    "rss_mb": 4364.4140625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:01",
+    "cpu_percent": 574.1808405426635,
+    "memory_percent": 27.621704,
+    "rss_mb": 4483.3671875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:01",
+    "cpu_percent": 576.3906925440235,
+    "memory_percent": 27.767326,
+    "rss_mb": 4507.0078125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:02",
+    "cpu_percent": 578.71335101366,
+    "memory_percent": 25.418114,
+    "rss_mb": 4125.6953125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:02",
+    "cpu_percent": 580.8512355976761,
+    "memory_percent": 25.71687,
+    "rss_mb": 4174.1875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:03",
+    "cpu_percent": 583.06909028397,
+    "memory_percent": 24.487764,
+    "rss_mb": 3974.6875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:03",
+    "cpu_percent": 585.2486751131704,
+    "memory_percent": 23.487022,
+    "rss_mb": 3812.25390625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:04",
+    "cpu_percent": 587.2014038730214,
+    "memory_percent": 16.336617,
+    "rss_mb": 2651.6171875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:04",
+    "cpu_percent": 589.1522312922568,
+    "memory_percent": 12.290113,
+    "rss_mb": 1994.91015625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:05",
+    "cpu_percent": 591.280756987545,
+    "memory_percent": 15.969174,
+    "rss_mb": 2592.0078125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:05",
+    "cpu_percent": 593.349048023051,
+    "memory_percent": 18.534456,
+    "rss_mb": 3008.38671875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:06",
+    "cpu_percent": 595.4870190677484,
+    "memory_percent": 19.560635,
+    "rss_mb": 3175.01953125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:06",
+    "cpu_percent": 597.5945532911113,
+    "memory_percent": 21.893074,
+    "rss_mb": 3553.5390625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:07",
+    "cpu_percent": 599.7210456901554,
+    "memory_percent": 22.554533,
+    "rss_mb": 3660.8984375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:07",
+    "cpu_percent": 601.6042338876558,
+    "memory_percent": 22.970396,
+    "rss_mb": 3728.3984375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:08",
+    "cpu_percent": 603.3003523461039,
+    "memory_percent": 22.850378,
+    "rss_mb": 3708.91796875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:08",
+    "cpu_percent": 605.0417089127467,
+    "memory_percent": 19.596277,
+    "rss_mb": 3180.734375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:09",
+    "cpu_percent": 607.0711043756442,
+    "memory_percent": 22.135902,
+    "rss_mb": 3592.94921875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:10",
+    "cpu_percent": 609.1418533019555,
+    "memory_percent": 22.30961,
+    "rss_mb": 3621.0625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:10",
+    "cpu_percent": 611.2418279923106,
+    "memory_percent": 20.493196,
+    "rss_mb": 3326.31640625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:11",
+    "cpu_percent": 613.1005390194656,
+    "memory_percent": 21.051966,
+    "rss_mb": 3417.01953125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:11",
+    "cpu_percent": 614.6650959018814,
+    "memory_percent": 20.800785,
+    "rss_mb": 3376.2421875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:11",
+    "cpu_percent": 616.6416533420638,
+    "memory_percent": 21.822779,
+    "rss_mb": 3542.125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:12",
+    "cpu_percent": 618.5838245574487,
+    "memory_percent": 22.4703,
+    "rss_mb": 3647.2265625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:12",
+    "cpu_percent": 620.5223969055708,
+    "memory_percent": 23.219118,
+    "rss_mb": 3768.76953125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:13",
+    "cpu_percent": 622.4490951073741,
+    "memory_percent": 24.045332,
+    "rss_mb": 3902.875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:13",
+    "cpu_percent": 624.3619767412787,
+    "memory_percent": 24.601645,
+    "rss_mb": 3993.04296875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:14",
+    "cpu_percent": 626.2234690062234,
+    "memory_percent": 24.79225,
+    "rss_mb": 4024.109375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:14",
+    "cpu_percent": 628.1215190713259,
+    "memory_percent": 23.649685,
+    "rss_mb": 3838.65625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:15",
+    "cpu_percent": 630.0180790556868,
+    "memory_percent": 24.450102,
+    "rss_mb": 3968.57421875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:15",
+    "cpu_percent": 631.8703733014465,
+    "memory_percent": 24.956621,
+    "rss_mb": 4050.7890625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:16",
+    "cpu_percent": 633.7220539399401,
+    "memory_percent": 25.143904,
+    "rss_mb": 4081.1875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:16",
+    "cpu_percent": 635.572159183465,
+    "memory_percent": 25.290249,
+    "rss_mb": 4104.94140625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:17",
+    "cpu_percent": 637.3992683441172,
+    "memory_percent": 25.468626,
+    "rss_mb": 4133.89453125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:17",
+    "cpu_percent": 639.1121481996529,
+    "memory_percent": 25.468819,
+    "rss_mb": 4133.92578125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:18",
+    "cpu_percent": 640.7545030576605,
+    "memory_percent": 25.913298,
+    "rss_mb": 4206.0703125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:18",
+    "cpu_percent": 642.4975589996997,
+    "memory_percent": 23.941608,
+    "rss_mb": 3886.0390625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:19",
+    "cpu_percent": 644.1197716495064,
+    "memory_percent": 24.384932,
+    "rss_mb": 3957.99609375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:19",
+    "cpu_percent": 645.7989814107237,
+    "memory_percent": 24.391958,
+    "rss_mb": 3959.13671875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:20",
+    "cpu_percent": 647.4500408039604,
+    "memory_percent": 24.569181,
+    "rss_mb": 3987.90234375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:20",
+    "cpu_percent": 649.1784675724749,
+    "memory_percent": 24.79273,
+    "rss_mb": 4024.1875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:21",
+    "cpu_percent": 650.8252722787782,
+    "memory_percent": 22.20697,
+    "rss_mb": 3604.484375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:21",
+    "cpu_percent": 652.5725221147454,
+    "memory_percent": 23.451477,
+    "rss_mb": 3806.484375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:22",
+    "cpu_percent": 654.8552552606548,
+    "memory_percent": 25.357803,
+    "rss_mb": 4115.90625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:22",
+    "cpu_percent": 655.9854330892415,
+    "memory_percent": 25.76955,
+    "rss_mb": 4182.73828125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:23",
+    "cpu_percent": 658.0675490924524,
+    "memory_percent": 27.064188,
+    "rss_mb": 4392.8828125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:23",
+    "cpu_percent": 659.323321782256,
+    "memory_percent": 27.772068,
+    "rss_mb": 4507.7734375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:24",
+    "cpu_percent": 661.0160443003596,
+    "memory_percent": 27.91454,
+    "rss_mb": 4530.8984375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:24",
+    "cpu_percent": 662.6693486292086,
+    "memory_percent": 26.366293,
+    "rss_mb": 4279.59765625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:25",
+    "cpu_percent": 664.4987411908435,
+    "memory_percent": 24.228117,
+    "rss_mb": 3932.54296875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:25",
+    "cpu_percent": 665.9171828329175,
+    "memory_percent": 22.840487,
+    "rss_mb": 3707.33203125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:26",
+    "cpu_percent": 667.5501410866234,
+    "memory_percent": 20.021404,
+    "rss_mb": 3249.73828125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:26",
+    "cpu_percent": 669.153891777774,
+    "memory_percent": 21.161537,
+    "rss_mb": 3434.70703125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:27",
+    "cpu_percent": 670.7865652647207,
+    "memory_percent": 22.981684,
+    "rss_mb": 3730.23046875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:27",
+    "cpu_percent": 672.3606118806166,
+    "memory_percent": 21.722664,
+    "rss_mb": 3525.87890625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:28",
+    "cpu_percent": 673.9439927169998,
+    "memory_percent": 21.150227,
+    "rss_mb": 3432.9609375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:28",
+    "cpu_percent": 675.6027341053774,
+    "memory_percent": 21.530905,
+    "rss_mb": 3494.75
+  },
+  {
+    "timestamp": "2026-03-10 09:51:29",
+    "cpu_percent": 677.1027203052436,
+    "memory_percent": 19.53794,
+    "rss_mb": 3171.265625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:29",
+    "cpu_percent": 678.6761795723888,
+    "memory_percent": 19.595217,
+    "rss_mb": 3180.5625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:30",
+    "cpu_percent": 680.1951322261085,
+    "memory_percent": 22.152918,
+    "rss_mb": 3595.59765625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:30",
+    "cpu_percent": 681.9217051642918,
+    "memory_percent": 20.779537,
+    "rss_mb": 3372.79296875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:31",
+    "cpu_percent": 683.1027844984404,
+    "memory_percent": 21.070086,
+    "rss_mb": 3419.953125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:31",
+    "cpu_percent": 684.5904052792869,
+    "memory_percent": 20.280428,
+    "rss_mb": 3291.78125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:32",
+    "cpu_percent": 686.1334721788934,
+    "memory_percent": 22.194382,
+    "rss_mb": 3602.44140625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:32",
+    "cpu_percent": 687.1550751871991,
+    "memory_percent": 23.092627,
+    "rss_mb": 3748.23828125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:33",
+    "cpu_percent": 688.5042078617677,
+    "memory_percent": 23.85533,
+    "rss_mb": 3872.09765625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:33",
+    "cpu_percent": 689.915495148727,
+    "memory_percent": 20.78175,
+    "rss_mb": 3373.15234375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:34",
+    "cpu_percent": 691.3918046538566,
+    "memory_percent": 21.311228,
+    "rss_mb": 3459.09375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:34",
+    "cpu_percent": 692.8784661943209,
+    "memory_percent": 23.162033,
+    "rss_mb": 3759.40234375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:35",
+    "cpu_percent": 694.3390656771925,
+    "memory_percent": 22.909122,
+    "rss_mb": 3718.453125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:35",
+    "cpu_percent": 695.7456622472033,
+    "memory_percent": 23.314686,
+    "rss_mb": 3784.28515625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:36",
+    "cpu_percent": 697.1583499965342,
+    "memory_percent": 22.366117,
+    "rss_mb": 3630.31640625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:36",
+    "cpu_percent": 698.5932058073477,
+    "memory_percent": 22.266365,
+    "rss_mb": 3614.125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:37",
+    "cpu_percent": 700.222030386211,
+    "memory_percent": 22.793943,
+    "rss_mb": 3699.7578125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:37",
+    "cpu_percent": 701.4283193069152,
+    "memory_percent": 24.068027,
+    "rss_mb": 3906.55859375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:38",
+    "cpu_percent": 702.8394255736345,
+    "memory_percent": 24.389334,
+    "rss_mb": 3958.7109375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:39",
+    "cpu_percent": 704.5964836246155,
+    "memory_percent": 24.981264,
+    "rss_mb": 4054.7890625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:39",
+    "cpu_percent": 705.6336897136053,
+    "memory_percent": 24.859682,
+    "rss_mb": 4035.0546875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:39",
+    "cpu_percent": 706.9410747349672,
+    "memory_percent": 24.762262,
+    "rss_mb": 4019.2421875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:40",
+    "cpu_percent": 708.7499469663729,
+    "memory_percent": 24.65666,
+    "rss_mb": 4002.1015625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:40",
+    "cpu_percent": 709.6948656457488,
+    "memory_percent": 24.98509,
+    "rss_mb": 4055.41015625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:41",
+    "cpu_percent": 711.0255520279917,
+    "memory_percent": 23.04185,
+    "rss_mb": 3739.99609375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:41",
+    "cpu_percent": 712.3741900067262,
+    "memory_percent": 23.387291,
+    "rss_mb": 3796.06640625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:42",
+    "cpu_percent": 713.6685534090998,
+    "memory_percent": 24.248955,
+    "rss_mb": 3935.92578125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:42",
+    "cpu_percent": 714.8945491807125,
+    "memory_percent": 24.813211,
+    "rss_mb": 4027.51171875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:43",
+    "cpu_percent": 716.0802161716921,
+    "memory_percent": 22.256884,
+    "rss_mb": 3612.5859375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:43",
+    "cpu_percent": 717.4058717940347,
+    "memory_percent": 23.322098,
+    "rss_mb": 3785.484375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:44",
+    "cpu_percent": 719.4080804896396,
+    "memory_percent": 24.670185,
+    "rss_mb": 4004.296875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:44",
+    "cpu_percent": 720.0634822102132,
+    "memory_percent": 25.146576,
+    "rss_mb": 4081.62109375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:45",
+    "cpu_percent": 721.6564931519599,
+    "memory_percent": 25.42644,
+    "rss_mb": 4127.046875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:45",
+    "cpu_percent": 722.6289358150767,
+    "memory_percent": 23.658445,
+    "rss_mb": 3840.078125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:46",
+    "cpu_percent": 723.8428687280632,
+    "memory_percent": 25.098612,
+    "rss_mb": 4073.8359375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:46",
+    "cpu_percent": 725.0999770797679,
+    "memory_percent": 20.622478,
+    "rss_mb": 3347.19921875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:47",
+    "cpu_percent": 726.4020467852318,
+    "memory_percent": 20.827547,
+    "rss_mb": 3380.5859375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:47",
+    "cpu_percent": 727.6790905058053,
+    "memory_percent": 21.669525,
+    "rss_mb": 3517.25
+  },
+  {
+    "timestamp": "2026-03-10 09:51:48",
+    "cpu_percent": 729.2220323622739,
+    "memory_percent": 24.078375,
+    "rss_mb": 3908.24609375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:48",
+    "cpu_percent": 730.1752050316038,
+    "memory_percent": 23.738539,
+    "rss_mb": 3852.94140625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:49",
+    "cpu_percent": 731.4211950680991,
+    "memory_percent": 24.476622,
+    "rss_mb": 3972.87890625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:49",
+    "cpu_percent": 732.6666687660991,
+    "memory_percent": 21.846386,
+    "rss_mb": 3545.95703125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:50",
+    "cpu_percent": 734.1117068054726,
+    "memory_percent": 23.732258,
+    "rss_mb": 3852.05859375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:51",
+    "cpu_percent": 735.3049667284486,
+    "memory_percent": 25.478567,
+    "rss_mb": 4135.57421875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:51",
+    "cpu_percent": 736.4785752539483,
+    "memory_percent": 24.129877,
+    "rss_mb": 3916.59765625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:51",
+    "cpu_percent": 737.5913788099105,
+    "memory_percent": 19.405287,
+    "rss_mb": 3149.734375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:52",
+    "cpu_percent": 738.9744923605766,
+    "memory_percent": 19.13671,
+    "rss_mb": 3106.140625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:52",
+    "cpu_percent": 740.0953430288015,
+    "memory_percent": 19.800213,
+    "rss_mb": 3213.8359375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:53",
+    "cpu_percent": 741.3275422163979,
+    "memory_percent": 21.7887,
+    "rss_mb": 3536.65625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:54",
+    "cpu_percent": 742.6576164940393,
+    "memory_percent": 20.966194,
+    "rss_mb": 3403.09375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:54",
+    "cpu_percent": 743.7463141397369,
+    "memory_percent": 21.923302,
+    "rss_mb": 3558.44140625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:55",
+    "cpu_percent": 745.0249302907437,
+    "memory_percent": 23.739908,
+    "rss_mb": 3853.36328125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:55",
+    "cpu_percent": 746.1636768735949,
+    "memory_percent": 21.879597,
+    "rss_mb": 3551.34765625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:56",
+    "cpu_percent": 747.3486955580455,
+    "memory_percent": 23.39509,
+    "rss_mb": 3797.33203125
+  },
+  {
+    "timestamp": "2026-03-10 09:51:56",
+    "cpu_percent": 748.4837877972752,
+    "memory_percent": 24.820623,
+    "rss_mb": 4028.71484375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:56",
+    "cpu_percent": 749.3540203563853,
+    "memory_percent": 24.020134,
+    "rss_mb": 3898.78515625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:57",
+    "cpu_percent": 750.493098800214,
+    "memory_percent": 23.532677,
+    "rss_mb": 3819.6640625
+  },
+  {
+    "timestamp": "2026-03-10 09:51:57",
+    "cpu_percent": 751.6360624022212,
+    "memory_percent": 24.354631,
+    "rss_mb": 3953.0234375
+  },
+  {
+    "timestamp": "2026-03-10 09:51:58",
+    "cpu_percent": 752.7877169405906,
+    "memory_percent": 24.065933,
+    "rss_mb": 3906.21875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:58",
+    "cpu_percent": 753.9255847382124,
+    "memory_percent": 24.772974,
+    "rss_mb": 4020.98046875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:59",
+    "cpu_percent": 755.0421812887358,
+    "memory_percent": 25.57666,
+    "rss_mb": 4151.4296875
+  },
+  {
+    "timestamp": "2026-03-10 09:51:59",
+    "cpu_percent": 756.1601505902131,
+    "memory_percent": 26.242281,
+    "rss_mb": 4259.46875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:00",
+    "cpu_percent": 757.2907725761426,
+    "memory_percent": 23.535467,
+    "rss_mb": 3820.1171875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:00",
+    "cpu_percent": 758.4058095709639,
+    "memory_percent": 24.014336,
+    "rss_mb": 3897.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:01",
+    "cpu_percent": 759.5075992519559,
+    "memory_percent": 23.86065,
+    "rss_mb": 3872.8984375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:01",
+    "cpu_percent": 760.6185918095028,
+    "memory_percent": 24.523287,
+    "rss_mb": 3980.453125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:02",
+    "cpu_percent": 761.717069250024,
+    "memory_percent": 25.146479,
+    "rss_mb": 4081.60546875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:02",
+    "cpu_percent": 762.8020456831084,
+    "memory_percent": 25.180077,
+    "rss_mb": 4087.05859375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:03",
+    "cpu_percent": 763.8741788384987,
+    "memory_percent": 25.405334,
+    "rss_mb": 4123.62109375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:04",
+    "cpu_percent": 766.1000314166529,
+    "memory_percent": 20.0041,
+    "rss_mb": 3246.9296875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:04",
+    "cpu_percent": 766.1000314166529,
+    "memory_percent": 20.0041,
+    "rss_mb": 3246.9296875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:05",
+    "cpu_percent": 767.5715559790405,
+    "memory_percent": 21.830456,
+    "rss_mb": 3543.37109375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:05",
+    "cpu_percent": 768.2742492472722,
+    "memory_percent": 22.766699,
+    "rss_mb": 3695.3984375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:06",
+    "cpu_percent": 769.2529826088879,
+    "memory_percent": 23.384886,
+    "rss_mb": 3795.67578125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:06",
+    "cpu_percent": 770.3522140955238,
+    "memory_percent": 24.317135,
+    "rss_mb": 3946.9921875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:06",
+    "cpu_percent": 771.2937634074889,
+    "memory_percent": 24.77461,
+    "rss_mb": 4021.25390625
+  },
+  {
+    "timestamp": "2026-03-10 09:52:07",
+    "cpu_percent": 772.1943634265056,
+    "memory_percent": 23.911356,
+    "rss_mb": 3881.13671875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:08",
+    "cpu_percent": 773.388907154378,
+    "memory_percent": 25.07108,
+    "rss_mb": 4069.3671875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:08",
+    "cpu_percent": 774.5441782333775,
+    "memory_percent": 23.6983,
+    "rss_mb": 3846.546875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:08",
+    "cpu_percent": 775.3595656248813,
+    "memory_percent": 24.55161,
+    "rss_mb": 3985.05078125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:09",
+    "cpu_percent": 776.6062114886772,
+    "memory_percent": 26.835993,
+    "rss_mb": 4355.8359375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:10",
+    "cpu_percent": 777.5524018195608,
+    "memory_percent": 23.556356,
+    "rss_mb": 3823.5078125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:10",
+    "cpu_percent": 778.4862061551089,
+    "memory_percent": 24.02117,
+    "rss_mb": 3898.953125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:10",
+    "cpu_percent": 779.3802688849077,
+    "memory_percent": 25.10843,
+    "rss_mb": 4075.4296875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:11",
+    "cpu_percent": 780.3332664442017,
+    "memory_percent": 23.231682,
+    "rss_mb": 3770.80859375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:12",
+    "cpu_percent": 781.5195965697092,
+    "memory_percent": 21.661488,
+    "rss_mb": 3515.9453125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:12",
+    "cpu_percent": 782.3551488967754,
+    "memory_percent": 18.371815,
+    "rss_mb": 2981.98828125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:13",
+    "cpu_percent": 783.431799574914,
+    "memory_percent": 19.368755,
+    "rss_mb": 3143.8046875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:13",
+    "cpu_percent": 784.2621663637011,
+    "memory_percent": 19.839441,
+    "rss_mb": 3220.203125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:14",
+    "cpu_percent": 785.2105341755116,
+    "memory_percent": 20.88822,
+    "rss_mb": 3390.43359375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:14",
+    "cpu_percent": 786.056884154432,
+    "memory_percent": 17.412516,
+    "rss_mb": 2826.28125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:15",
+    "cpu_percent": 787.1579776545868,
+    "memory_percent": 18.600492,
+    "rss_mb": 3019.10546875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:15",
+    "cpu_percent": 788.0777115582774,
+    "memory_percent": 17.101027,
+    "rss_mb": 2775.72265625
+  },
+  {
+    "timestamp": "2026-03-10 09:52:16",
+    "cpu_percent": 789.1456193575253,
+    "memory_percent": 17.74682,
+    "rss_mb": 2880.54296875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:16",
+    "cpu_percent": 790.0809720355114,
+    "memory_percent": 18.563213,
+    "rss_mb": 3013.0546875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:17",
+    "cpu_percent": 791.0098650041706,
+    "memory_percent": 18.991783,
+    "rss_mb": 3082.6171875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:17",
+    "cpu_percent": 791.9667074540965,
+    "memory_percent": 19.107372,
+    "rss_mb": 3101.37890625
+  },
+  {
+    "timestamp": "2026-03-10 09:52:17",
+    "cpu_percent": 792.6675805608231,
+    "memory_percent": 19.208738,
+    "rss_mb": 3117.83203125
+  },
+  {
+    "timestamp": "2026-03-10 09:52:18",
+    "cpu_percent": 793.5785401651812,
+    "memory_percent": 19.302477,
+    "rss_mb": 3133.046875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:19",
+    "cpu_percent": 794.6570157278932,
+    "memory_percent": 16.710629,
+    "rss_mb": 2712.35546875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:19",
+    "cpu_percent": 795.4278166806304,
+    "memory_percent": 16.615158,
+    "rss_mb": 2696.87109375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:19",
+    "cpu_percent": 796.3556811654413,
+    "memory_percent": 17.193226,
+    "rss_mb": 2790.6875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:20",
+    "cpu_percent": 797.3558758267295,
+    "memory_percent": 14.705438,
+    "rss_mb": 2386.88671875
+  },
+  {
+    "timestamp": "2026-03-10 09:52:20",
+    "cpu_percent": 798.256411498088,
+    "memory_percent": 12.014412,
+    "rss_mb": 1950.09765625
+  },
+  {
+    "timestamp": "2026-03-10 09:52:21",
+    "cpu_percent": 799.1498150661491,
+    "memory_percent": 10.015166,
+    "rss_mb": 1625.59375
+  },
+  {
+    "timestamp": "2026-03-10 09:52:21",
+    "cpu_percent": 800.0702379631382,
+    "memory_percent": 10.029413,
+    "rss_mb": 1627.90625
+  },
+  {
+    "timestamp": "2026-03-10 09:52:22",
+    "cpu_percent": 800.6516527466955,
+    "memory_percent": 7.1402993,
+    "rss_mb": 1158.96484375
+  }
+]

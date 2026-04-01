@@ -1,5 +1,4 @@
 # Binaries
-detector
 *.exe
 *.zip
 
@@ -28,16 +27,18 @@ __pycache__/
 bin/
 tmp/
 
-# Performance test outputs
-# 测试结果传到仓库也是有意义的
-# go_benchmark_*.txt
-# python_benchmark_*.txt
-
 # Paper directory (not to be uploaded to repository)
 paper/
 
 # Batch files (not to be uploaded to repository)
-*.bat
+# *.bat
 
 # IDE
 .idea/
+.venv/
+
+# Directories not to be uploaded to repository
+#detector/
+#engine/
+#examples/
+paper/

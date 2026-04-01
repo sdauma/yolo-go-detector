@@ -1,0 +1,182 @@
+[
+  {
+    "timestamp": "2026-03-10 09:48:45",
+    "cpu_percent": 1.2378351503036875,
+    "memory_percent": 0.13347073,
+    "rss_mb": 21.66796875
+  },
+  {
+    "timestamp": "2026-03-10 09:48:46",
+    "cpu_percent": 1.3809150557390342,
+    "memory_percent": 0.13433711,
+    "rss_mb": 21.8046875
+  },
+  {
+    "timestamp": "2026-03-10 09:48:47",
+    "cpu_percent": 0.9577752006899168,
+    "memory_percent": 0.13440931,
+    "rss_mb": 21.81640625
+  },
+  {
+    "timestamp": "2026-03-10 09:48:48",
+    "cpu_percent": 0.7331717493182325,
+    "memory_percent": 0.13445744,
+    "rss_mb": 21.82421875
+  },
+  {
+    "timestamp": "2026-03-10 09:48:49",
+    "cpu_percent": 0.5937913029354496,
+    "memory_percent": 0.13445744,
+    "rss_mb": 21.82421875
+  },
+  {
+    "timestamp": "2026-03-10 09:48:50",
+    "cpu_percent": 0.4989851918599659,
+    "memory_percent": 0.13452965,
+    "rss_mb": 21.8359375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:51",
+    "cpu_percent": 0.43026671483267326,
+    "memory_percent": 0.13455372,
+    "rss_mb": 21.83984375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:52",
+    "cpu_percent": 0.3782132010204374,
+    "memory_percent": 0.13455372,
+    "rss_mb": 21.83984375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:53",
+    "cpu_percent": 0.3373813080412583,
+    "memory_percent": 0.13455372,
+    "rss_mb": 21.83984375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:54",
+    "cpu_percent": 0.3045050316021655,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:55",
+    "cpu_percent": 0.2774581509205067,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:56",
+    "cpu_percent": 0.2548346973758053,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:57",
+    "cpu_percent": 0.23562080317409043,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:58",
+    "cpu_percent": 0.21910544512298344,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:48:59",
+    "cpu_percent": 0.20474881091554764,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:49:00",
+    "cpu_percent": 0.19215640668183598,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:49:01",
+    "cpu_percent": 0.18102626471552372,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:49:02",
+    "cpu_percent": 0.17111560204845253,
+    "memory_percent": 0.13457778,
+    "rss_mb": 21.84375
+  },
+  {
+    "timestamp": "2026-03-10 09:49:03",
+    "cpu_percent": 0.16223169006942292,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:04",
+    "cpu_percent": 0.15422548818560708,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:05",
+    "cpu_percent": 0.146973074250609,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:06",
+    "cpu_percent": 0.1403689755511023,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:07",
+    "cpu_percent": 0.1343362957115947,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:08",
+    "cpu_percent": 0.1287999212214344,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:09",
+    "cpu_percent": 0.12369920538045072,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:10",
+    "cpu_percent": 0.11899025169412038,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:11",
+    "cpu_percent": 0.11462469359077108,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:12",
+    "cpu_percent": 0.11056995990818172,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:13",
+    "cpu_percent": 0.10679055218209611,
+    "memory_percent": 0.13460185,
+    "rss_mb": 21.84765625
+  },
+  {
+    "timestamp": "2026-03-10 09:49:14",
+    "cpu_percent": 0.10326260019252047,
+    "memory_percent": 0.13489063,
+    "rss_mb": 21.89453125
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "test_name": "CPU_Monitoring_Idle",
+    "model": "None",
+    "language": "Go",
+    "scenario": "Idle",
+    "avg_cpu_percent": 0.3377926265078492,
+    "peak_cpu_percent": 1.3809150557390342,
+    "std_cpu_percent": 0.32642004370048944,
+    "avg_rss_mb": 21.836848958333334,
+    "peak_rss_mb": 21.89453125,
+    "timestamp": "2026-03-10 09:49:14"
+  },
+  {
+    "test_name": "CPU_Monitoring_Single_Inference",
+    "model": "YOLO11x",
+    "language": "Go",
+    "scenario": "Single_Inference",
+    "avg_cpu_percent": 17.813003750084768,
+    "peak_cpu_percent": 22.3994686248723,
+    "std_cpu_percent": 5.73056091755524,
+    "avg_rss_mb": 468.40342881944446,
+    "peak_rss_mb": 503.796875,
+    "timestamp": "2026-03-10 09:49:16"
+  },
+  {
+    "test_name": "CPU_Monitoring_Continuous",
+    "model": "YOLO11x",
+    "language": "Go",
+    "scenario": "Continuous_100_Inferences",
+    "avg_cpu_percent": 352.60683263061156,
+    "peak_cpu_percent": 491.3842676933094,
+    "std_cpu_percent": 119.29850196175023,
+    "avg_rss_mb": 532.8636029411765,
+    "peak_rss_mb": 533.109375,
+    "timestamp": "2026-03-10 09:50:42"
+  },
+  {
+    "test_name": "CPU_Monitoring_Concurrent",
+    "model": "YOLO11x",
+    "language": "Go",
+    "scenario": "Concurrent_10x50",
+    "avg_cpu_percent": 672.7053559328999,
+    "peak_cpu_percent": 800.6516527466955,
+    "std_cpu_percent": 89.95001516037165,
+    "avg_rss_mb": 3639.679451947236,
+    "peak_rss_mb": 4589.7265625,
+    "timestamp": "2026-03-10 09:52:22"
+  }
+]

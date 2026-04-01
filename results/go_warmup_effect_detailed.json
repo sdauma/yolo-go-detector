@@ -1,0 +1,122 @@
+[
+  {
+    "inference_num": 1,
+    "latency_ms": 912,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:35.318"
+  },
+  {
+    "inference_num": 2,
+    "latency_ms": 837,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:36.192"
+  },
+  {
+    "inference_num": 3,
+    "latency_ms": 844,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:37.052"
+  },
+  {
+    "inference_num": 4,
+    "latency_ms": 849,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:37.919"
+  },
+  {
+    "inference_num": 5,
+    "latency_ms": 851,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:38.771"
+  },
+  {
+    "inference_num": 6,
+    "latency_ms": 836,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:39.615"
+  },
+  {
+    "inference_num": 7,
+    "latency_ms": 849,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:40.475"
+  },
+  {
+    "inference_num": 8,
+    "latency_ms": 839,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:41.318"
+  },
+  {
+    "inference_num": 9,
+    "latency_ms": 838,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:42.163"
+  },
+  {
+    "inference_num": 10,
+    "latency_ms": 847,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:43.022"
+  },
+  {
+    "inference_num": 11,
+    "latency_ms": 884,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:43.913"
+  },
+  {
+    "inference_num": 12,
+    "latency_ms": 900,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:44.819"
+  },
+  {
+    "inference_num": 13,
+    "latency_ms": 858,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:45.679"
+  },
+  {
+    "inference_num": 14,
+    "latency_ms": 858,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:46.539"
+  },
+  {
+    "inference_num": 15,
+    "latency_ms": 853,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:47.398"
+  },
+  {
+    "inference_num": 16,
+    "latency_ms": 850,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:48.257"
+  },
+  {
+    "inference_num": 17,
+    "latency_ms": 837,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:49.101"
+  },
+  {
+    "inference_num": 18,
+    "latency_ms": 839,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:49.945"
+  },
+  {
+    "inference_num": 19,
+    "latency_ms": 847,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:50.804"
+  },
+  {
+    "inference_num": 20,
+    "latency_ms": 848,
+    "rss_mb": 18.89453125,
+    "timestamp": "20:42:51.664"
+  }
+]

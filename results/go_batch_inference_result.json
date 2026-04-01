@@ -1,0 +1,43 @@
+{
+  "test_name": "Batch_Inference",
+  "model": "YOLO11x",
+  "language": "Go",
+  "results": [
+    {
+      "batch_size": 1,
+      "total_time_ms": 848,
+      "per_image_time_ms": 848,
+      "throughput_images_per_sec": 1.1790201847076602,
+      "peak_rss_mb": 18.89453125
+    },
+    {
+      "batch_size": 4,
+      "total_time_ms": 3407,
+      "per_image_time_ms": 851.75,
+      "throughput_images_per_sec": 1.1740440808351655,
+      "peak_rss_mb": 18.89453125
+    },
+    {
+      "batch_size": 8,
+      "total_time_ms": 6752,
+      "per_image_time_ms": 844,
+      "throughput_images_per_sec": 1.1846920900108318,
+      "peak_rss_mb": 18.89453125
+    },
+    {
+      "batch_size": 16,
+      "total_time_ms": 13505,
+      "per_image_time_ms": 844.0625,
+      "throughput_images_per_sec": 1.1846601964376884,
+      "peak_rss_mb": 18.89453125
+    },
+    {
+      "batch_size": 32,
+      "total_time_ms": 27084,
+      "per_image_time_ms": 846.375,
+      "throughput_images_per_sec": 1.1814816951601037,
+      "peak_rss_mb": 19.14453125
+    }
+  ],
+  "timestamp": "2026-03-09 20:42:31"
+}

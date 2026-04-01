@@ -1,0 +1,21 @@
+{
+  "test_name": "Long_Stability_Enhanced",
+  "model": "YOLO11x",
+  "language": "Go",
+  "duration": "10m0s",
+  "total_inferences": 697,
+  "avg_latency_ms": 848.2783357245337,
+  "min_latency_ms": 828,
+  "max_latency_ms": 875,
+  "std_latency_ms": 8.791707556777755,
+  "start_rss_mb": 18.89453125,
+  "end_rss_mb": 19.14453125,
+  "rss_drift_mb": 0.25,
+  "peak_rss_mb": 19.14453125,
+  "total_gc_num": 4,
+  "total_gc_pause_ms": 7.0001,
+  "avg_gc_pause_ms": 1.750025,
+  "max_gc_pause_ms": 0,
+  "performance_degrade_percent": 0.26703183841150113,
+  "timestamp": "2026-03-09 20:41:08"
+}

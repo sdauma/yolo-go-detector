@@ -88,7 +88,7 @@ for num_threads in thread_configs:
         # 内存采样点 1：Session 创建后、warmup 前（Start RSS）
         process = psutil.Process(os.getpid())
         start_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
-        print(f"Start RSS: {start_rss:.2f} MB")
+        print(f"Start RSS: {start_rss:.5f} MB")
         
         # Warmup
         print("Warming up...")
@@ -118,8 +118,8 @@ for num_threads in thread_configs:
         
         # 内存采样点 3：Benchmark 后稳定值
         stable_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
-        print(f"Stable RSS: {stable_rss:.2f} MB")
-        print(f"Peak RSS: {peak_rss:.2f} MB")
+        print(f"Stable RSS: {stable_rss:.5f} MB")
+        print(f"Peak RSS: {peak_rss:.5f} MB")
         
         # 计算结果
         avg_latency = sum(times) / len(times)
@@ -140,7 +140,7 @@ for num_threads in thread_configs:
         all_peak_rss.append(peak_rss)
         all_stable_rss.append(stable_rss)
         
-        print(f"测试 {test_idx} 完成: 平均延迟={avg_latency:.3f} ms")
+        print(f"测试 {test_idx} 完成: 平均延迟={avg_latency:.5f} ms")
     
     # 计算3次测试的平均值
     avg_latency = np.mean(all_avg_latencies)
@@ -175,50 +175,50 @@ for num_threads in thread_configs:
     })
     
     print("\n===== 测试结果 =====")
-    print(f"平均延迟: {avg_latency:.3f} ms")
-    print(f"标准差: {std_dev:.3f} ms")
+    print(f"平均延迟: {avg_latency:.5f} ms")
+    print(f"标准差: {std_dev:.5f} ms")
     print(f"变异系数: {coeff_var:.2f}%")
     print(f"FPS: {fps:.2f}")
-    print(f"P50延迟: {p50_latency:.3f} ms")
-    print(f"P90延迟: {p90_latency:.3f} ms")
-    print(f"P99延迟: {p99_latency:.3f} ms")
-    print(f"最小延迟: {min_latency:.3f} ms")
-    print(f"最大延迟: {max_latency:.3f} ms")
+    print(f"P50延迟: {p50_latency:.5f} ms")
+    print(f"P90延迟: {p90_latency:.5f} ms")
+    print(f"P99延迟: {p99_latency:.5f} ms")
+    print(f"最小延迟: {min_latency:.5f} ms")
+    print(f"最大延迟: {max_latency:.5f} ms")
     print(f"\n===== 内存使用情况 =====")
-    print(f"Start RSS: {start_rss:.2f} MB")
-    print(f"Peak RSS: {peak_rss:.2f} MB")
-    print(f"Stable RSS: {stable_rss:.2f} MB")
+    print(f"Start RSS: {start_rss:.5f} MB")
+    print(f"Peak RSS: {peak_rss:.5f} MB")
+    print(f"Stable RSS: {stable_rss:.5f} MB")
     
     # 保存详细日志
     log_path = os.path.join(current_dir, '..', '..', 'results', f'python_thread_{num_threads}_detailed_log.txt')
     with open(log_path, 'w', encoding='utf-8') as f:
         for i in range(len(all_avg_latencies)):
             f.write(f"===== 第 {i+1} 次测试 =====\n")
-            f.write(f"平均延迟: {all_avg_latencies[i]:.3f} ms\n")
-            f.write(f"最小延迟: {all_min_latencies[i]:.3f} ms\n")
-            f.write(f"最大延迟: {all_max_latencies[i]:.3f} ms\n")
-            f.write(f"P50延迟: {all_p50_latencies[i]:.3f} ms\n")
-            f.write(f"P90延迟: {all_p90_latencies[i]:.3f} ms\n")
-            f.write(f"P99延迟: {all_p99_latencies[i]:.3f} ms\n")
-            f.write(f"Start RSS: {all_start_rss[i]:.2f} MB\n")
-            f.write(f"Peak RSS: {all_peak_rss[i]:.2f} MB\n")
-            f.write(f"Stable RSS: {all_stable_rss[i]:.2f} MB\n")
+            f.write(f"平均延迟: {all_avg_latencies[i]:.5f} ms\n")
+            f.write(f"最小延迟: {all_min_latencies[i]:.5f} ms\n")
+            f.write(f"最大延迟: {all_max_latencies[i]:.5f} ms\n")
+            f.write(f"P50延迟: {all_p50_latencies[i]:.5f} ms\n")
+            f.write(f"P90延迟: {all_p90_latencies[i]:.5f} ms\n")
+            f.write(f"P99延迟: {all_p99_latencies[i]:.5f} ms\n")
+            f.write(f"Start RSS: {all_start_rss[i]:.5f} MB\n")
+            f.write(f"Peak RSS: {all_peak_rss[i]:.5f} MB\n")
+            f.write(f"Stable RSS: {all_stable_rss[i]:.5f} MB\n")
             f.write("\n")
 
         f.write("===== 5次测试平均值 =====\n")
-        f.write(f"平均延迟: {avg_latency:.3f} ms\n")
-        f.write(f"标准差: {std_dev:.3f} ms\n")
+        f.write(f"平均延迟: {avg_latency:.5f} ms\n")
+        f.write(f"标准差: {std_dev:.5f} ms\n")
         f.write(f"变异系数: {coeff_var:.2f}%\n")
         f.write(f"FPS: {fps:.2f}\n")
-        f.write(f"P50延迟: {p50_latency:.3f} ms\n")
-        f.write(f"P90延迟: {p90_latency:.3f} ms\n")
-        f.write(f"P99延迟: {p99_latency:.3f} ms\n")
-        f.write(f"最小延迟: {min_latency:.3f} ms\n")
-        f.write(f"最大延迟: {max_latency:.3f} ms\n")
+        f.write(f"P50延迟: {p50_latency:.5f} ms\n")
+        f.write(f"P90延迟: {p90_latency:.5f} ms\n")
+        f.write(f"P99延迟: {p99_latency:.5f} ms\n")
+        f.write(f"最小延迟: {min_latency:.5f} ms\n")
+        f.write(f"最大延迟: {max_latency:.5f} ms\n")
         f.write("\n===== 内存使用情况 =====\n")
-        f.write(f"Start RSS: {start_rss:.2f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.2f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.2f} MB\n")
+        f.write(f"Start RSS: {start_rss:.5f} MB\n")
+        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
+        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
 
     print(f"\n详细日志已保存到: {log_path}")
 
@@ -229,20 +229,20 @@ for num_threads in thread_configs:
     # 构建结果字符串
     result_lines = [
         f"===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads={num_threads}) =====",
-        f"平均延迟: {avg_latency:.3f} ms",
-        f"标准差: {std_dev:.3f} ms",
+        f"平均延迟: {avg_latency:.5f} ms",
+        f"标准差: {std_dev:.5f} ms",
         f"变异系数: {coeff_var:.2f}%",
         f"FPS: {fps:.2f}",
-        f"P50延迟: {p50_latency:.3f} ms",
-        f"P90延迟: {p90_latency:.3f} ms",
-        f"P99延迟: {p99_latency:.3f} ms",
-        f"最小延迟: {min_latency:.3f} ms",
-        f"最大延迟: {max_latency:.3f} ms",
+        f"P50延迟: {p50_latency:.5f} ms",
+        f"P90延迟: {p90_latency:.5f} ms",
+        f"P99延迟: {p99_latency:.5f} ms",
+        f"最小延迟: {min_latency:.5f} ms",
+        f"最大延迟: {max_latency:.5f} ms",
         "",
         "===== 内存使用情况 =====",
-        f"Start RSS: {start_rss:.2f} MB",
-        f"Peak RSS: {peak_rss:.2f} MB",
-        f"Stable RSS: {stable_rss:.2f} MB"
+        f"Start RSS: {start_rss:.5f} MB",
+        f"Peak RSS: {peak_rss:.5f} MB",
+        f"Stable RSS: {stable_rss:.5f} MB"
     ]
     
     # 尝试多种编码方式

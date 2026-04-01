@@ -1,0 +1,119 @@
+% ========== 参考文献筛选与核验流程图 - LaTeX TikZ代码版 ==========
+% 可直接复制到LaTeX文档中使用
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.8cm,
+    auto,
+    start/.style={
+        ellipse,
+        draw,
+        thick,
+        text width=3.5cm,
+        align=center,
+        minimum height=1cm,
+        font=\small,
+        fill=green!20
+    },
+    process/.style={
+        rectangle,
+        draw,
+        thick,
+        text width=4.5cm,
+        align=center,
+        minimum height=1.2cm,
+        font=\small,
+        fill=blue!10
+    },
+    decision/.style={
+        diamond,
+        draw,
+        thick,
+        text width=3.5cm,
+        align=center,
+        minimum height=1.5cm,
+        font=\footnotesize,
+        fill=yellow!20
+    },
+    exclude/.style={
+        ellipse,
+        draw,
+        thick,
+        text width=3cm,
+        align=center,
+        minimum height=1cm,
+        font=\small,
+        fill=red!20
+    },
+    line/.style={
+        draw,
+        thick,
+        ->,
+        >=stealth
+    }
+]
+
+% 节点定义
+\node [start] (start) {文献检索开始\\Literature Retrieval Initiated};
+
+\node [process, below of=start] (search) {多数据库文献检索\\Multi-database Literature Search\\
+    \scriptsize IEEE Xplore, ACM Digital Library, SpringerLink,\\
+    USENIX, arXiv, Google Scholar, 官方技术文档};
+
+\node [process, below of=search] (dedup) {去重与初步整理\\Deduplication and Initial Organization\\
+    \scriptsize 删除重复文献，统一文献信息格式};
+
+\node [process, below of=dedup] (screen) {标题与摘要相关性筛选\\Title and Abstract Relevance Screening\\
+    \scriptsize 是否涉及深度学习推理、性能评估、推理系统};
+
+\node [decision, below of=screen] (relevant) {是否与研究主题\\直接相关？\\Directly Relevant?};
+
+\node [exclude, right of=relevant, node distance=4cm] (exclude1) {排除文献\\Excluded Records};
+
+\node [process, below of=relevant] (verify) {来源与出版信息核验\\Source and Publication Verification\\
+    \scriptsize 作者信息完整、出版来源可查、年份明确};
+
+\node [decision, below of=verify] (reliable) {文献来源可靠且\\信息完整？\\Reliable Source?};
+
+\node [exclude, right of=reliable, node distance=4cm] (exclude2) {排除文献\\Excluded Records};
+
+\node [process, below of=reliable] (review) {全文审阅与方法学价值评估\\Full-text Review and Assessment\\
+    \scriptsize 是否支持研究框架、具备引用价值、可复现};
+
+\node [start, below of=review] (final) {纳入最终参考文献集合\\Included in Final Reference Set};
+
+% 连接线
+\path [line] (start) -- (search);
+\path [line] (search) -- (dedup);
+\path [line] (dedup) -- (screen);
+\path [line] (screen) -- (relevant);
+\path [line] (relevant) -- node [right] {YES} (review);
+\path [line] (relevant) -- node [above] {NO} (exclude1);
+\path [line] (review) -- (verify);
+\path [line] (verify) -- (reliable);
+\path [line] (reliable) -- node [right] {YES} (final);
+\path [line] (reliable) -- node [above] {NO} (exclude2);
+\path [line] (review) -- (final);
+
+\end{tikzpicture}
+
+\caption{参考文献筛选与核验流程\\Reference Screening and Verification Workflow}
+\label{fig:ref_flow}
+
+\end{figure}
+
+% ========== 使用说明 ==========
+% 1. 将上述代码复制到LaTeX文档中
+% 2. 确保文档导入了tikz包：
+%    \usepackage{tikz}
+%    \usetikzlibrary{shapes,arrows,positioning}
+% 3. 编译LaTeX文档
+% 4. 流程图会自动生成
+
+% ========== 特点 ==========
+% - 纵向布局
+% - 9个节点
+% - 2个决策节点
+% - 中英双语
+% - 符合期刊规范
