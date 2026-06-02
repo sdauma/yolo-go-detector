@@ -12,15 +12,14 @@ from matplotlib import font_manager
 import matplotlib.pyplot as plt
 
 def setup_fonts():
-    """设置字体配置，检查多个字体路径并注册华文中宋字体"""
+    """设置字体配置，按照《小型微型计算机系统》要求使用宋体"""
     # 获取项目根目录
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
     # 字体文件可能存在的路径
     font_paths = [
-        os.path.join(base_dir, "paper", "华文中宋.ttf"),  # 项目目录
-        "C:\\Windows\\Fonts\\华文中宋.ttf",  # 系统字体目录
-        "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\华文中宋.ttf"  # 用户字体目录
+        "C:\\Windows\\Fonts\\simsun.ttc",  # 系统宋体
+        "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\simsun.ttc"  # 用户字体目录
     ]
     
     # 尝试注册字体
@@ -32,8 +31,8 @@ def setup_fonts():
             font_registered = True
             break
     
-    # 设置字体：中文使用华文中宋，英文使用 Times New Roman
-    plt.rcParams['font.sans-serif'] = ['STZhongsong', 'SimHei']  # 优先华文中宋，回退到黑体
+    # 设置字体：中文使用宋体，英文使用 Times New Roman
+    plt.rcParams['font.sans-serif'] = ['SimSun', 'SimHei']  # 优先宋体，回退到黑体
     plt.rcParams['font.serif'] = ['Times New Roman']  # 英文使用 Times New Roman
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
     

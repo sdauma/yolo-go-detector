@@ -78,11 +78,11 @@ def plot_throughput_comparison():
     throughput = read_architecture_throughput()
     colors = ['#CCCCCC', '#666666', '#000000']
     
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
     bars = ax.bar(architectures, throughput, color=colors, edgecolor='black', linewidth=1.5)
     
-    ax.set_ylabel('吞吐量 (REQ/s)', fontsize=12, fontweight='bold')
-    ax.set_title('三种并发架构的吞吐量对比', fontsize=13, fontweight='bold', pad=10)
+    ax.set_ylabel('吞吐量 (REQ/s)', fontsize=8, fontweight='bold')
+    ax.set_title('三种并发架构的吞吐量对比', fontsize=9, fontweight='bold', pad=10)
     ax.grid(axis='y', linestyle='--', alpha=0.5)
     ax.set_axisbelow(True)
     
@@ -91,14 +91,14 @@ def plot_throughput_comparison():
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., height,
                 f'{height:.2f}',
-                ha='center', va='bottom', fontsize=11, fontweight='bold')
+                ha='center', va='bottom', fontsize=9, fontweight='bold')
     
     # 计算性能提升
     improvement = throughput[2] / throughput[1]
     ax.annotate(f'Session Pool\nvs Mutex: {improvement:.0f} 倍提升', 
                 xy=(2.2, throughput[2]), xytext=(2.3, throughput[2] * 1.08),
                 arrowprops=dict(arrowstyle='->', color='black', lw=2, shrinkA=0, shrinkB=6),
-                fontsize=10, color='black', fontweight='bold')
+                fontsize=8, color='black', fontweight='bold')
     
     plt.tight_layout()
     plt.savefig(f'{output_dir}/fig2_throughput_comparison.png', dpi=600, bbox_inches='tight')
@@ -185,7 +185,7 @@ def read_memory_data():
 def plot_memory_comparison():
     concurrency, python_memory_values, go_memory_values = read_memory_data()
     
-    fig, ax = plt.subplots(figsize=(9, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
     
     # Python 曲线
     ax.plot(concurrency, python_memory_values, 'o-', label='Python 传统部署',
@@ -194,20 +194,20 @@ def plot_memory_comparison():
     ax.plot(concurrency, go_memory_values, 's--', label='Go Session Pool 架构',
             color='#000000', linewidth=2.5, markersize=8, markeredgewidth=1.5)
     
-    ax.set_xlabel('并发数', fontsize=12, fontweight='bold')
-    ax.set_ylabel('内存占用 (MB)', fontsize=12, fontweight='bold')
-    ax.set_title('不同并发数下的内存占用对比', fontsize=13, fontweight='bold', pad=10)
-    ax.legend(fontsize=11, loc='upper left', framealpha=0.9)
+    ax.set_xlabel('并发数', fontsize=8, fontweight='bold')
+    ax.set_ylabel('内存占用 (MB)', fontsize=8, fontweight='bold')
+    ax.set_title('不同并发数下的内存占用对比', fontsize=9, fontweight='bold', pad=10)
+    ax.legend(fontsize=8, loc='upper left', framealpha=0.9)
     ax.grid(True, linestyle='--', alpha=0.5)
     ax.set_axisbelow(True)
     
     # 添加关键数据点标注
     ax.annotate('线性增长', xy=(8, python_memory_values[3]), xytext=(6, python_memory_values[3]+500),
                 arrowprops=dict(arrowstyle='->', color='#666666', lw=2),
-                fontsize=10, color='#666666', fontweight='bold')
+                fontsize=8, color='#666666', fontweight='bold')
     ax.annotate('几乎恒定', xy=(8, go_memory_values[3]), xytext=(5, go_memory_values[3]+50),
                 arrowprops=dict(arrowstyle='->', color='#000000', lw=2),
-                fontsize=10, color='#000000', fontweight='bold')
+                fontsize=8, color='#000000', fontweight='bold')
     
     plt.tight_layout()
     plt.savefig(f'{output_dir}/fig3_memory_comparison.png', dpi=600, bbox_inches='tight')
@@ -246,41 +246,41 @@ def read_batch_data():
 def plot_batch_effect():
     batch_sizes, batch_latency, batch_throughput = read_batch_data()
     
-    fig, ax1 = plt.subplots(figsize=(9, 6))
+    fig, ax1 = plt.subplots(figsize=(8, 5))
     
     # 左轴 - 延迟
     color = '#000000'
-    ax1.set_xlabel('批处理大小', fontsize=12, fontweight='bold')
-    ax1.set_ylabel('单图延迟 (ms)', color=color, fontsize=12, fontweight='bold')
+    ax1.set_xlabel('批处理大小', fontsize=8, fontweight='bold')
+    ax1.set_ylabel('单图延迟 (ms)', color=color, fontsize=8, fontweight='bold')
     line1 = ax1.plot(batch_sizes, batch_latency, 'o-', color=color, linewidth=2.5,
                      markersize=8, label='延迟 (左轴)')
-    ax1.tick_params(axis='y', labelcolor=color, labelsize=11)
+    ax1.tick_params(axis='y', labelcolor=color, labelsize=10)
     ax1.grid(True, linestyle='--', alpha=0.5)
     ax1.set_axisbelow(True)
     
     # 设置 x 轴为实际的批处理大小（离散值）
     ax1.set_xticks(batch_sizes)
-    ax1.set_xticklabels([str(bs) for bs in batch_sizes], fontsize=11)
+    ax1.set_xticklabels([str(bs) for bs in batch_sizes], fontsize=8)
     
     # 右轴 - 吞吐量
     ax2 = ax1.twinx()
     color = '#666666'
-    ax2.set_ylabel('吞吐量 (img/s)', color=color, fontsize=12, fontweight='bold')
+    ax2.set_ylabel('吞吐量 (img/s)', color=color, fontsize=8, fontweight='bold')
     bars = ax2.bar(batch_sizes, batch_throughput, color=color, alpha=0.3, label='吞吐量 (右轴)')
-    ax2.tick_params(axis='y', labelcolor=color, labelsize=11)
+    ax2.tick_params(axis='y', labelcolor=color, labelsize=10)
     ax2.set_ylim(1.15, 1.21)
     
     # 标题和图例
-    plt.suptitle('CPU 推理场景下批处理对吞吐量的影响', fontsize=13, fontweight='bold', y=0.90)
+    plt.suptitle('CPU 推理场景下批处理对吞吐量的影响', fontsize=9, fontweight='bold', y=0.90)
     
     # 合并图例
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', fontsize=11, framealpha=0.9)
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', fontsize=8, framealpha=0.9)
     
     # 添加结论文字
     fig.text(0.5, 0.02, '结论：CPU 场景下 Batch Size 对性能无显著影响',
-             fontsize=11, ha='center', fontweight='bold',
+             fontsize=8, ha='center', fontweight='bold',
              bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor='black'))
     
     plt.tight_layout(rect=[0, 0.05, 1, 0.95])
@@ -376,18 +376,18 @@ def plot_model_size_comparison():
     x = np.arange(len(models))
     width = 0.35
     
-    fig, ax = plt.subplots(figsize=(9, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
     
     bars1 = ax.bar(x - width/2, python_latency_values, width, label='Python',
                    color='#666666', edgecolor='black', linewidth=1.5)
     bars2 = ax.bar(x + width/2, go_latency_values, width, label='Go',
                    color='#000000', edgecolor='black', linewidth=1.5)
     
-    ax.set_ylabel('推理延迟 (ms)', fontsize=12, fontweight='bold')
-    ax.set_title('不同模型规模下的推理延迟对比', fontsize=13, fontweight='bold', pad=10)
+    ax.set_ylabel('推理延迟 (ms)', fontsize=8, fontweight='bold')
+    ax.set_title('不同模型规模下的推理延迟对比', fontsize=9, fontweight='bold', pad=10)
     ax.set_xticks(x)
-    ax.set_xticklabels(models, fontsize=11)
-    ax.legend(['Python', 'Go'], fontsize=11, loc='upper left', framealpha=0.9)
+    ax.set_xticklabels(models, fontsize=8)
+    ax.legend(['Python', 'Go'], fontsize=8, loc='upper left', framealpha=0.9)
     ax.grid(axis='y', linestyle='--', alpha=0.5)
     ax.set_axisbelow(True)
     
@@ -397,7 +397,7 @@ def plot_model_size_comparison():
             height = bar.get_height()
             ax.text(bar.get_x() + bar.get_width()/2., height,
                     f'{height:.1f}',
-                    ha='center', va='bottom', fontsize=10, fontweight='bold')
+                    ha='center', va='bottom', fontsize=8, fontweight='bold')
     
     # 添加性能差异标注
     diff_percent = [(python_latency_values[0]-go_latency_values[0])/go_latency_values[0]*100,
@@ -405,7 +405,7 @@ def plot_model_size_comparison():
     for i, diff in enumerate(diff_percent):
         y_pos = max(python_latency_values[i], go_latency_values[i]) + 12
         ax.text(i, y_pos, f'{diff:.1f}% 差异',
-                ha='center', va='bottom', fontsize=10, fontweight='bold',
+                ha='center', va='bottom', fontsize=8, fontweight='bold',
                 bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor='black'))
     
     plt.tight_layout()
@@ -462,12 +462,12 @@ def plot_cpu_utilization():
     schemes = ['Python 单实例', 'Go Session Pool (10并发)']
     cpu_util = read_cpu_utilization_data()
     
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 5))
     bars = ax.bar(schemes, cpu_util, color=['#666666', '#000000'],
                   edgecolor='black', linewidth=1.5)
     
-    ax.set_ylabel('CPU 利用率 (%)', fontsize=12, fontweight='bold')
-    ax.set_title('不同部署方案的 CPU 利用率对比', fontsize=13, fontweight='bold', pad=10)
+    ax.set_ylabel('CPU 利用率 (%)', fontsize=8, fontweight='bold')
+    ax.set_title('不同部署方案的 CPU 利用率对比', fontsize=9, fontweight='bold', pad=10)
     ax.grid(axis='y', linestyle='--', alpha=0.5)
     ax.set_axisbelow(True)
     
@@ -476,15 +476,15 @@ def plot_cpu_utilization():
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., height,
                 f'{height:.1f}%',
-                ha='center', va='bottom', fontsize=11, fontweight='bold')
+                ha='center', va='bottom', fontsize=9, fontweight='bold')
     
     # 添加说明
     ax.annotate('单核利用', xy=(0.2, cpu_util[0]), xytext=(0.25, cpu_util[0] * 1.20),
                 arrowprops=dict(arrowstyle='->', color='#666666', lw=2),
-                fontsize=10, color='#666666', fontweight='bold')
+                fontsize=8, color='#666666', fontweight='bold')
     ax.annotate('多核并行(~6核)', xy=(1.07, cpu_util[1] * 1.01), xytext=(1.14, cpu_util[1] * 1.01),
                 arrowprops=dict(arrowstyle='->', color='#000000', lw=2),
-                fontsize=10, color='#000000', fontweight='bold')
+                fontsize=8, color='#000000', fontweight='bold')
     
     plt.tight_layout(rect=[0, 0.05, 1, 0.95])
     plt.savefig(f'{output_dir}/fig6_cpu_utilization.png', dpi=600, bbox_inches='tight')
@@ -594,10 +594,10 @@ def plot_stability():
     ax.plot(stability_time, go_rss, 's--', label='Go Session Pool',
             color='#000000', linewidth=2, markersize=5, markevery=10)
 
-    ax.set_xlabel('运行时间 (分钟)', fontsize=12, fontweight='bold')
-    ax.set_ylabel('RSS 内存占用 (MB)', fontsize=12, fontweight='bold')
-    ax.set_title(f'长时间运行的内存漂移对比（{actual_duration:.0f} 分钟测试）', fontsize=13, fontweight='bold', pad=10)
-    ax.legend(fontsize=11, loc='upper left', bbox_to_anchor=(0, 0.95), framealpha=0.9)
+    ax.set_xlabel('运行时间 (分钟)', fontsize=8, fontweight='bold')
+    ax.set_ylabel('RSS 内存占用 (MB)', fontsize=8, fontweight='bold')
+    ax.set_title(f'长时间运行的内存漂移对比（{actual_duration:.0f} 分钟测试）', fontsize=9, fontweight='bold', pad=10)
+    ax.legend(fontsize=8, loc='upper left', bbox_to_anchor=(0, 0.95), framealpha=0.9)
     ax.grid(True, linestyle='--', alpha=0.5)
     ax.set_axisbelow(True)
 
@@ -605,14 +605,14 @@ def plot_stability():
                 xy=(stability_time[-1], python_rss[-1]),
                 xytext=(stability_time[-1] * 0.7, python_rss[-1] - 30),
                 arrowprops=dict(arrowstyle='->', color='#666666', lw=2),
-                fontsize=10, color='#666666', fontweight='bold',
+                fontsize=8, color='#666666', fontweight='bold',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.8, edgecolor='black'))
 
     ax.annotate(f'Go 漂移: +{(go_rss[-1]-go_rss[0]):.2f} MB',
                 xy=(stability_time[-1], go_rss[-1]),
                 xytext=(stability_time[-1] * 0.7, go_rss[-1] + 30),
                 arrowprops=dict(arrowstyle='->', color='#000000', lw=2),
-                fontsize=10, color='#000000', fontweight='bold',
+                fontsize=8, color='#000000', fontweight='bold',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.8, edgecolor='black'))
 
     plt.tight_layout()

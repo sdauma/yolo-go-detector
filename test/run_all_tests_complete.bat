@@ -19,7 +19,9 @@ echo Project Root: %PROJECT_ROOT%
 echo.
 
 REM 初始化计数器
-set TOTAL_TESTS=41
+REM TOTAL_TESTS=46 = 41篇标准化测试(24Go+17Py) + 1数据分析(data_analysis.py) + 4图表生成
+REM data_analysis.py是统计显著性分析(读结果跑t-test)，不算论文标准化测试
+set TOTAL_TESTS=46
 set CURRENT_TEST=0
 set SUCCESS_COUNT=0
 set FAIL_COUNT=0
@@ -124,6 +126,38 @@ echo DONE: Go Reinforced YOLO11n Test
 echo.
 
 REM ========================================
+REM Part 3a: Go Architecture Benchmark
+REM ========================================
+echo ========================================
+echo Part 3a: Go Architecture Benchmark
+echo ========================================
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Architecture Benchmark...
+cd /d %BENCHMARK_DIR%
+go run go_architecture_benchmark.go
+if %errorlevel% neq 0 (
+    echo ERROR: Go Architecture Benchmark failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Architecture_Benchmark
+)
+echo DONE: Go Architecture Benchmark
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Architecture Quick Test...
+cd /d %BENCHMARK_DIR%
+go run go_architecture_quick_test.go
+if %errorlevel% neq 0 (
+    echo ERROR: Go Architecture Quick Test failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Architecture_Quick
+)
+echo DONE: Go Architecture Quick Test
+echo.
+
+REM ========================================
 REM Part 4: Go Thread Config Tests
 REM ========================================
 echo ========================================
@@ -141,6 +175,26 @@ if %errorlevel% neq 0 (
     set FAILED_TESTS=!FAILED_TESTS! Go_Thread_Config
 )
 echo DONE: Go Thread Config Benchmark
+echo.
+
+REM ========================================
+REM Part 4a: Go Batch Inference Test
+REM ========================================
+echo ========================================
+echo Part 4a: Go Batch Inference Test
+echo ========================================
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Batch Inference Test...
+cd /d %BENCHMARK_DIR%
+go run go_batch_inference.go
+if %errorlevel% neq 0 (
+    echo ERROR: Go Batch Inference Test failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Batch_Inference
+)
+echo DONE: Go Batch Inference Test
 echo.
 
 REM ========================================
@@ -228,6 +282,26 @@ echo DONE: Go Long Stability Test
 echo.
 
 REM ========================================
+REM Part 7a: Go Long Stability Enhanced Test
+REM ========================================
+echo ========================================
+echo Part 7a: Go Long Stability Enhanced Test
+echo ========================================
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Long Stability Enhanced Test...
+cd /d %BENCHMARK_DIR%
+go run go_long_stability_enhanced.go
+if %errorlevel% neq 0 (
+    echo ERROR: Go Long Stability Enhanced Test failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Long_Stability_Enhanced
+)
+echo DONE: Go Long Stability Enhanced Test
+echo.
+
+REM ========================================
 REM Part 8: Go Session Tests
 REM ========================================
 echo ========================================
@@ -278,13 +352,33 @@ echo.
 set /a CURRENT_TEST+=1
 echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Concurrent Stress Test...
 cd /d %BENCHMARK_DIR%
-go run go_concurrent_stress_test.go
+go run go_concurrent_stress_fixed.go
 if %errorlevel% neq 0 (
     echo ERROR: Go Concurrent Stress Test failed!
     set /a FAIL_COUNT+=1
     set FAILED_TESTS=!FAILED_TESTS! Go_Concurrent_Stress
 )
 echo DONE: Go Concurrent Stress Test
+echo.
+
+REM ========================================
+REM Part 10a: Go Concurrent Architecture Comparison
+REM ========================================
+echo ========================================
+echo Part 10a: Go Concurrent Architecture Comparison
+echo ========================================
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Concurrent Architecture Comparison...
+cd /d %BENCHMARK_DIR%
+go run go_concurrent_architecture_comparison.go
+if %errorlevel% neq 0 (
+    echo ERROR: Go Concurrent Architecture Comparison failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Concurrent_Arch_Comparison
+)
+echo DONE: Go Concurrent Architecture Comparison
 echo.
 
 REM ========================================
@@ -308,104 +402,65 @@ echo DONE: Go Performance Diagnostic
 echo.
 
 REM ========================================
-REM Part 11a: Go Three Architectures Comparison
+REM Part 11a: Go CPU Monitoring Test
 REM ========================================
 echo ========================================
-echo Part 11a: Go Three Architectures Comparison
+echo Part 11a: Go CPU Monitoring Test
 echo ========================================
 echo.
 
 set /a CURRENT_TEST+=1
-echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Three Architectures Comparison Test...
-cd /d %PROJECT_ROOT%\examples
-go run test_three_architectures.go > %RESULTS_DIR%\three_architectures_run.log 2>&1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go CPU Monitoring...
+cd /d %BENCHMARK_DIR%
+go run go_cpu_monitoring.go
 if %errorlevel% neq 0 (
-    echo ERROR: Go Three Architectures Comparison Test failed!
+    echo ERROR: Go CPU Monitoring failed!
     set /a FAIL_COUNT+=1
-    set FAILED_TESTS=!FAILED_TESTS! Go_Three_Architectures
-) else (
-    set /a SUCCESS_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_CPU_Monitoring
 )
-echo DONE: Go Three Architectures Comparison Test
+echo DONE: Go CPU Monitoring
 echo.
 
 REM ========================================
-REM Part 11b: Go Examples Tests
+REM Part 11b: Go Memory Breakdown Test
 REM ========================================
 echo ========================================
-echo Part 11b: Go Examples Tests
+echo Part 11b: Go Memory Breakdown Test
 echo ========================================
 echo.
 
 set /a CURRENT_TEST+=1
-echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running GoYOLO-Engine Complete Test...
-cd /d %PROJECT_ROOT%\examples
-go run test_goyolo_engine.go > %RESULTS_DIR%\goyolo_engine_complete.log 2>&1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Memory Breakdown...
+cd /d %BENCHMARK_DIR%
+go run go_memory_breakdown.go
 if %errorlevel% neq 0 (
-    echo ERROR: GoYOLO-Engine Complete Test failed!
+    echo ERROR: Go Memory Breakdown failed!
     set /a FAIL_COUNT+=1
-    set FAILED_TESTS=!FAILED_TESTS! GoYOLO_Engine_Complete
-) else (
-    set /a SUCCESS_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Memory_Breakdown
 )
-echo DONE: GoYOLO-Engine Complete Test
+echo DONE: Go Memory Breakdown
+echo.
+
+REM ========================================
+REM Part 11c: Go Warmup Effect Test
+REM ========================================
+echo ========================================
+echo Part 11c: Go Warmup Effect Test
+echo ========================================
 echo.
 
 set /a CURRENT_TEST+=1
-echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Basic Functionality Test...
-cd /d %PROJECT_ROOT%\examples
-go run test_basic.go > %RESULTS_DIR%\test_basic_functionality.log 2>&1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Warmup Effect...
+cd /d %BENCHMARK_DIR%
+go run go_warmup_effect.go
 if %errorlevel% neq 0 (
-    echo ERROR: Go Basic Functionality Test failed!
+    echo ERROR: Go Warmup Effect failed!
     set /a FAIL_COUNT+=1
-    set FAILED_TESTS=!FAILED_TESTS! Go_Basic_Functionality
-) else (
-    set /a SUCCESS_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Go_Warmup_Effect
 )
-echo DONE: Go Basic Functionality Test
+echo DONE: Go Warmup Effect
 echo.
 
-set /a CURRENT_TEST+=1
-echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Concurrent Benchmark Example...
-cd /d %PROJECT_ROOT%\examples
-go run benchmark_concurrent.go > %RESULTS_DIR%\benchmark_concurrent_example.log 2>&1
-if %errorlevel% neq 0 (
-    echo ERROR: Go Concurrent Benchmark Example failed!
-    set /a FAIL_COUNT+=1
-    set FAILED_TESTS=!FAILED_TESTS! Go_Concurrent_Benchmark_Example
-) else (
-    set /a SUCCESS_COUNT+=1
-)
-echo DONE: Go Concurrent Benchmark Example
-echo.
-
-set /a CURRENT_TEST+=1
-echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go ONNX Environment Test...
-cd /d %PROJECT_ROOT%\examples
-go run test_onnx.go > %RESULTS_DIR%\test_onnx_environment.log 2>&1
-if %errorlevel% neq 0 (
-    echo ERROR: Go ONNX Environment Test failed!
-    set /a FAIL_COUNT+=1
-    set FAILED_TESTS=!FAILED_TESTS! Go_ONNX_Environment
-) else (
-    set /a SUCCESS_COUNT+=1
-)
-echo DONE: Go ONNX Environment Test
-echo.
-
-set /a CURRENT_TEST+=1
-echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Go Real-time Detection Demo...
-cd /d %PROJECT_ROOT%\examples
-go run real_time_detect.go > %RESULTS_DIR%\real_time_detection_demo.log 2>&1
-if %errorlevel% neq 0 (
-    echo WARNING: Go Real-time Detection Demo failed!
-    set /a FAIL_COUNT+=1
-    set FAILED_TESTS=!FAILED_TESTS! Go_Realtime_Detection
-) else (
-    set /a SUCCESS_COUNT+=1
-)
-echo DONE: Go Real-time Detection Demo
-echo.
 
 REM ========================================
 REM Part 12: Python Baseline Tests (Core)
@@ -521,6 +576,46 @@ if %errorlevel% neq 0 (
     set FAILED_TESTS=!FAILED_TESTS! Python_Reinforced_YOLO11n
 )
 echo DONE: Python Reinforced YOLO11n Test
+echo.
+
+REM ========================================
+REM Part 14a: Python Architecture Benchmark
+REM ========================================
+echo ========================================
+echo Part 14a: Python Architecture Benchmark
+echo ========================================
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Python Architecture Benchmark...
+cd /d %PYTHON_DIR%
+python python_architecture_benchmark.py
+if %errorlevel% neq 0 (
+    echo ERROR: Python Architecture Benchmark failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Python_Architecture_Benchmark
+)
+echo DONE: Python Architecture Benchmark
+echo.
+
+REM ========================================
+REM Part 14b: Python CPU Monitoring
+REM ========================================
+echo ========================================
+echo Part 14b: Python CPU Monitoring
+echo ========================================
+echo.
+
+set /a CURRENT_TEST+=1
+echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Python CPU Monitoring...
+cd /d %PYTHON_DIR%
+python python_cpu_monitoring.py
+if %errorlevel% neq 0 (
+    echo ERROR: Python CPU Monitoring failed!
+    set /a FAIL_COUNT+=1
+    set FAILED_TESTS=!FAILED_TESTS! Python_CPU_Monitoring
+)
+echo DONE: Python CPU Monitoring
 echo.
 
 REM ========================================
@@ -678,7 +773,7 @@ echo.
 set /a CURRENT_TEST+=1
 echo [%CURRENT_TEST%/%TOTAL_TESTS%] Running Python Concurrent Stress Test...
 cd /d %PYTHON_DIR%
-python python_concurrent_stress_test.py
+python python_concurrent_stress_test_fixed.py
 if %errorlevel% neq 0 (
     echo ERROR: Python Concurrent Stress Test failed!
     set /a FAIL_COUNT+=1
@@ -795,24 +890,22 @@ echo.
 echo Test Results saved in: %RESULTS_DIR%
 echo.
 echo Test Result Files:
-echo   - Go Baseline: go_baseline_result.txt, go_pure_inference_result.txt
+echo   - Go Baseline: go_baseline_result.txt, go_pure_inference_result.txt, go_advanced_session_result.txt
+echo   - Go Architecture: go_architecture_benchmark_result.txt, go_architecture_quick_result.txt
 echo   - Go Reinforced: go_reinforced_result.txt, go_reinforced_small_result.txt, go_yolo11n_reinforced_result.txt
 echo   - Go Thread Config: go_thread_1_result.txt to go_thread_12_result.txt
+echo   - Go Batch Inference: go_batch_inference_result.txt
 echo   - Go Cold Start: go_cold_start_result.txt, go_cold_start_decomposition_result.txt
-echo   - Go Memory: go_memory_standardization_result.txt, go_memory_copy_overhead_result.txt
-echo   - Go Stability: go_long_stability_result.txt
+echo   - Go Memory: go_memory_standardization_result.txt, go_memory_copy_overhead_result.txt, go_memory_breakdown_result.txt
+echo   - Go Stability: go_long_stability_result.txt, go_long_stability_enhanced_result.txt
 echo   - Go Session: go_session_creation_result.txt
 echo   - Go Consistency: go_output_consistency_result.txt
-echo   - Go Stress: go_concurrent_stress_test_result.txt
+echo   - Go Stress: go_concurrent_stress_result.txt, go_concurrent_architecture_comparison_result.txt
 echo   - Go Diagnostic: go_performance_diagnostic_result.txt
-echo   - Go Examples Logs:
-echo       - three_architectures_run.log
-echo       - goyolo_engine_complete.log
-echo       - test_basic_functionality.log
-echo       - benchmark_concurrent_example.log
-echo       - test_onnx_environment.log
-echo       - real_time_detection_demo.log
-echo   - Python Baseline: python_baseline_result.txt, python_pure_inference_result.txt
+echo   - Go CPU: go_cpu_monitoring_result.txt
+echo   - Go Warmup: go_warmup_effect_result.txt
+echo   - Python Baseline: python_baseline_result.txt, python_pure_inference_result.txt, python_advanced_session_result.txt
+echo   - Python Architecture: python_architecture_benchmark_result.txt
 echo   - Python Reinforced: python_reinforced_result.txt, python_reinforced_small_result.txt, python_yolo11n_reinforced_result.txt
 echo   - Python Thread Config: python_thread_1_result.txt to python_thread_12_result.txt
 echo   - Python Cold Start: python_cold_start_result.txt, python_cold_start_decomposition_result.txt
@@ -820,7 +913,8 @@ echo   - Python Memory: python_memory_standardization_result.txt, python_memory_
 echo   - Python Stability: python_long_stability_result.txt
 echo   - Python Session: python_session_creation_result.txt
 echo   - Python Consistency: python_output_consistency_result.txt
-echo   - Python Stress: python_concurrent_stress_test_result.txt
+echo   - Python Stress: python_concurrent_stress_result.txt
+echo   - Python CPU: python_cpu_monitoring_result.txt
 echo.
 echo Chart Files:
 echo   - PDF: latency_boxplot.pdf, cold_start_comparison.pdf, thread_config_comparison.pdf, rss_curve.pdf

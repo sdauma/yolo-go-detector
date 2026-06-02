@@ -1,3 +1,7 @@
+// Package main 演示 BatchInferenceEngine 的任务提交/回调结果 API。
+// 此示例跑真实的 ONNX Runtime 推理，但 processTask() 尚未集成
+// engine/postprocess.go 的后处理逻辑，因此始终返回空 []BoundingBox{}。
+// 完整的端到端检测请参考仓库根目录的 main.go + detector_pool.go。
 package main
 
 import (

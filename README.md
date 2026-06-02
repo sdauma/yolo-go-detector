@@ -2,7 +2,7 @@
 
 一个基于 **ONNX Runtime** 和 **YOLO11/YOLOv8x** 的轻量级目标检测工具，使用 Go 语言编写，支持中文标签显示、多平台（Windows/macOS/Linux）。
 
-基于41个测试程序（累计超过43,000次推理）的严格测试（强化测试），本项目在内存效率和冷启动性能方面表现优异。
+基于41个测试程序（累计超过66,000次推理）的严格测试（强化测试），本项目在内存效率和冷启动性能方面表现优异。
 
 ![示例图](assets/bus_11x_false.jpg) 
 
@@ -146,9 +146,14 @@ yolo-go-detector/
 │   ├── python_baseline_result.txt            # Python基准测试结果
 │   └── ...
 ├── engine/           # GoYOLO-Engine核心引擎
-│   ├── session_pool.go    # Session池管理
+│   ├── session_pool.go    # Session池管理 + BatchInferenceEngine
+│   ├── postprocess.go     # YOLO输出解析、NMS后处理
+│   ├── optimizer.go       # 性能统计组件
 │   ├── tensor_pool.go     # Tensor内存池
 │   └── ...
+├── examples/         # engine包API使用示例
+│   ├── example.go        # BatchInferenceEngine 任务提交/回调演示
+│   └── README.md
 ├── test/             # 测试脚本和数据
 │   ├── benchmark/    # Go基准测试
 │   ├── charts/       # 图表生成脚本
@@ -162,6 +167,39 @@ yolo-go-detector/
 └── go.sum            # Go依赖校验文件
 ```
 
+## 📖 研究成果导航
+
+本仓库是论文《面向工业监控的 ONNX Runtime 高并发推理架构设计与实现》的配套代码。以下是从论文到代码的对应关系：
+
+### 核心架构实现
+
+| 论文章节 | 代码位置 | 说明 |
+|----------|----------|------|
+| §2.3 Session Pool 并发推理架构 | `test/benchmark/go_architecture_benchmark.go` | 三种并发架构（Unsafe Shared / Mutex / Session Pool）的完整实验实现 |
+| §2.3.3 Session Pool 设计 | `detector_pool.go` | 工程可用的 `ModelSessionPool` + `VideoDetectorManager` |
+| §2.3.3 会话池核心逻辑 | `engine/session_pool.go` | `SessionPool` + `BatchInferenceEngine` 完整实现 |
+
+### 实验数据来源
+
+| 论文图表 | 原始数据文件 |
+|----------|-------------|
+| 表1 三种架构对比 | `results/go_architecture_comparison.txt` |
+| 表2 跨语言基准对比 | `results/go_baseline_result.txt`, `results/python_baseline_result.txt` |
+| 图2-图7 | `results/charts/` （PNG + PDF） |
+| 全部实验原始日志 | `results/*.txt` |
+
+### 可运行入口
+
+- **单图检测**：`go run . -img ./assets/bus.jpg`
+- **批量检测**：`go run . -img ./test_images/ -workers 4`
+- **全部实验复现**：`cd test && run_all_tests_complete.bat`
+
+### 测试程序与论文实验的对应
+
+全部 41 个标准化测试程序位于 `test/benchmark/`，每个均独立可运行，**直接调用 ONNX Runtime 原生 API** 以确保测量纯净度，不依赖 engine 包的封装层。
+
+---
+
 ## 🧪 性能测试
 
 本项目包含完整的 **41 个标准化测试程序**，用于比较 Go 和 Python 作为主机语言对 ONNX Runtime 推理性能的影响。
@@ -169,7 +207,7 @@ yolo-go-detector/
 **测试程序构成**：
 - **正式测试程序**：41 个（Go 24 个 + Python 17 个）
 - **辅助程序**：约 20 个（环境设置、数据生成、统计分析、图表生成等）
-- **Examples 示例**：6 个 Go 程序（演示和快速验证，非正式测试）
+- **Example 示例**：1 个 Go 程序（演示 engine 包 API 用法）
 
 ### 快速运行所有测试
 
@@ -187,7 +225,7 @@ run_all_tests_complete.bat
 - ✅ 自动生成所有图表（PDF + PNG 格式）
 - ✅ 自动保存测试结果到 `results/` 目录
 - ✅ 自动生成测试摘要报告
-- ✅ 额外运行 6 个 Go Examples 示例程序（非正式测试）
+- ✅ 额外运行 Go Examples 示例程序（非正式测试）
 
 测试完成后，查看详细报告：
 - 📄 `results/` - 所有测试结果和图表
@@ -347,7 +385,7 @@ run_all_tests_complete.bat
 
 ## 🏆 核心结论
 
-基于 **41个测试程序**（累计超过43,000次推理）的完整分析：
+基于 **41个测试程序**（累计超过66,000次推理）的完整分析：
 
 | 对比维度 | 结论 | 统计显著性 |
 |----------|------|------------|
@@ -413,7 +451,7 @@ MIT License
 
 ---
 
-**版本**：v2.2  
-**更新日期**：2026-03-31  
+**版本**：v2.3  
+**更新日期**：2026-06-03  
 **测试程序**：41 个标准化测试程序（24 个 Go + 17 个 Python）  
-**测试数据**：累计超过 43,000 次推理
+**测试数据**：累计超过 66,000 次推理

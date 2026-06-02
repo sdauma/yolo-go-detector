@@ -366,7 +366,7 @@ func getLuminance(c color.RGBA) float64 {
 	return 0.299*float64(c.R) + 0.587*float64(c.G) + 0.114*float64(c.B)
 }
 
-// 新增：获取高对比度文本颜色
+// 获取高对比度文本颜色
 // 根据背景颜色自动选择黑色或白色文本，确保可读性
 func getContrastTextColor(backgroundColor color.RGBA) color.RGBA {
 	luminance := getLuminance(backgroundColor)
@@ -483,7 +483,7 @@ func getAreaAverageColor(img *image.RGBA, rect image.Rectangle) color.RGBA {
 	}
 }
 
-// 新增：绘制系统文本函数
+// 绘制系统文本函数
 // 在图像上添加系统标识文字，如监控系统名称等
 func drawSystemText(img *image.RGBA, location string) {
 	if !*systemTextEnabled || *systemTextContent == "" {
@@ -1073,22 +1073,6 @@ func clamp(value, min, max float32) float32 {
 	return value
 }
 
-// min和max辅助函数
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-// 确保至少有一个工作协程
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 // 水平翻转图像
 // 用于测试时增强(TTA)，提高检测精度
 func flipHorizontal(img image.Image) image.Image {
@@ -1536,7 +1520,7 @@ func drawText(img *image.RGBA, x, y int, text string, textColor color.RGBA) {
 	d.DrawString(text)
 }
 
-// YOLO类别标签（英文原始标签）[1,2](@ref)
+// YOLO类别标签（英文原始标签）
 // YOLOv8模型支持的80个类别
 var yoloClasses = []string{
 	"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",

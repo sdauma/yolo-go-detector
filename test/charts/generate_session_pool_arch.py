@@ -8,9 +8,8 @@ base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 # 字体文件可能存在的路径
 font_paths = [
-    os.path.join(base_dir, "paper", "华文中宋.ttf"),  # 项目目录
-    "C:\\Windows\\Fonts\\华文中宋.ttf",  # 系统字体目录
-    "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\华文中宋.ttf"  # 用户字体目录
+    "C:\\Windows\\Fonts\\simsun.ttc",  # 系统宋体
+    "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\simsun.ttc"  # 用户字体目录
 ]
 
 # 打印当前工作目录
@@ -35,8 +34,8 @@ if not font_registered:
 font_names = [f.name for f in font_manager.fontManager.ttflist]
 print("Registered fonts containing 'STZhongsong':", [name for name in font_names if 'STZhongsong' in name])
 
-# 设置字体：中文使用华文中宋，英文使用 Times New Roman
-plt.rcParams['font.sans-serif'] = ['STZhongsong', 'SimHei']  # 优先华文中宋，回退到黑体
+# 设置字体：中文使用宋体，英文使用 Times New Roman
+plt.rcParams['font.sans-serif'] = ['SimSun', 'SimHei']  # 优先宋体，回退到黑体
 plt.rcParams['font.serif'] = ['Times New Roman']  # 英文使用 Times New Roman
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 
@@ -112,7 +111,7 @@ ax.axis('off')
 # 添加中英文标题（符合期刊图注规范）
 # 使用 suptitle 并让 matplotlib 自动处理字体
 plt.suptitle("图 1 Session Pool 并发推理架构\nFig. 1 Session Pool Concurrent Inference Architecture",
-             fontsize=12, y=0.98)
+             fontsize=11, y=0.98)
 
 # 检测实际使用的字体
 from matplotlib.font_manager import findfont, FontProperties
