@@ -40,22 +40,20 @@ func NewModelSessionPool(maxSize int, modelPath string) *ModelSessionPool {
 		modelPath: modelPath,
 	}
 
-	// 预创建一些会话，提高初始处理速度
-	preCreateCount := max(1, min(maxSize/2, runtime.NumCPU()))
-	for i := 0; i < preCreateCount; i++ {
+	// 预创建全部会话，避免运行时创建开销 + CPU 过度订阅
+	for i := 0; i < maxSize; i++ {
 		if session, err := initSession(); err == nil {
-			select {
-			case pool.sessions <- session:
-			default:
-				session.Destroy()
-			}
+			pool.sessions <- session
+		} else {
+			fmt.Printf("[ModelSessionPool] 警告: 预创建第 %d 个 Session 失败: %v\n", i+1, err)
 		}
 	}
+	fmt.Printf("[ModelSessionPool] 预创建 %d 个 Session（池容量 %d）\n", len(pool.sessions), maxSize)
 
 	return pool
 }
 
-// GetSession 从池中获取会话，如果池为空则创建新会话
+// GetSession 从池中获取会话（阻塞等待，不会超过池容量）
 func (pool *ModelSessionPool) GetSession() (*ModelSession, error) {
 	// 首先尝试从池中获取会话
 	select {
@@ -72,8 +70,22 @@ func (pool *ModelSessionPool) GetSession() (*ModelSession, error) {
 	default:
 	}
 
-	// 池为空或会话无效，尝试创建新会话
-	return pool.createSession()
+	// 池为空，尝试创建新会话
+	currentActive := atomic.LoadInt32(&pool.activeSessions)
+	if currentActive < int32(pool.maxSize) {
+		return pool.createSession()
+	}
+
+	// ★ 池已满，阻塞等待归还（之前是直接创建，导致 Session 数超容量 + CPU 风暴）
+	session := <-pool.sessions
+	if session != nil && session.Session != nil {
+		atomic.AddInt32(&pool.activeSessions, 1)
+		return session, nil
+	}
+	if session != nil {
+		session.Destroy()
+	}
+	return pool.GetSession()
 }
 
 // PutSession 将会话放回池中

@@ -30,6 +30,10 @@ tmp/
 # Paper directory (not to be uploaded to repository)
 paper/
 
+# Production credentials (real passwords, DO NOT commit)
+production/config.prod.yaml
+production/*.exe
+
 # Batch files (not to be uploaded to repository)
 # *.bat
 

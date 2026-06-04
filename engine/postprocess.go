@@ -54,16 +54,16 @@ func (p *Postprocessor) Process(output []float32, inputWidth, inputHeight int) [
 	detections := make([]BoundingBox, 0, numAnchors)
 
 	// 解析输出
+	// YOLO 输出内存布局为行主序 [84, 8400]（与主项目 main.go 完全一致）
+	// 前 4 行是 box (cx, cy, w, h)，后 80 行是类别置信度
 	for i := 0; i < numAnchors; i++ {
-		offset := i * 84
+		// 获取边界框坐标 (cx, cy, w, h) — 行主序
+		cx := output[0*numAnchors+i]
+		cy := output[1*numAnchors+i]
+		w := output[2*numAnchors+i]
+		h := output[3*numAnchors+i]
 
-		// 获取边界框坐标 (cx, cy, w, h)
-		cx := output[offset]
-		cy := output[offset+1]
-		w := output[offset+2]
-		h := output[offset+3]
-
-		// 转换为 (x1, y1, x2, y2)
+		// 转换为 (x1, y1, x2, y2) — 仍在模型输入空间
 		x1 := cx - w/2
 		y1 := cy - h/2
 		x2 := cx + w/2
@@ -73,7 +73,7 @@ func (p *Postprocessor) Process(output []float32, inputWidth, inputHeight int) [
 		maxConf := float32(0)
 		classID := 0
 		for c := 0; c < numClasses; c++ {
-			conf := output[offset+4+c]
+			conf := output[(4+c)*numAnchors+i]
 			if conf > maxConf {
 				maxConf = conf
 				classID = c

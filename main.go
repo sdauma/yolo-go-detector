@@ -4,13 +4,17 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"errors"
 	"flag"
 	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
+	_ "image/gif"
 	"image/jpeg"
+	_ "image/jpeg"
+	_ "image/png"
 	"math"
 	"os"
 	"path/filepath"
@@ -23,10 +27,11 @@ import (
 
 	"math/rand/v2"
 
-	"github.com/flopp/go-findfont"
+	"github.com/flopp/go-findfont" // 添加字体查找库
 	"github.com/nfnt/resize"
+	ort "github.com/yalue/onnxruntime_go"
 	"golang.org/x/image/font"
-	"golang.org/x/image/font/inconsolata"
+	"golang.org/x/image/font/inconsolata" // 用于回退的默认字体
 	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/math/fixed"
 )
@@ -35,25 +40,61 @@ import (
 var (
 	// 模型路径配置
 	modelPath = "./third_party/yolo11x.onnx" // YOLO模型文件路径
+	useCoreML = false                        // 是否使用CoreML加速（仅限iOS/macOS）
 
 	// 输入输出路径参数
-	inputImagePath  = flag.String("img", "./assets/bus.jpg", "输入图像路径、目录、视频文件或.txt文件")
+	//inputImagePath = flag.String("img", "../yolo/camera/14.jpg", "输入图像路径、目录、视频文件或.txt文件")
+	inputImagePath = flag.String("img", "./assets/bus.jpg", "输入图像路径、目录、视频文件或.txt文件")
+	//inputImagePath  = flag.String("img", "../yolo/camera", "输入图像路径、目录、视频文件或.txt文件")
 	outputImagePath = flag.String("output", "./assets/bus_11x_false.jpg", "输出图像路径（仅在输入单个图像时有效）")
 
 	// 检测参数配置
 	confidenceThreshold = flag.Float64("conf", 0.25, "置信度阈值，过滤低置信度检测结果")
 	iouThreshold        = flag.Float64("iou", 0.7, "IOU阈值，用于非极大值抑制(NMS)")
 	modelInputSize      = flag.Int("size", 640, "模型输入尺寸，通常为640x640")
-	useRectScaling      = flag.Bool("rect", false, "是否使用矩形缩放（保持长宽比）")
-	useAugment          = flag.Bool("augment", false, "是否启用测试时增强 (TTA) 进行预测")
+	// rect	bool	True	如果启用，则对图像较短的一边进行最小填充，直到可以被步长整除，以提高推理速度。如果禁用，则在推理期间将图像填充为正方形。
+	useRectScaling = flag.Bool("rect", false, "是否使用矩形缩放（保持长宽比）")
+	// augment	bool	False	启用测试时增强 (TTA) 进行预测，可能会提高检测的鲁棒性，但会降低推理速度。
+	useAugment = flag.Bool("augment", false, "是否启用测试时增强 (TTA) 进行预测")
+	// batch	int	1	指定推理的批处理大小（仅在源为以下情况时有效： 一个目录、视频文件，或 .txt 文件)。
+	batchSize = flag.Int("batch", 1, "指定推理的批处理大小")
+
+	// 系统显示参数（用于监控系统等应用场景）
+	systemTextLocation = flag.String("text-location", "bottom-left", "系统文本位置 (top-left, bottom-left, top-right, bottom-right)")
+	systemTextContent  = flag.String("system-text", "重要设施危险场景监测系统", "系统显示文本")
+	systemTextEnabled  = flag.Bool("enable-system-text", true, "是否显示系统文本")
 
 	// 并发处理相关参数
 	workerCount = flag.Int("workers", max(1, runtime.NumCPU()/2), "并发工作协程数量")
 	queueSize   = flag.Int("queue-size", 100, "任务队列大小")
 	taskTimeout = flag.Duration("timeout", 30*time.Second, "单个任务超时时间")
+
+	// 中文字体变量
+	chineseFont font.Face
+
+	// ONNX Runtime 初始化状态控制（线程安全）
+	ortInitOnce sync.Once
+
+	//步长
+	stride = 32
+
+	// 内存池优化
+	boundingBoxPool = sync.Pool{
+		New: func() interface{} {
+			return &boundingBox{}
+		},
+	}
+
+	// 图像对象池，用于重用RGBA图像
+	imagePool = sync.Pool{
+		New: func() interface{} {
+			// 默认创建640x640的图像，这是最常用的尺寸
+			return image.NewRGBA(image.Rect(0, 0, 640, 640))
+		},
+	}
 )
 
-// 支持的图像和视频扩展名
+// 定义支持的图像和视频扩展名常量，提升可维护性
 var (
 	supportedImageExts = map[string]bool{
 		".jpg":  true,
@@ -70,33 +111,46 @@ var (
 	}
 )
 
-// 辅助函数
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+// 缩放和填充信息结构体，用于坐标转换
+// 在图像预处理过程中记录缩放参数，以便将模型输出坐标转换回原图坐标
+type ScaleInfo struct {
+	ScaleX    float32 // X轴缩放比例
+	ScaleY    float32 // Y轴缩放比例
+	PadLeft   int     // 左侧填充像素数
+	PadTop    int     // 顶部填充像素数
+	NewWidth  int     // 缩放后宽度
+	NewHeight int     // 缩放后高度
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
+// init 函数：程序初始化
+// 确保全局资源只初始化一次
+func init() {
+	// 设置环境变量确保UTF-8编码支持
+	os.Setenv("LC_ALL", "zh_CN.UTF-8")
+
+	// 初始化中文字体
+	if err := initChineseFont(); err != nil {
+		fmt.Printf("警告: 中文字体初始化失败: %v\n", err)
 	}
-	return b
 }
 
 // 主函数：程序入口点
 // 解析命令行参数，初始化配置，根据输入类型决定处理方式
 func main() {
-	// 设置环境变量确保UTF-8编码支持
-	os.Setenv("LC_ALL", "zh_CN.UTF-8")
-
-	// 初始化图像池映射
-	imagePools = make(map[imageSizeKey]*sync.Pool)
-
 	flag.Parse()
 	fmt.Printf("使用参数: conf=%.2f, iou=%.2f, size=%d, rect=%t, augment=%t, batch=%d, workers=%d\n",
 		*confidenceThreshold, *iouThreshold, *modelInputSize, *useRectScaling, *useAugment, *batchSize, *workerCount)
+
+	// 确保程序退出时清理字体资源
+	defer cleanupFont()
+
+	// 确保临时目录存在
+	tmpDir := "./tmp"
+	if _, err := os.Stat(tmpDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(tmpDir, 0755); err != nil {
+			fmt.Printf("创建临时目录失败: %v\n", err)
+		}
+	}
 
 	// 创建默认输出目录
 	defaultOutputDir := "./assets"
@@ -132,7 +186,7 @@ func main() {
 
 		// 如果输出路径为空，则自动生成带模型标识的路径
 		outputPath := *outputImagePath
-		if outputPath == "" || outputPath == "../yolo/camera/3_11x_false.jpg" {
+		if outputPath == "" || outputPath == "../yolo/camera/14_11x_false.jpg" {
 			modelIdentifier := getModelIdentifier(modelPath)
 			imgName := filepath.Base(imagePaths[0])
 			ext := filepath.Ext(imgName)
@@ -186,12 +240,8 @@ func ConcurrentBatchProcessImages(sourceImagePaths []string, outputImagePaths []
 		return fmt.Errorf("输入图片路径数量(%d)与输出图片路径数量(%d)不匹配", len(sourceImagePaths), len(outputImagePaths))
 	}
 
-	// 初始化中文字体
-	if err := initChineseFont(); err != nil {
-		fmt.Printf("警告: 中文字体初始化失败: %v\n", err)
-	} else {
-		defer cleanupFont()
-	}
+	// 中文字体已在init函数中初始化
+	// 字体资源在整个程序生命周期内保持可用，无需在批量处理后清理
 
 	fmt.Printf("启动并发处理，工作协程数量: %d, 队列大小: %d\n", *workerCount, *queueSize)
 
@@ -366,7 +416,7 @@ func getLuminance(c color.RGBA) float64 {
 	return 0.299*float64(c.R) + 0.587*float64(c.G) + 0.114*float64(c.B)
 }
 
-// 获取高对比度文本颜色
+// 新增：获取高对比度文本颜色
 // 根据背景颜色自动选择黑色或白色文本，确保可读性
 func getContrastTextColor(backgroundColor color.RGBA) color.RGBA {
 	luminance := getLuminance(backgroundColor)
@@ -483,7 +533,7 @@ func getAreaAverageColor(img *image.RGBA, rect image.Rectangle) color.RGBA {
 	}
 }
 
-// 绘制系统文本函数
+// 新增：绘制系统文本函数
 // 在图像上添加系统标识文字，如监控系统名称等
 func drawSystemText(img *image.RGBA, location string) {
 	if !*systemTextEnabled || *systemTextContent == "" {
@@ -636,21 +686,54 @@ func cleanupFont() {
 // getChineseLabel 获取中文标签
 // 将英文标签转换为对应的中文标签
 func getChineseLabel(englishLabel string) string {
-	if chinese, exists := detectLabelMap[englishLabel]; exists {
+	if chinese, exists := detectLabeltMap[englishLabel]; exists {
 		return chinese
 	}
 	return englishLabel
 }
 
+func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
+	originalPic, e := loadImageFile(inputImagePath)
+	if e != nil {
+		return 0, "", e
+	}
+
+	allBoxes, err := inferOnly(originalPic)
+	if err != nil {
+		return 0, "", err
+	}
+
+	var outObjectStr string
+	var num int
+	for _, box := range allBoxes {
+		if checkStrIsInArray(box.label, []string{"person", "car", "motorcycle", "bus", "truck"}) {
+			num++
+			chineseLabel := getChineseLabel(box.label)
+			confStr := fmt.Sprintf("%.8f", box.confidence)
+			boxXYStr := fmt.Sprintf("%.8f %.8f %.8f %.8f", box.x1, box.y1, box.x2, box.y2)
+			outObjectStr += "对象" + strconv.Itoa(num) + ": " + box.label + "(" + chineseLabel + ")" +
+				", 置信度: " + confStr + " ,框：[" + boxXYStr + "] ; "
+		}
+	}
+	if num > 0 {
+		outObjectStr = " AI分析到危险对象共有 " + strconv.Itoa(num) + " 个, " + outObjectStr
+	} else {
+		outObjectStr = "未检测到危险对象"
+	}
+
+	e = drawBoundingBoxesWithLabels(originalPic, allBoxes, outputImagePath)
+	if e != nil {
+		return num, outObjectStr, e
+	}
+
+	return num, outObjectStr, nil
+}
+
 // 图片检测输出结果 输入图片地址 输出检测结果中的对象描述:对象个数;描述:对象1是*,置信度;错误信息
 // 核心检测函数，执行完整的检测流程
-func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
-	os.Setenv("LC_ALL", "zh_CN.UTF-8")
-	if err := initChineseFont(); err != nil {
-		fmt.Printf("警告: 中文字体初始化失败: %v\n", err)
-	} else {
-		defer cleanupFont()
-	}
+func detectImageBAK(inputImagePath, outputImagePath string) (int, string, error) {
+	// 环境变量和中文字体已在init函数中初始化
+	// 字体资源在整个程序生命周期内保持可用，无需在单次检测后清理
 
 	originalPic, e := loadImageFile(inputImagePath)
 	if e != nil {
@@ -712,8 +795,8 @@ func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
 			num++
 			chineseLabel := getChineseLabel(box.label)
 			//confStr := fmt.Sprintf("%.2f", float32(math.Round(float64(box.confidence*100))/100))
-			confStr := fmt.Sprintf("%.6f", box.confidence)
-			boxXYStr := fmt.Sprintf("%.6f %.6f %.6f %.6f", box.x1, box.y1, box.x2, box.y2)
+			confStr := fmt.Sprintf("%.8f", box.confidence)
+			boxXYStr := fmt.Sprintf("%.8f %.8f %.8f %.8f", box.x1, box.y1, box.x2, box.y2)
 			outObjectStr += "对象" + strconv.Itoa(num) + ": " + box.label + "(" + chineseLabel + ")" + ", 置信度: " + confStr + " ,框：[" + boxXYStr + "] ; "
 		}
 	}
@@ -735,21 +818,20 @@ func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
 // 确保ONNX Runtime只被初始化一次，保证线程安全
 
 func initializeORTEnvironment() error {
-	ortInitMutex.Lock()
-	defer ortInitMutex.Unlock()
-	if ortInitialized {
-		return nil
-	}
-	libPath := getSharedLibPath()
-	if libPath == "" {
-		return errors.New("未找到ONNX Runtime库，请确保已安装ONNX Runtime或在third_party目录中放置了相应的库文件")
-	}
-	ort.SetSharedLibraryPath(libPath)
-	if err := ort.InitializeEnvironment(); err != nil {
-		return fmt.Errorf("初始化ORT环境失败: %w，使用的库路径: %s", err, libPath)
-	}
-	ortInitialized = true
-	return nil
+	var initErr error
+	ortInitOnce.Do(func() {
+		libPath := getSharedLibPath()
+		if libPath == "" {
+			initErr = errors.New("未找到ONNX Runtime库")
+			return
+		}
+		ort.SetSharedLibraryPath(libPath)
+		if err := ort.InitializeEnvironment(); err != nil {
+			initErr = fmt.Errorf("初始化ORT环境失败: %w", err)
+			return
+		}
+	})
+	return initErr
 }
 
 type ModelSession struct {
@@ -815,21 +897,61 @@ func (b *boundingBox) iou(other *boundingBox) float32 {
 // 加载图像文件
 // 支持多种图像格式（JPEG、PNG、GIF等）
 func loadImageFile(filePath string) (image.Image, error) {
-	// 检查文件是否存在
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("图像文件不存在: %s", filePath)
-	}
-
 	f, e := os.Open(filePath)
 	if e != nil {
-		return nil, fmt.Errorf("打开图像文件失败 (路径: %s): %w", filePath, e)
+		return nil, fmt.Errorf("打开 %s 错误: %w", filePath, e)
 	}
 	defer f.Close()
-	pic, format, e := image.Decode(f)
+	pic, _, e := image.Decode(f)
 	if e != nil {
-		return nil, fmt.Errorf("解码图像文件失败 (路径: %s, 格式: %v): %w", filePath, format, e)
+		return nil, fmt.Errorf("解码 %s 错误: %w", filePath, e)
 	}
 	return pic, nil
+}
+
+// 旧函数已被替换，请使用resizeWithLetterbox函数
+
+// LetterBox类的rect=False模式实现（auto=False）
+// 对应Python中LetterBox的auto=False参数，用于rect=False模式（标准letterbox）
+// 保持长宽比，将图像缩放到最短边等于目标尺寸，用灰色填充
+func resizeWithLetterboxBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
+	bounds := img.Bounds()
+	originalWidth := bounds.Dx()
+	originalHeight := bounds.Dy()
+
+	// 计算缩放比例，保持长宽比，确保最短边适应目标尺寸
+	scale := float64(targetSize) / math.Max(float64(originalWidth), float64(originalHeight))
+	newWidth := int(float64(originalWidth) * scale)
+	newHeight := int(float64(originalHeight) * scale)
+
+	// 缩放图像
+	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
+	result := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
+
+	// 填充灰色背景 (114, 114, 114) - YOLO标准
+	grayFill := &image.Uniform{color.RGBA{114, 114, 114, 255}}
+	draw.Draw(result, result.Bounds(), grayFill, image.Point{}, draw.Src)
+
+	// 将缩放后的图像居中放置
+	offsetX := (targetSize - newWidth) / 2
+	offsetY := (targetSize - newHeight) / 2
+	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight),
+		resized, image.Point{}, draw.Src)
+
+	// 计算实际的缩放比例（相对于原始图像）
+	scaleX := float32(newWidth) / float32(originalWidth)
+	scaleY := float32(newHeight) / float32(originalHeight)
+
+	scaleInfo := ScaleInfo{
+		ScaleX:    scaleX,
+		ScaleY:    scaleY,
+		PadLeft:   offsetX,
+		PadTop:    offsetY,
+		NewWidth:  newWidth,
+		NewHeight: newHeight,
+	}
+
+	return result, scaleInfo
 }
 
 // 标准 Letterbox (对应 auto=False) 此模式将图像缩放到 imgsz（如 640），并填充到完整的正方形。 	官方版本
@@ -844,8 +966,17 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 
 	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
 
-	// 从对象池获取指定尺寸的图像
-	result := GetImageFromPool(targetSize, targetSize)
+	// 从对象池获取图像
+	result := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if result.Bounds().Dx() != targetSize || result.Bounds().Dy() != targetSize {
+		result = image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
+	} else {
+		// 清空图像
+		for i := range result.Pix {
+			result.Pix[i] = 0
+		}
+	}
 
 	// 填充 114 灰色
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
@@ -856,6 +987,47 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight), resized, image.Point{}, draw.Src)
 
 	return result, ScaleInfo{ScaleX: float32(scale), ScaleY: float32(scale), PadLeft: offsetX, PadTop: offsetY}
+}
+
+// LetterBox类的rect=True模式实现（auto=True）
+// 对应Python中LetterBox的auto=True参数，用于rect=True模式
+// 保持长宽比，同时确保尺寸能被步长(stride)整除，以提高批处理效率
+func resizeWithRectScalingBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
+	bounds := img.Bounds()
+	originalWidth := bounds.Dx()
+	originalHeight := bounds.Dy()
+
+	scale := float64(targetSize) / math.Min(float64(originalWidth), float64(originalHeight))
+	newWidth := int(float64(originalWidth) * scale)
+	newHeight := int(float64(originalHeight) * scale)
+
+	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
+
+	// 中心裁剪成 640x640
+	startX := (newWidth - targetSize) / 2
+	startY := (newHeight - targetSize) / 2
+	if startX < 0 {
+		startX = 0
+	}
+	if startY < 0 {
+		startY = 0
+	}
+
+	cropped := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
+	draw.Draw(cropped, cropped.Bounds(), resized, image.Point{startX, startY}, draw.Src)
+
+	scaleX := float32(newWidth) / float32(originalWidth)
+	scaleY := float32(newHeight) / float32(originalHeight)
+
+	scaleInfo := ScaleInfo{
+		ScaleX:    scaleX,
+		ScaleY:    scaleY,
+		PadLeft:   startX,
+		PadTop:    startY,
+		NewWidth:  newWidth,
+		NewHeight: newHeight,
+	}
+	return cropped, scaleInfo
 }
 
 // Rect 缩放 (对应 auto=True) 官方版本：这是 dynamic=True 的精髓：不再填充到 640x640，而是填充到能被 stride（通常为 32）整除的最小矩形，从而大幅提升推理速度。
@@ -880,8 +1052,17 @@ func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.I
 
 	resized := resize.Resize(uint(unpadWidth), uint(unpadHeight), img, resize.Bilinear)
 
-	// 从对象池获取指定尺寸的图像
-	result := GetImageFromPool(finalWidth, finalHeight)
+	// 从对象池获取图像
+	result := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if result.Bounds().Dx() != finalWidth || result.Bounds().Dy() != finalHeight {
+		result = image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
+	} else {
+		// 清空图像
+		for i := range result.Pix {
+			result.Pix[i] = 0
+		}
+	}
 
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
 
@@ -926,13 +1107,13 @@ func initSession() (*ModelSession, error) {
 	inputShape := ort.NewShape(int64(*batchSize), 3, int64(size), int64(size))
 	inputTensor, err := ort.NewEmptyTensor[float32](inputShape)
 	if err != nil {
-		return nil, fmt.Errorf("创建输入张量失败 (形状: %v): %w", inputShape, err)
+		return nil, fmt.Errorf("创建输入张量失败: %w", err)
 	}
 	outputShape := ort.NewShape(int64(*batchSize), 84, 8400) // YOLO 输出
 	outputTensor, err := ort.NewEmptyTensor[float32](outputShape)
 	if err != nil {
 		inputTensor.Destroy()
-		return nil, fmt.Errorf("创建输出张量失败 (形状: %v): %w", outputShape, err)
+		return nil, fmt.Errorf("创建输出张量失败: %w", err)
 	}
 	options, err := ort.NewSessionOptions()
 	if err != nil {
@@ -941,13 +1122,17 @@ func initSession() (*ModelSession, error) {
 		return nil, fmt.Errorf("创建SessionOptions失败: %w", err)
 	}
 	defer options.Destroy()
+	// ★ 显式设置线程数，避免多 Session 场景下的 CPU 过度订阅
+	// 单 Session 场景默认用满所有核心，多 Session 场景由调用方（SessionPool）控制
+	options.SetIntraOpNumThreads(runtime.NumCPU())
+	options.SetInterOpNumThreads(1)
 	session, err := ort.NewAdvancedSession(modelPath,
 		[]string{"images"}, []string{"output0"},
 		[]ort.ArbitraryTensor{inputTensor}, []ort.ArbitraryTensor{outputTensor}, options)
 	if err != nil {
 		inputTensor.Destroy()
 		outputTensor.Destroy()
-		return nil, fmt.Errorf("创建ORT会话失败 (模型路径: %s, 输入尺寸: %d): %w", modelPath, size, err)
+		return nil, fmt.Errorf("创建ORT会话失败: %w", err)
 	}
 	return &ModelSession{
 		Session: session,
@@ -1073,14 +1258,39 @@ func clamp(value, min, max float32) float32 {
 	return value
 }
 
+// min和max辅助函数
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// 确保至少有一个工作协程
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
 // 水平翻转图像
 // 用于测试时增强(TTA)，提高检测精度
 func flipHorizontal(img image.Image) image.Image {
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 
-	// 从对象池获取指定尺寸的图像
-	result := GetImageFromPool(w, h)
+	// 从对象池获取图像
+	result := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
+		result = image.NewRGBA(image.Rect(0, 0, w, h))
+	} else {
+		// 清空图像
+		for i := range result.Pix {
+			result.Pix[i] = 0
+		}
+	}
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
@@ -1098,8 +1308,17 @@ func rotateImage(img image.Image, degrees int) image.Image {
 
 	switch degrees {
 	case 90:
-		// 从对象池获取指定尺寸的图像
-		result := GetImageFromPool(h, w)
+		// 从对象池获取图像
+		result := imagePool.Get().(*image.RGBA)
+		// 调整图像大小
+		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
+			result = image.NewRGBA(image.Rect(0, 0, h, w))
+		} else {
+			// 清空图像
+			for i := range result.Pix {
+				result.Pix[i] = 0
+			}
+		}
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(y, w-x-1, img.At(x, y))
@@ -1107,8 +1326,17 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		}
 		return result
 	case 180:
-		// 从对象池获取指定尺寸的图像
-		result := GetImageFromPool(w, h)
+		// 从对象池获取图像
+		result := imagePool.Get().(*image.RGBA)
+		// 调整图像大小
+		if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
+			result = image.NewRGBA(image.Rect(0, 0, w, h))
+		} else {
+			// 清空图像
+			for i := range result.Pix {
+				result.Pix[i] = 0
+			}
+		}
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(w-x-1, h-y-1, img.At(x, y))
@@ -1116,8 +1344,17 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		}
 		return result
 	case 270:
-		// 从对象池获取指定尺寸的图像
-		result := GetImageFromPool(h, w)
+		// 从对象池获取图像
+		result := imagePool.Get().(*image.RGBA)
+		// 调整图像大小
+		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
+			result = image.NewRGBA(image.Rect(0, 0, h, w))
+		} else {
+			// 清空图像
+			for i := range result.Pix {
+				result.Pix[i] = 0
+			}
+		}
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(h-y-1, x, img.At(x, y))
@@ -1235,8 +1472,18 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 
-	// 从对象池获取指定尺寸的图像
-	rgba := GetImageFromPool(w, h)
+	// 从对象池获取图像
+	rgba := imagePool.Get().(*image.RGBA)
+	// 调整图像大小
+	if rgba.Bounds().Dx() != w || rgba.Bounds().Dy() != h {
+		// 如果池中的图像尺寸不匹配，创建新图像并确保正确初始化
+		rgba = image.NewRGBA(bounds)
+	} else {
+		// 重用现有图像，仅清空像素数据
+		for i := range rgba.Pix {
+			rgba.Pix[i] = 0
+		}
+	}
 
 	draw.Draw(rgba, bounds, img, image.Point{}, draw.Src)
 
@@ -1378,7 +1625,7 @@ func drawBoundingBoxesWithLabels(img image.Image, boxes []boundingBox, outputPat
 	}
 
 	// 将图像对象归还到池中
-	PutImageToPool(rgba)
+	imagePool.Put(rgba)
 
 	return nil
 }
@@ -1520,7 +1767,7 @@ func drawText(img *image.RGBA, x, y int, text string, textColor color.RGBA) {
 	d.DrawString(text)
 }
 
-// YOLO类别标签（英文原始标签）
+// YOLO类别标签（英文原始标签）[1,2](@ref)
 // YOLOv8模型支持的80个类别
 var yoloClasses = []string{
 	"person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
@@ -1536,7 +1783,7 @@ var yoloClasses = []string{
 
 // 中英标签映射
 // 将YOLO英文标签映射为中文标签
-var detectLabelMap = map[string]string{
+var detectLabeltMap = map[string]string{
 	"person":         "人员",
 	"bicycle":        "自行车",
 	"car":            "汽车",
@@ -1651,4 +1898,278 @@ func getHighContrastBackgroundColor(originalColor color.RGBA) color.RGBA {
 			return color.RGBA{R: 200, G: 200, B: 200, A: 220}
 		}
 	}
+}
+
+func getMemoryMB() float64 {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	return float64(m.Alloc) / 1024.0 / 1024.0
+}
+func InferOnceExp(imgPath string) (int, float64, float64, error) {
+	memBefore := getMemoryMB()
+	start := time.Now()
+
+	// 使用内存中的临时路径，避免磁盘I/O影响性能测试
+	num, _, err := detectImage(imgPath, "./tmp/tmp.jpg")
+
+	elapsed := time.Since(start).Seconds() * 1000
+	memAfter := getMemoryMB()
+
+	return num, elapsed, memAfter - memBefore, err
+}
+func RunExperiment(imgPath string, runs int) {
+	var times []float64
+	var mems []float64
+
+	fmt.Printf("Running %d experiments on %s\n\n", runs, imgPath)
+
+	for i := 0; i < runs; i++ {
+		num, t, mem, err := InferOnceExp(imgPath)
+		if err != nil {
+			fmt.Println("Error:", err)
+			continue
+		}
+		times = append(times, t)
+		mems = append(mems, mem)
+
+		fmt.Printf("Run %03d: objects=%d | time=%.2f ms | Δmem=%.2f MB\n",
+			i+1, num, t, mem)
+	}
+
+	printStats(times, mems)
+}
+func printStats(times, mems []float64) {
+	if len(times) == 0 {
+		fmt.Println("No valid data.")
+		return
+	}
+
+	sort.Float64s(times)
+
+	mean := avg(times)
+	p99 := times[int(math.Min(float64(len(times)-1), float64(len(times))*0.99))]
+	std := stddev(times, mean)
+
+	fmt.Printf("\n===== Experiment Summary =====\n")
+	fmt.Printf("Mean Latency : %.2f ms\n", mean)
+	fmt.Printf("P99 Latency  : %.2f ms\n", p99)
+	fmt.Printf("Std Dev      : %.2f ms\n", std)
+	fmt.Printf("Avg ΔMemory  : %.2f MB\n", avg(mems))
+	fmt.Println("==============================")
+}
+
+func avg(arr []float64) float64 {
+	sum := 0.0
+	for _, v := range arr {
+		sum += v
+	}
+	return sum / float64(len(arr))
+}
+
+func stddev(arr []float64, mean float64) float64 {
+	var sum float64
+	for _, v := range arr {
+		diff := v - mean
+		sum += diff * diff
+	}
+	return math.Sqrt(sum / float64(len(arr)))
+}
+func inferOnly(pic image.Image) ([]boundingBox, error) {
+	originalWidth := pic.Bounds().Dx()
+	originalHeight := pic.Bounds().Dy()
+
+	modelSession, err := initSession()
+	if err != nil {
+		return nil, err
+	}
+	defer modelSession.Destroy()
+
+	var allBoxes []boundingBox
+
+	if *useAugment {
+		scaleInfo, err := prepareInput(pic, modelSession.Input)
+		if err != nil {
+			return nil, err
+		}
+		modelSession.Session.Run()
+		originalBoxes := processOutput(
+			modelSession.Output.GetData(),
+			originalWidth, originalHeight,
+			float32(*confidenceThreshold),
+			float32(*iouThreshold),
+			scaleInfo,
+		)
+		allBoxes = append(allBoxes, originalBoxes...)
+
+		flippedPic := flipHorizontal(pic)
+		scaleInfo, err = prepareInput(flippedPic, modelSession.Input)
+		if err == nil {
+			modelSession.Session.Run()
+			flippedBoxes := processOutput(
+				modelSession.Output.GetData(),
+				originalWidth, originalHeight,
+				float32(*confidenceThreshold),
+				float32(*iouThreshold),
+				scaleInfo,
+			)
+			for i := range flippedBoxes {
+				flippedBoxes[i] = flipBoundingBox(flippedBoxes[i], originalWidth)
+			}
+			allBoxes = append(allBoxes, flippedBoxes...)
+		}
+
+		if len(allBoxes) > 0 {
+			allBoxes = nonMaxSuppression(allBoxes, float32(*iouThreshold))
+		}
+	} else {
+		scaleInfo, err := prepareInput(pic, modelSession.Input)
+		if err != nil {
+			return nil, err
+		}
+		modelSession.Session.Run()
+		allBoxes = processOutput(
+			modelSession.Output.GetData(),
+			originalWidth, originalHeight,
+			float32(*confidenceThreshold),
+			float32(*iouThreshold),
+			scaleInfo,
+		)
+	}
+
+	return allBoxes, nil
+}
+
+type ExpResult struct {
+	ImagePath  string
+	NumObjects int
+	TimeMS     float64
+	MemMB      float64
+}
+type ExpSummary struct {
+	Count     int
+	AvgTimeMS float64
+	MaxTimeMS float64
+	MinTimeMS float64
+	AvgMemMB  float64
+	MaxMemMB  float64
+	MinMemMB  float64
+}
+
+func RunBatchExperiment(imagePaths []string) ([]ExpResult, ExpSummary, error) {
+	var results []ExpResult
+
+	var totalTime, totalMem float64
+	minTime, maxTime := math.MaxFloat64, 0.0
+	minMem, maxMem := math.MaxFloat64, 0.0
+
+	for _, path := range imagePaths {
+		num, timeMS, memMB, err := InferOnceExp(path)
+		if err != nil {
+			return nil, ExpSummary{}, err
+		}
+
+		res := ExpResult{
+			ImagePath:  path,
+			NumObjects: num,
+			TimeMS:     timeMS,
+			MemMB:      memMB,
+		}
+		results = append(results, res)
+
+		totalTime += timeMS
+		totalMem += memMB
+
+		if timeMS < minTime {
+			minTime = timeMS
+		}
+		if timeMS > maxTime {
+			maxTime = timeMS
+		}
+		if memMB < minMem {
+			minMem = memMB
+		}
+		if memMB > maxMem {
+			maxMem = memMB
+		}
+	}
+
+	n := float64(len(results))
+	summary := ExpSummary{
+		Count:     len(results),
+		AvgTimeMS: totalTime / n,
+		MaxTimeMS: maxTime,
+		MinTimeMS: minTime,
+		AvgMemMB:  totalMem / n,
+		MaxMemMB:  maxMem,
+		MinMemMB:  minMem,
+	}
+
+	return results, summary, nil
+}
+func SaveResultsToCSV(results []ExpResult, summary ExpSummary, csvPath string) error {
+	file, err := os.Create(csvPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	// 表头
+	writer.Write([]string{"ImagePath", "NumObjects", "TimeMS", "MemMB"})
+
+	for _, r := range results {
+		writer.Write([]string{
+			r.ImagePath,
+			strconv.Itoa(r.NumObjects),
+			fmt.Sprintf("%.4f", r.TimeMS),
+			fmt.Sprintf("%.4f", r.MemMB),
+		})
+	}
+
+	// 空行
+	writer.Write([]string{})
+	writer.Write([]string{"Summary"})
+	writer.Write([]string{"Count", strconv.Itoa(summary.Count)})
+	writer.Write([]string{"AvgTimeMS", fmt.Sprintf("%.6f", summary.AvgTimeMS)})
+	writer.Write([]string{"MaxTimeMS", fmt.Sprintf("%.6f", summary.MaxTimeMS)})
+	writer.Write([]string{"MinTimeMS", fmt.Sprintf("%.6f", summary.MinTimeMS)})
+	writer.Write([]string{"AvgMemMB", fmt.Sprintf("%.6f", summary.AvgMemMB)})
+	writer.Write([]string{"MaxMemMB", fmt.Sprintf("%.6f", summary.MaxMemMB)})
+	writer.Write([]string{"MinMemMB", fmt.Sprintf("%.6f", summary.MinMemMB)})
+
+	return nil
+}
+func RunExperimentOnDir(imgDir string, outCSV string) error {
+	files, err := os.ReadDir(imgDir)
+	if err != nil {
+		return err
+	}
+
+	var imgPaths []string
+	for _, f := range files {
+		if f.IsDir() {
+			continue
+		}
+		ext := strings.ToLower(filepath.Ext(f.Name()))
+		if ext == ".jpg" || ext == ".png" || ext == ".jpeg" {
+			imgPaths = append(imgPaths, filepath.Join(imgDir, f.Name()))
+		}
+	}
+
+	results, summary, err := RunBatchExperiment(imgPaths)
+	if err != nil {
+		return err
+	}
+
+	err = SaveResultsToCSV(results, summary, outCSV)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("实验完成，结果保存至:", outCSV)
+	fmt.Printf("平均推理时间: %.2f ms\n", summary.AvgTimeMS)
+	fmt.Printf("平均内存占用: %.2f MB\n", summary.AvgMemMB)
+	return nil
 }

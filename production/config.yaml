@@ -1,0 +1,53 @@
+# 生产环境配置文件
+# 复制为 config.prod.yaml 并填入真实信息后使用
+
+video_api:
+  # 视联网 API 地址
+  base_url: "https://172.18.137.20:9502"
+  # 登录用户名
+  username: ""
+  # 登录密码
+  password: ""
+  # 组织 ID（空=全部摄像头）
+  org_id: ""
+  # 跳过 HTTPS 证书验证（内网自签名证书必须设为 true）
+  skip_verify: true
+  # 在线摄像头列表刷新间隔（分钟），默认 240（4小时）
+  refresh_interval_minutes: 240
+
+detection:
+  # ONNX 模型路径
+  model_path: "../third_party/yolo11x.onnx"
+  # 置信度阈值
+  conf_thresh: 0.25
+  # IOU 阈值
+  iou_thresh: 0.7
+  # 模型输入尺寸
+  input_size: 640
+  # Session Pool 大小（0=自动设为 CPU 核数）
+  pool_size: 0
+  # 每 Session 内部并行线程数（0=自动计算 CPU/PoolSize，推荐 0，避免 CPU 过度订阅）
+  intra_op_threads: 0
+
+scheduler:
+  # 每轮检测间隔（秒），2600路并发
+  round_interval_seconds: 5
+  # 并发取图数（同时发出的 HTTP 请求数上限）
+  fetch_concurrency: 100
+  # 单路取图超时（秒）
+  fetch_timeout_seconds: 30
+
+output:
+  # JSONL 输出目录（每轮一行，2600路约 260KB）
+  jsonl_dir: "./output"
+  # 告警图片输出目录（仅检测到目标时存图）
+  alert_image_dir: "./output/alerts"
+  # 是否在告警图上绘制边界框
+  draw_bounding_boxes: true
+  # 关注的类别（检测到这些类别才触发告警存图）
+  alert_classes:
+    - person
+    - car
+    - motorcycle
+    - bus
+    - truck
