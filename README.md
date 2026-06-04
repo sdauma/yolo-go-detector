@@ -180,7 +180,7 @@ yolo-go-detector/
 | §2.3 Session Pool 并发推理架构 | `test/benchmark/go_architecture_benchmark.go` | 三种并发架构（Unsafe Shared / Mutex / Session Pool）的完整实验实现 |
 | §2.3.3 Session Pool 设计 | `detector_pool.go` | 工程参考实现：`ModelSessionPool` + `VideoDetectorManager` |
 | §2.3.3 会话池核心逻辑 | `engine/session_pool.go` | 架构参考实现：`SessionPool` + `BatchInferenceEngine` |
-| 实际运行逻辑 | `test/benchmark/go_*.go` | 41 个测试程序各自独立实现推理，论文数据均由此产生 |
+| 实际运行逻辑 | `test/benchmark/go_*.go`<br>`test/benchmark/python_*.py` | 41 个测试程序（24 Go + 17 Python）各自独立实现推理，论文数据均由此产生 |
 
 ### 实验数据来源
 
@@ -188,7 +188,7 @@ yolo-go-detector/
 |----------|-------------|
 | 表1 三种架构对比 | `results/go_architecture_comparison.txt` |
 | 表2 跨语言基准对比 | `results/go_baseline_result.txt`, `results/python_baseline_result.txt` |
-| 图2-图7 | `results/charts/` （PNG + PDF） |
+| 图1-图7 | `results/charts/` （PNG + PDF） |
 | 全部实验原始日志 | `results/*.txt` |
 
 ### 可运行入口
