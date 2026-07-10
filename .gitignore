@@ -44,7 +44,6 @@ production/*.exe
 
 # Build artifacts
 *.obj
-*.pdb
 
 # Directories not to be uploaded to repository
 #detector/
