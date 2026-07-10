@@ -1,3 +1,9 @@
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='matplotlib')
+warnings.filterwarnings('ignore', message='.*iCCP.*')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='matplotlib')
+import matplotlib
+matplotlib.use('Agg')
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -10,6 +16,7 @@ try:
     go_rss = pd.read_csv("../../results/go_rss_curve.csv")
     if go_rss.empty:
         raise ValueError("Go 内存数据为空")
+    go_mem_col = "RSS_MB" if "RSS_MB" in go_rss.columns else "PM_MB"
 except FileNotFoundError:
     raise FileNotFoundError("无法读取 Go 内存数据文件：go_rss_curve.csv")
 except Exception as e:
@@ -29,8 +36,9 @@ plt.figure(figsize=(7, 4.5))
 go_time_min = go_rss["Elapsed_Seconds"] / 60.0
 py_time_min = py_rss["Elapsed_Seconds"] / 60.0
 
-plt.plot(go_time_min, go_rss["RSS_MB"], 'k--o', label="Go", linewidth=1.5, markersize=4)
-plt.plot(py_time_min, py_rss["RSS_MB"], 'k-.s', label="Python", linewidth=1.5, markersize=4)
+plt.plot(go_time_min, go_rss[go_mem_col], 'k--o', label="Go", linewidth=1.5, markersize=4)
+py_mem_col = "RSS_MB" if "RSS_MB" in py_rss.columns else "PM_MB"
+plt.plot(py_time_min, py_rss[py_mem_col], 'k-.s', label="Python", linewidth=1.5, markersize=4)
 
 plt.xlabel("运行时间 (min)", fontsize=11)
 plt.ylabel("内存占用 (MB)", fontsize=11)
@@ -43,4 +51,4 @@ plt.savefig("../../results/rss_curve.pdf", dpi=600)
 plt.savefig("../../results/charts/fig7_stability.png", dpi=600)
 print("内存使用曲线已生成: ../../results/rss_curve.pdf")
 print("内存使用曲线(PNG)已生成: ../../results/charts/fig7_stability.png")
-plt.show()
+

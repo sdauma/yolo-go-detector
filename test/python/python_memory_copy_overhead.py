@@ -1,3 +1,15 @@
+﻿# -*- coding: utf-8 -*-
+# python_memory_copy_overhead.py
+# Python 鍐呭瓨鎷疯礉寮€閿€鍒嗘瀽娴嬭瘯
+#
+# 鎶€鏈鏄庯細
+# - 浣跨敤 Python baseline Session 鎺ュ彛锛圛nferenceSession锛?
+# - 閫氳繃 SessionOptions 鏄惧紡閰嶇疆threads鍙傛暟
+#
+# 娴嬭瘯鐩殑锛?
+# - 娴嬮噺鎺ㄧ悊杩囩▼涓?Data Copy銆丆 Call銆丟C Pause 绛夌幆鑺傜殑鏃堕棿鍗犳瘮
+# - 涓?Go 绔唴瀛樻嫹璐濆紑閿€娴嬭瘯瀵归綈
+
 import os
 import time
 import numpy as np
@@ -18,8 +30,9 @@ class MemoryCopyResult:
     overhead_percent: float
 
 def get_process_rss():
+    """杩斿洖杩涚▼绉佹湁鍐呭瓨锛圥rivateMemorySize64锛夛紝涓?Go 绔?memutil.PrivateMemoryMB() 瀵归綈"""
     process = psutil.Process(os.getpid())
-    return process.memory_info().rss / 1024 / 1024
+    return process.memory_info().private / 1024 / 1024
 
 def measure_data_copy_overhead(input_data: np.ndarray) -> tuple:
     start_time = time.perf_counter()
@@ -64,7 +77,7 @@ def run_memory_copy_benchmark(session: ort.InferenceSession, input_data: np.ndar
     )
 
 def main():
-    print("===== Python 内存拷贝和线程调度开销测试 =====")
+    print("===== Python Memory Copy and Thread Scheduling Overhead Test =====")
     
     current_dir = os.path.dirname(os.path.abspath(__file__))
     base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
@@ -82,7 +95,7 @@ def main():
     session = ort.InferenceSession(model_path, sess_options, providers=['CPUExecutionProvider'])
     input_name = session.get_inputs()[0].name
     
-    print("\n===== 内存拷贝开销分析 =====")
+    print("\n===== Memory Copy Overhead Analysis =====")
     results = []
     
     for i in range(10):
@@ -96,18 +109,18 @@ def main():
     avg_inference = sum(r.inference_time for r in results) / len(results)
     avg_overhead_percent = sum(r.overhead_percent for r in results) / len(results)
     
-    print(f"数据拷贝时间: {avg_data_copy:.5f} ms")
-    print(f"C调用开销: {avg_c_call:.5f} ms")
-    print(f"GC暂停时间: {avg_gc_pause:.5f} ms")
-    print(f"总开销时间: {avg_total_overhead:.5f} ms")
-    print(f"推理时间: {avg_inference:.5f} ms")
-    print(f"开销占比: {avg_overhead_percent:.5f}%")
+    print(f"鏁版嵁鎷疯礉鏃堕棿: {avg_data_copy:.5f} ms")
+    print(f"C璋冪敤寮€閿€: {avg_c_call:.5f} ms")
+    print(f"GC鏆傚仠鏃堕棿: {avg_gc_pause:.5f} ms")
+    print(f"鎬诲紑閿€鏃堕棿: {avg_total_overhead:.5f} ms")
+    print(f"鎺ㄧ悊鏃堕棿: {avg_inference:.5f} ms")
+    print(f"寮€閿€鍗犳瘮: {avg_overhead_percent:.5f}%")
     
-    print("\n===== 线程调度开销测试 =====")
+    print("\n===== Thread Scheduling Overhead Test =====")
     thread_counts = [1, 2, 4, 8, 12]
     
     for thread_count in thread_counts:
-        print(f"\n测试 {thread_count} 线程配置...")
+        print(f"\n娴嬭瘯 {thread_count} threads閰嶇疆...")
         
         times = []
         lock = threading.Lock()
@@ -124,9 +137,9 @@ def main():
                 executor.submit(measure_thread_switch)
         
         avg_time = sum(times) / len(times)
-        print(f"平均线程调度时间: {avg_time:.5f} ms")
+        print(f"骞冲潎threads璋冨害鏃堕棿: {avg_time:.5f} ms")
     
-    print("\n===== 内存使用分析 =====")
+    print("\n===== Memory Usage Analysis =====")
     start_rss = get_process_rss()
     
     for _ in range(100):
@@ -138,28 +151,28 @@ def main():
     end_rss = get_process_rss()
     rss_drift = end_rss - start_rss
     
-    print(f"初始RSS: {start_rss:.5f} MB")
-    print(f"最终RSS: {end_rss:.5f} MB")
-    print(f"RSS漂移: {rss_drift:.5f} MB")
+    print(f"start_rss: {start_rss:.5f} MB")
+    print(f"end_rss: {end_rss:.5f} MB")
+    print(f"rss_drift: {rss_drift:.5f} MB")
     
     result_path = os.path.join(base_path, "..", "..", "results", "python_memory_copy_overhead_result.txt")
     os.makedirs(os.path.dirname(result_path), exist_ok=True)
     
-    result_content = "===== Python 内存拷贝和线程调度开销测试结果 =====\n\n"
-    result_content += f"数据拷贝时间: {avg_data_copy:.5f} ms\n"
-    result_content += f"C调用开销: {avg_c_call:.5f} ms\n"
-    result_content += f"GC暂停时间: {avg_gc_pause:.5f} ms\n"
-    result_content += f"总开销时间: {avg_total_overhead:.5f} ms\n"
-    result_content += f"推理时间: {avg_inference:.5f} ms\n"
-    result_content += f"开销占比: {avg_overhead_percent:.5f}%\n\n"
-    result_content += f"初始RSS: {start_rss:.5f} MB\n"
-    result_content += f"最终RSS: {end_rss:.5f} MB\n"
-    result_content += f"RSS漂移: {rss_drift:.5f} MB\n"
+    result_content = "===== Python 鍐呭瓨鎷疯礉鍜宼hreads璋冨害寮€閿€娴嬭瘯缁撴灉 =====\n\n"
+    result_content += f"鏁版嵁鎷疯礉鏃堕棿: {avg_data_copy:.5f} ms\n"
+    result_content += f"C璋冪敤寮€閿€: {avg_c_call:.5f} ms\n"
+    result_content += f"GC鏆傚仠鏃堕棿: {avg_gc_pause:.5f} ms\n"
+    result_content += f"鎬诲紑閿€鏃堕棿: {avg_total_overhead:.5f} ms\n"
+    result_content += f"鎺ㄧ悊鏃堕棿: {avg_inference:.5f} ms\n"
+    result_content += f"寮€閿€鍗犳瘮: {avg_overhead_percent:.5f}%\n\n"
+    result_content += f"start_rss: {start_rss:.5f} MB\n"
+    result_content += f"end_rss: {end_rss:.5f} MB\n"
+    result_content += f"rss_drift: {rss_drift:.5f} MB\n"
     
     with open(result_path, 'w', encoding='utf-8') as f:
         f.write(result_content)
     
-    print(f"\n结果已保存到: {result_path}")
+    print(f"\nResults saved to: {result_path}")
 
 if __name__ == "__main__":
     main()

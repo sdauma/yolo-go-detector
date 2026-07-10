@@ -8,7 +8,13 @@
 """
 
 import os
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='matplotlib')
+warnings.filterwarnings('ignore', message='.*iCCP.*')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='matplotlib')
 from matplotlib import font_manager
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def setup_fonts():

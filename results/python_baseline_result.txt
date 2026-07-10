@@ -1,13 +1,13 @@
-===== Python 基准测试结果（10 次运行平均值） =====
-平均延迟：719.82800 ms
-P50 延迟：697.88792 ms
-P90 延迟：777.07194 ms
-P99 延迟：1006.93715 ms
-最小延迟：673.53281 ms
-最大延迟：1211.40220 ms
+===== Python Baseline Test Results (10 runs average) =====
+avg_latency: 588.12321 ms
+P50 latency: 584.85182 ms
+P90 latency: 595.35793 ms
+P99 latency: 668.92929 ms
+min_latency: 574.17160 ms
+max_latency: 734.74021 ms
 
-===== 内存使用情况（10 次运行平均值） =====
-Start RSS: 296.70234 MB
-Peak RSS: 550.29805 MB
-Stable RSS: 550.29609 MB
-RSS Drift: 253.59375 MB
+===== Memory Usage (10 runs average) =====
+Start RSS: 701.49844 MB
+Peak RSS: 967.11133 MB
+Stable RSS: 967.09453 MB
+RSS Drift: 265.59609 MB

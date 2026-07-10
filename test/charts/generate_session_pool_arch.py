@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+"""
+图1生成脚本：基于三层结构的 Session Pool 并发推理架构图
+
+本脚本生成论文图1，展示YOLO目标检测系统中Go语言并发推理的分层架构：
+  第一层：摄像头流数据输入（2600路视频流）
+  第二层：推理任务队列（有界缓冲，削峰填谷）
+  第三层：Worker Pool（工作协程池，从队列消费任务）
+  第四层：Session Pool（ONNX会话池，Worker通过GetSession获取Session进行推理）
+  第五层：检测结果输出
+
+数据流：摄像头 → 任务队列 → Worker Pool → Session Pool → 检测结果输出
+核心机制：Session Pool通过池化复用ONNX Runtime Session，避免频繁创建/销毁的开销
+"""
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='matplotlib')
+warnings.filterwarnings('ignore', message='.*iCCP.*')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='matplotlib')
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, FancyArrowPatch
 from matplotlib import font_manager
@@ -61,57 +81,85 @@ final_charts_dir = os.path.join(output_dir, "final_charts")
 # 创建目录
 os.makedirs(final_charts_dir, exist_ok=True)
 
-fig, ax = plt.subplots(figsize=(12, 7))  # 增大画布以容纳更详细的标注
+fig, ax = plt.subplots(figsize=(14, 7))  # 加宽画布以容纳 Worker Pool
 
 # 绘制函数
-def box(x, y, w, h, text, fontsize=10):
-    rect = Rectangle((x, y), w, h, fill=False, linewidth=1.5, edgecolor='black')
+def box(x, y, w, h, text, fontsize=10, fill=False, facecolor='lightgray'):
+    rect = Rectangle((x, y), w, h, fill=fill, linewidth=1.5, edgecolor='black',
+                     facecolor=facecolor, alpha=0.3)
     ax.add_patch(rect)
-    # 不指定 family，让 matplotlib 自动根据字符选择字体
     ax.text(x + w/2, y + h/2, text, ha='center', va='center', fontsize=fontsize)
 
-def arrow(x1, y1, x2, y2):
-    arr = FancyArrowPatch((x1, y1), (x2, y2), arrowstyle='->', linewidth=1.2, edgecolor='black')
+def dashed_box(x, y, w, h, text, fontsize=10):
+    """虚线框，用于表示逻辑分组"""
+    rect = Rectangle((x, y), w, h, fill=False, linewidth=1.0, edgecolor='gray',
+                     linestyle='--')
+    ax.add_patch(rect)
+    ax.text(x + w/2, y + h/2, text, ha='center', va='center', fontsize=fontsize,
+            color='gray', style='italic')
+
+def arrow(x1, y1, x2, y2, style='->', color='black'):
+    arr = FancyArrowPatch((x1, y1), (x2, y2), arrowstyle=style, linewidth=1.2,
+                          edgecolor=color, mutation_scale=18)
     ax.add_patch(arr)
 
-# 摄像头
-box(0.5, 3.5, 1.5, 0.8, "摄像头流\n2600 路", fontsize=9)
+# === 第一层：数据输入 ===
+box(0.3, 4.8, 1.5, 0.8, "摄像头流\n(2600 路)", fontsize=9)
 
-# 任务队列
-box(3, 3.5, 1.8, 0.8, "推理任务队列", fontsize=9)
+# === 第二层：任务队列（削峰填谷）===
+box(2.5, 4.8, 1.8, 0.8, "推理任务队列\n(有界缓冲)", fontsize=9)
 
-# Session Pool 管理器（增强标注）
-box(6, 3.2, 2.2, 1.4, "Session Pool 管理器\n(CPU 核心数配置)\n轮询调度", fontsize=9)
+# === 第三层：Worker Pool（工作协程池）===
+# 虚线大框表示 Worker Pool 逻辑分组
+dashed_box(5.0, 3.8, 3.6, 2.2, "工作协程池\n(Worker Pool)", fontsize=9)
+# 多个 Worker 协程（灰度填充，兼容黑白印刷）
+box(5.3, 5.0, 1.2, 0.6, "Worker 1", fontsize=8, fill=True, facecolor='#E8E8E8')
+box(6.8, 5.0, 1.2, 0.6, "Worker 2", fontsize=8, fill=True, facecolor='#E8E8E8')
+box(5.3, 4.0, 1.2, 0.6, "Worker 3", fontsize=8, fill=True, facecolor='#E8E8E8')
+box(6.8, 4.0, 1.2, 0.6, "Worker N", fontsize=8, fill=True, facecolor='#E8E8E8')
 
-# 多个 session
-box(9.2, 4.2, 1.4, 0.6, "Session 1", fontsize=9)
-box(9.2, 3.3, 1.4, 0.6, "Session 2", fontsize=9)
-box(9.2, 2.4, 1.4, 0.6, "Session N", fontsize=9)
+# === 第四层：Session Pool（大框内嵌 Session 子框，展示池内结构）===
+# Session Pool 虚线框（右移至 x=9.4 与 Worker Pool 拉开间距给 GetSession 标注留空间；高度缩至 2.2 与 Worker Pool 顶部对齐）
+dashed_box(9.4, 3.8, 3.6, 2.2, "", fontsize=9)
+# 标题文字放在框内左侧（左对齐）
+ax.text(9.6, 5.1, "Session Pool\n(ONNX 会话池)\nSession 级\n轮询分配", fontsize=8,
+        ha='left', va='center', color='gray', style='italic')
+# Session 子框紧挨文字右侧
+box(11.4, 5.3, 1.2, 0.55, "Session 1", fontsize=8)
+box(11.4, 4.65, 1.2, 0.55, "Session 2", fontsize=8)
+box(11.4, 4.0, 1.2, 0.55, "Session N", fontsize=8)
 
-# 检测结果
-box(11.5, 3.5, 1.8, 0.8, "检测结果\n输出", fontsize=9)
+# === 第五层：检测结果输出 ===
+box(13.4, 4.8, 1.6, 0.8, "检测结果\n输出", fontsize=9)
 
-# 箭头
-arrow(2, 3.9, 3, 3.9)
-arrow(4.8, 3.9, 6, 3.9)
+# === 箭头 ===
+# 摄像头 → 任务队列
+arrow(1.8, 5.2, 2.5, 5.2)
 
-arrow(8.2, 4.0, 9.2, 4.5)
-arrow(8.2, 3.9, 9.2, 3.6)
-arrow(8.2, 3.8, 9.2, 2.7)
+# 任务队列 → Worker Pool（整体）
+arrow(4.3, 5.2, 5.0, 5.2)
+# 任务队列 → Worker Pool 内部各 Worker 分发（起点统一对齐到任务队列右边缘中心）
+arrow(4.3, 5.2, 5.3, 5.3)
+arrow(4.3, 5.2, 6.8, 5.3)
+arrow(4.3, 5.2, 5.3, 4.3)
+arrow(4.3, 5.2, 6.8, 4.3)
 
-arrow(10.6, 4.5, 11.5, 3.9)
-arrow(10.6, 3.6, 11.5, 3.9)
-arrow(10.6, 2.7, 11.5, 3.9)
+# Worker Pool → Session Pool (GetSession)
+arrow(8.6, 5.3, 9.4, 5.3)
+# 标注获取接口（位于两框中间，间距 0.8 足够文字不落在框边上）
+ax.text(9.0, 5.45, "GetSession", fontsize=7, ha='center', va='bottom', style='italic')
 
-# 设置坐标轴
-ax.set_xlim(0, 14)
-ax.set_ylim(2, 5.5)
+# Session 子框 → 检测结果输出（数据流从 Session Pool 内的 Session 汇聚到输出）
+arrow(12.6, 5.57, 13.4, 5.2)
+arrow(12.6, 4.92, 13.4, 5.2)
+arrow(12.6, 4.27, 13.4, 5.2)
+
+# === 设置坐标轴 ===
+ax.set_xlim(0, 16.0)
+ax.set_ylim(3.2, 6.2)
 ax.axis('off')
 
-# 添加中英文标题（符合期刊图注规范）
-# 使用 suptitle 并让 matplotlib 自动处理字体
-plt.suptitle("图 1 Session Pool 并发推理架构\nFig. 1 Session Pool Concurrent Inference Architecture",
-             fontsize=11, y=0.98)
+# 注：图内不放标题，图注由论文 LaTeX \\caption 提供（符合《计算机系统应用》规范）
 
 # 检测实际使用的字体
 from matplotlib.font_manager import findfont, FontProperties
@@ -149,6 +197,7 @@ print("=====================\n")
 
 # 保存图片
 plt.savefig(os.path.join(output_dir, "fig1_session_pool_architecture.png"), dpi=600, bbox_inches='tight', format='png')
+plt.savefig(os.path.join(output_dir, "fig1_session_pool_architecture.pdf"), bbox_inches='tight', format='pdf')
 plt.savefig(os.path.join(final_charts_dir, "fig1_session_pool_architecture.png"), dpi=600, bbox_inches='tight', format='png')
 print("图 1 已生成：fig1_session_pool_architecture.png")
 print("图表已保存到：", output_dir)

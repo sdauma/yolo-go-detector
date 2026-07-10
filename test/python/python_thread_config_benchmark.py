@@ -1,3 +1,16 @@
+# -*- coding: utf-8 -*-
+# python_thread_config_benchmark.py
+# Python thread config performance benchmark
+#
+# Technical notes:
+# - Uses Python baseline Session API (InferenceSession)
+# - Explicitly configures intra_op_num_threads via SessionOptions
+# - Tests thread configs: 1, 2, 4, 8
+#
+# Test purpose:
+# - Observe performance trends under different thread configs
+# - Verify ONNX Runtime thread scalability
+# - Align with Go thread config tests
 import onnxruntime as ort
 import numpy as np
 import time
@@ -5,41 +18,41 @@ import os
 import sys
 import psutil
 
-# 固定随机种子，确保可复现
+# Fixed random seed for reproducibility
 np.random.seed(12345)
 
-# 获取当前工作目录
+# Get current working directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-print(f"当前目录: {current_dir}")
+print(f"Current directory: {current_dir}")
 
-# 构建模型路径
+# Build model path
 model_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
-print(f"模型路径: {model_path}")
+print(f"Model path: {model_path}")
 
-# 构建项目根路径
+# Build project root path
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
-print(f"项目根路径: {base_path}")
+print(f"Project root: {base_path}")
 
-# 检查模型文件是否存在
+# Check if model file exists
 if not os.path.exists(model_path):
-    print(f"错误: 模型文件不存在: {model_path}")
+    print(f"Error: Model file not found: {model_path}")
     sys.exit(1)
 
-print("===== Python 线程配置性能测试 ====")
-print(f"模型路径: {model_path}")
+print("===== Python Thread Config Performance Benchmark =====")
+print(f"Model path: {model_path}")
 
-# 测试的线程配置
+# Thread configs to test
 thread_configs = [1, 2, 4, 8]
 
-# 存储所有线程配置的综合结果
+# Store comprehensive results for all thread configs
 all_thread_results = []
 
-# 对每个线程配置进行测试
+# Test each thread config
 for num_threads in thread_configs:
-    print(f"\n===== 测试线程配置: intra_op_num_threads={num_threads} ====")
+    print(f"\n===== Testing Thread Config: intra_op_num_threads={num_threads} =====")
     
-    # 执行5次独立测试
+    # Run 5 independent tests
     test_count = 5
     all_avg_latencies = []
     all_min_latencies = []
@@ -52,10 +65,10 @@ for num_threads in thread_configs:
     all_stable_rss = []
     
     for test_idx in range(1, test_count + 1):
-        print(f"\n=== 独立测试 {test_idx}/{test_count} ===")
+        print(f"\n=== Independent Test {test_idx}/{test_count} ===")
         
-        # 创建 Session
-        print("创建 InferenceSession...")
+        # Create Session
+        print("Creating InferenceSession...")
         try:
             sess_options = ort.SessionOptions()
             sess_options.intra_op_num_threads = num_threads
@@ -66,28 +79,28 @@ for num_threads in thread_configs:
                 sess_options=sess_options,
                 providers=["CPUExecutionProvider"]
             )
-            print("InferenceSession 创建成功!")
+            print("InferenceSession created successfully!")
         except Exception as e:
-            print(f"错误: 创建 InferenceSession 失败: {e}")
+            print(f"Error: Failed to create InferenceSession: {e}")
             continue
         
-        # 获取输入信息
+        # Get input info
         input_name = sess.get_inputs()[0].name
         input_shape = sess.get_inputs()[0].shape
         
-        # 使用与 Go 完全一致的输入数据（从文件加载）
-        print("加载输入数据...")
+        # Use input data completely consistent with Go (loaded from file)
+        print("Loading input data...")
         input_data_path = os.path.join(base_path, "test", "data", "input_data.bin")
         try:
             input_data = np.fromfile(input_data_path, dtype=np.float32).reshape(input_shape)
-            print(f"输入数据加载成功: {input_data_path}")
+            print(f"Input data loaded successfully: {input_data_path}")
         except Exception as e:
-            print(f"加载输入数据失败: {e}")
+            print(f"Failed to load input data: {e}")
             sys.exit(1)
         
-        # 内存采样点 1：Session 创建后、warmup 前（Start RSS）
+        # Memory sample point 1: after Session creation, before warmup (Start RSS)
         process = psutil.Process(os.getpid())
-        start_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+        start_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
         print(f"Start RSS: {start_rss:.5f} MB")
         
         # Warmup
@@ -111,17 +124,17 @@ for num_threads in thread_configs:
             dt = (t1 - t0) * 1000
             times.append(dt)
             
-            # 采样内存，记录峰值
-            current_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+            # Sample memory, record peak
+            current_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
             if current_rss > peak_rss:
                 peak_rss = current_rss
         
-        # 内存采样点 3：Benchmark 后稳定值
-        stable_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+        # Memory sample point 3: stable value after benchmark
+        stable_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
         print(f"Stable RSS: {stable_rss:.5f} MB")
         print(f"Peak RSS: {peak_rss:.5f} MB")
         
-        # 计算结果
+        # Calculate results
         avg_latency = sum(times) / len(times)
         min_latency = min(times)
         max_latency = max(times)
@@ -129,7 +142,7 @@ for num_threads in thread_configs:
         p90_latency = np.percentile(times, 90)
         p99_latency = np.percentile(times, 99)
         
-        # 保存本次测试结果
+        # Save this test's results
         all_avg_latencies.append(avg_latency)
         all_min_latencies.append(min_latency)
         all_max_latencies.append(max_latency)
@@ -140,9 +153,9 @@ for num_threads in thread_configs:
         all_peak_rss.append(peak_rss)
         all_stable_rss.append(stable_rss)
         
-        print(f"测试 {test_idx} 完成: 平均延迟={avg_latency:.5f} ms")
+        print(f"Test {test_idx} complete: Avg Latency={avg_latency:.5f} ms")
     
-    # 计算3次测试的平均值
+    # Calculate average of 5 tests
     avg_latency = np.mean(all_avg_latencies)
     min_latency = np.mean(all_min_latencies)
     max_latency = np.mean(all_max_latencies)
@@ -153,14 +166,14 @@ for num_threads in thread_configs:
     peak_rss = np.mean(all_peak_rss)
     stable_rss = np.mean(all_stable_rss)
     
-    # 计算标准差
+    # Calculate std dev
     std_dev = np.std(all_avg_latencies)
-    # 计算变异系数
+    # Calculate coefficient of variation
     coeff_var = (std_dev / avg_latency) * 100
-    # 计算FPS
+    # Calculate FPS
     fps = 1000.0 / avg_latency
     
-    # 存储结果到综合结果列表
+    # Store result in comprehensive results list
     all_thread_results.append({
         'num_threads': num_threads,
         'avg_latency': avg_latency,
@@ -174,168 +187,95 @@ for num_threads in thread_configs:
         'stable_rss': stable_rss
     })
     
-    print("\n===== 测试结果 =====")
-    print(f"平均延迟: {avg_latency:.5f} ms")
-    print(f"标准差: {std_dev:.5f} ms")
-    print(f"变异系数: {coeff_var:.2f}%")
+    print("\n===== Test Results =====")
+    print(f"Avg Latency: {avg_latency:.5f} ms")
+    print(f"Std Dev: {std_dev:.5f} ms")
+    print(f"Coeff of Variation: {coeff_var:.2f}%")
     print(f"FPS: {fps:.2f}")
-    print(f"P50延迟: {p50_latency:.5f} ms")
-    print(f"P90延迟: {p90_latency:.5f} ms")
-    print(f"P99延迟: {p99_latency:.5f} ms")
-    print(f"最小延迟: {min_latency:.5f} ms")
-    print(f"最大延迟: {max_latency:.5f} ms")
-    print(f"\n===== 内存使用情况 =====")
+    print(f"P50 Latency: {p50_latency:.5f} ms")
+    print(f"P90 Latency: {p90_latency:.5f} ms")
+    print(f"P99 Latency: {p99_latency:.5f} ms")
+    print(f"Min Latency: {min_latency:.5f} ms")
+    print(f"Max Latency: {max_latency:.5f} ms")
+    print(f"\n===== Memory Usage =====")
     print(f"Start RSS: {start_rss:.5f} MB")
     print(f"Peak RSS: {peak_rss:.5f} MB")
     print(f"Stable RSS: {stable_rss:.5f} MB")
     
-    # 保存详细日志
+    # Save detailed log
     log_path = os.path.join(current_dir, '..', '..', 'results', f'python_thread_{num_threads}_detailed_log.txt')
     with open(log_path, 'w', encoding='utf-8') as f:
         for i in range(len(all_avg_latencies)):
-            f.write(f"===== 第 {i+1} 次测试 =====\n")
-            f.write(f"平均延迟: {all_avg_latencies[i]:.5f} ms\n")
-            f.write(f"最小延迟: {all_min_latencies[i]:.5f} ms\n")
-            f.write(f"最大延迟: {all_max_latencies[i]:.5f} ms\n")
-            f.write(f"P50延迟: {all_p50_latencies[i]:.5f} ms\n")
-            f.write(f"P90延迟: {all_p90_latencies[i]:.5f} ms\n")
-            f.write(f"P99延迟: {all_p99_latencies[i]:.5f} ms\n")
+            f.write(f"===== Run #{i+1} =====\n")
+            f.write(f"Avg Latency: {all_avg_latencies[i]:.5f} ms\n")
+            f.write(f"Min Latency: {all_min_latencies[i]:.5f} ms\n")
+            f.write(f"Max Latency: {all_max_latencies[i]:.5f} ms\n")
+            f.write(f"P50 Latency: {all_p50_latencies[i]:.5f} ms\n")
+            f.write(f"P90 Latency: {all_p90_latencies[i]:.5f} ms\n")
+            f.write(f"P99 Latency: {all_p99_latencies[i]:.5f} ms\n")
             f.write(f"Start RSS: {all_start_rss[i]:.5f} MB\n")
             f.write(f"Peak RSS: {all_peak_rss[i]:.5f} MB\n")
             f.write(f"Stable RSS: {all_stable_rss[i]:.5f} MB\n")
             f.write("\n")
 
-        f.write("===== 5次测试平均值 =====\n")
-        f.write(f"平均延迟: {avg_latency:.5f} ms\n")
-        f.write(f"标准差: {std_dev:.5f} ms\n")
-        f.write(f"变异系数: {coeff_var:.2f}%\n")
+        f.write("===== 5-Test Average =====\n")
+        f.write(f"Avg Latency: {avg_latency:.5f} ms\n")
+        f.write(f"Std Dev: {std_dev:.5f} ms\n")
+        f.write(f"Coeff of Variation: {coeff_var:.2f}%\n")
         f.write(f"FPS: {fps:.2f}\n")
-        f.write(f"P50延迟: {p50_latency:.5f} ms\n")
-        f.write(f"P90延迟: {p90_latency:.5f} ms\n")
-        f.write(f"P99延迟: {p99_latency:.5f} ms\n")
-        f.write(f"最小延迟: {min_latency:.5f} ms\n")
-        f.write(f"最大延迟: {max_latency:.5f} ms\n")
-        f.write("\n===== 内存使用情况 =====\n")
+        f.write(f"P50 Latency: {p50_latency:.5f} ms\n")
+        f.write(f"P90 Latency: {p90_latency:.5f} ms\n")
+        f.write(f"P99 Latency: {p99_latency:.5f} ms\n")
+        f.write(f"Min Latency: {min_latency:.5f} ms\n")
+        f.write(f"Max Latency: {max_latency:.5f} ms\n")
+        f.write("\n===== Memory Usage =====\n")
         f.write(f"Start RSS: {start_rss:.5f} MB\n")
         f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
         f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
 
-    print(f"\n详细日志已保存到: {log_path}")
+    print(f"\nDetailed log saved to: {log_path}")
 
-    # 保存结果
+    # Save results
     result_path = os.path.join(current_dir, '..', '..', 'results', f'python_thread_{num_threads}_result.txt')
-    print(f"保存结果到: {result_path}")
+    print(f"Saving results to: {result_path}")
     
-    # 构建结果字符串
+    # Build result strings
     result_lines = [
-        f"===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads={num_threads}) =====",
-        f"平均延迟: {avg_latency:.5f} ms",
-        f"标准差: {std_dev:.5f} ms",
-        f"变异系数: {coeff_var:.2f}%",
+        f"===== Python Thread Config Benchmark Results (5-run average) (intra_op_num_threads={num_threads}) =====",
+        f"Avg Latency: {avg_latency:.5f} ms",
+        f"Std Dev: {std_dev:.5f} ms",
+        f"Coeff of Variation: {coeff_var:.2f}%",
         f"FPS: {fps:.2f}",
-        f"P50延迟: {p50_latency:.5f} ms",
-        f"P90延迟: {p90_latency:.5f} ms",
-        f"P99延迟: {p99_latency:.5f} ms",
-        f"最小延迟: {min_latency:.5f} ms",
-        f"最大延迟: {max_latency:.5f} ms",
+        f"P50 Latency: {p50_latency:.5f} ms",
+        f"P90 Latency: {p90_latency:.5f} ms",
+        f"P99 Latency: {p99_latency:.5f} ms",
+        f"Min Latency: {min_latency:.5f} ms",
+        f"Max Latency: {max_latency:.5f} ms",
         "",
-        "===== 内存使用情况 =====",
+        "===== Memory Usage =====",
         f"Start RSS: {start_rss:.5f} MB",
         f"Peak RSS: {peak_rss:.5f} MB",
         f"Stable RSS: {stable_rss:.5f} MB"
     ]
     
-    # 尝试多种编码方式
-    try:
-        # 方法1: 使用utf-8编码写入
-        print("尝试使用UTF-8编码写入...")
-        with open(result_path, 'w', encoding='utf-8') as f:
-            for line in result_lines:
-                f.write(line + '\n')
-        print("UTF-8编码写入成功!")
-        
-        # 验证文件内容
-        print("验证文件内容...")
-        with open(result_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        print(f"文件前500字符: {content[:500]}...")
-        
-    except Exception as e:
-        print(f"UTF-8编码写入失败: {e}")
-        
-        # 方法2: 使用gbk编码写入
-        try:
-            print("尝试使用GBK编码写入...")
-            with open(result_path, 'w', encoding='gbk') as f:
-                for line in result_lines:
-                    f.write(line + '\n')
-            print("GBK编码写入成功!")
-            
-            # 验证文件内容
-            with open(result_path, 'r', encoding='gbk') as f:
-                content = f.read()
-            print(f"文件前500字符: {content[:500]}...")
-            
-        except Exception as e2:
-            print(f"GBK编码写入失败: {e2}")
-            
-            # 方法3: 使用二进制模式写入
-            try:
-                print("尝试使用二进制模式写入...")
-                with open(result_path, 'wb') as f:
-                    for line in result_lines:
-                        f.write((line + '\n').encode('utf-8'))
-                print("二进制模式写入成功!")
-                
-            except Exception as e3:
-                print(f"二进制模式写入失败: {e3}")
+    # Write with UTF-8 encoding
+    with open(result_path, 'w', encoding='utf-8') as f:
+        for line in result_lines:
+            f.write(line + '\n')
     
-    print(f"\n结果已保存到: {result_path}")
+    print(f"\nResults saved to: {result_path}")
 
-# 保存所有线程配置的综合结果
+# Save comprehensive results for all thread configs
 comprehensive_result_path = os.path.join(current_dir, '..', '..', 'results', 'python_thread_config_comprehensive.txt')
-print(f"\n保存综合结果到: {comprehensive_result_path}")
+print(f"\nSaving comprehensive results to: {comprehensive_result_path}")
 
-try:
-    with open(comprehensive_result_path, 'w', encoding='utf-8') as f:
-        f.write("===== 不同 intra_op_num_threads 配置性能测试综合结果 =====\n\n")
-        f.write(f"{'线程配置':<20} {'平均延迟(ms)':<15} {'标准差(ms)':<12} {'变异系数(%)':<12} {'FPS':<10} {'P50延迟(ms)':<15} {'P90延迟(ms)':<15} {'P99延迟(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n")
-        
-        for result in all_thread_results:
-            f.write(f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n")
+with open(comprehensive_result_path, 'w', encoding='utf-8') as f:
+    f.write("===== Comprehensive Thread Config Performance Benchmark Results =====\n\n")
+    f.write(f"{'Thread Config':<20} {'Avg Latency(ms)':<15} {'Std Dev(ms)':<12} {'CV(%)':<12} {'FPS':<10} {'P50 Latency(ms)':<15} {'P90 Latency(ms)':<15} {'P99 Latency(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n")
     
-    print("综合结果文件写入成功!")
-    
-except Exception as e:
-    print(f"保存综合结果失败: {e}")
-    # 尝试使用 GBK 编码
-    try:
-        with open(comprehensive_result_path, 'w', encoding='gbk') as f:
-            f.write("===== 不同 intra_op_num_threads 配置性能测试综合结果 =====\n\n")
-            f.write(f"{'线程配置':<20} {'平均延迟(ms)':<15} {'标准差(ms)':<12} {'变异系数(%)':<12} {'FPS':<10} {'P50延迟(ms)':<15} {'P90延迟(ms)':<15} {'P99延迟(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n")
-            
-            for result in all_thread_results:
-                f.write(f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n")
-        
-        print("综合结果文件写入成功 (GBK编码)!")
-        
-    except Exception as e2:
-        print(f"GBK编码写入失败: {e2}")
-        
-        # 方法3: 使用二进制模式写入
-        try:
-            print("尝试使用二进制模式写入...")
-            with open(comprehensive_result_path, 'wb') as f:
-                header = "===== 不同 intra_op_num_threads 配置性能测试综合结果 =====\n\n"
-                header += f"{'线程配置':<20} {'平均延迟(ms)':<15} {'标准差(ms)':<12} {'变异系数(%)':<12} {'FPS':<10} {'P50延迟(ms)':<15} {'P90延迟(ms)':<15} {'P99延迟(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n"
-                f.write(header.encode('utf-8'))
-                
-                for result in all_thread_results:
-                    line = f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n"
-                    f.write(line.encode('utf-8'))
-            print("综合结果文件写入成功 (二进制模式)!")
-            
-        except Exception as e3:
-            print(f"二进制模式写入失败: {e3}")
+    for result in all_thread_results:
+        f.write(f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n")
 
-print("\n===== 所有线程配置测试完成 =====")
+print("Comprehensive results file written successfully!")
+
+print("\n===== All Thread Config Tests Complete =====")

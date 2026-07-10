@@ -1,9 +1,16 @@
 // go_cold_start_decomposition.go
 // Go 冷启动分解测试
 //
+// 技术说明：
+// - 使用 Go baseline Session 接口（NewSession），该接口通过传入输入/输出 Tensor
+//   自动启用 I/O Binding，但不接受 SessionOptions 参数
+// - 线程配置由 ONNX Runtime 默认行为决定（intra_op_num_threads 默认等于 CPU 核数）
+// - 代码中创建了 SessionOptions 并设置了 intraOp=12，但由于 NewSession 不接受 opts，
+//   这些设置实际上不生效。保留 opts 创建代码仅用于记录意图
+//
 // 测试目的：
 // - 分解冷启动时间为会话创建时间、模型加载时间和首次推理时间
-// - 执行20次冷启动测试，计算平均值
+// - 执行 20 次冷启动测试，计算平均值
 // - 确保数据稳定性和可重复性
 
 package main
@@ -13,13 +20,11 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"strconv"
-	"strings"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 // fileExists 检查文件是否存在
@@ -31,21 +36,8 @@ func fileExists(path string) bool {
 	return !info.IsDir()
 }
 
-// getProcessRSS 获取进程的 RSS（Working Set）内存使用量（MB）
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // ColdStartResult 冷启动测试结果
 type ColdStartResult struct {

@@ -9,6 +9,11 @@ from font_utils import setup_fonts, print_font_info
 setup_fonts()
 print_font_info()
 
+# 获取项目根目录
+script_dir = os.path.dirname(__file__)
+project_root = os.path.dirname(os.path.dirname(script_dir))
+results_dir = os.path.join(project_root, "results")
+
 # 从文件中读取内存数据
 def read_memory_data(file_path):
     """从架构对比测试结果文件读取内存数据"""
@@ -19,13 +24,28 @@ def read_memory_data(file_path):
             
         for line in lines:
             line = line.strip()
+            is_shared = False
             if '架构=Shared' in line:
-                parts = line.split(',')
+                is_shared = True
+            elif 'architecture=Shared' in line:
+                is_shared = True
+            if not is_shared:
+                continue
+            parts = line.split(',')
+            concurrency = None
+            memory_str = None
+            for part in parts:
+                part = part.strip()
+                if part.startswith('concurrency=') or part.startswith('并发=') or part.startswith('并发数='):
+                    concurrency = int(part.split('=')[1].strip())
+                if part.startswith('peak_rss=') or part.startswith('峰值RSS=') or part.startswith('峰值PM='):
+                    memory_str = part.split('=', 1)[1].strip()
+            if concurrency is None:
                 concurrency = int(parts[1].split('=')[1].strip())
+            if memory_str is None:
                 memory_str = parts[-2].split('=')[1].strip()
-                # 提取数值部分，去掉 MB 单位
-                memory = float(memory_str.split(' ')[0])
-                data.append((concurrency, memory))
+            memory = float(memory_str.split(' ')[0])
+            data.append((concurrency, memory))
         
         if not data:
             raise ValueError(f"未从文件 {file_path} 中读取到任何内存数据")
@@ -50,18 +70,18 @@ def read_go_memory_data(file_path):
             line = line.strip()
             if '===== Session Pool =====' in line:
                 current_arch = 'session_pool'
-            elif '池大小' in line and (':' in line or ':' in line):
-                # 提取并发数，支持"池大小：12"或"池大小：12"
-                for sep in [':', ':']:
+            elif '池大小' in line and (':' in line or '：' in line):
+                # 提取并发数，支持"池大小：12"或"池大小:12"
+                for sep in [':', '：']:
                     if sep in line:
                         try:
                             concurrency = int(line.split(sep)[1].strip())
                             break
                         except ValueError:
                             pass
-            elif ('峰 值 RSS' in line or 'Peak RSS' in line or 'RSS:' in line) and current_arch and concurrency is not None:
-                # 提取内存值，支持"峰值 RSS: 60.75000 MB"或"峰值 RSS: 60.75000 MB"
-                for sep in [':', ':']:
+            elif ('峰值RSS' in line or '峰值PM' in line or 'Peak RSS' in line) and current_arch and concurrency is not None:
+                # 提取内存值，支持"峰值RSS: 60.75000 MB"或"峰值PM: 60.75000 MB"
+                for sep in [':', '：']:
                     if sep in line:
                         try:
                             memory_str = line.split(sep)[1].strip()
@@ -83,8 +103,8 @@ def read_go_memory_data(file_path):
 
 # 读取数据
 try:
-    python_memory_data = read_memory_data('../../results/python_architecture_comparison.txt')
-    go_memory_data = read_go_memory_data('../../results/go_architecture_comparison.txt')
+    python_memory_data = read_memory_data(os.path.join(results_dir, 'python_architecture_comparison.txt'))
+    go_memory_data = read_go_memory_data(os.path.join(results_dir, 'go_architecture_comparison.txt'))
 except Exception as e:
     print(f"错误：{e}")
     raise
@@ -137,4 +157,3 @@ for rects in [rects1, rects2]:
 
 # 保存图片
 plt.savefig("memory_scalability.png", dpi=600, bbox_inches='tight', format='png')
-plt.show()

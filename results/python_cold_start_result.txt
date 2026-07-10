@@ -1,22 +1,22 @@
-===== Python 冷启动时间对比分析测试结果（5次运行平均值） =====
-冷启动时间: 720.40812 ms
-稳定状态平均时间: 691.41652 ms
-冷启动时间 / 稳定状态平均时间: 1.04 倍
+===== Python Cold Start Time Comparison Analysis (5-run average) =====
+Cold Start Time: 608.02594 ms
+Avg Stable Latency: 588.30323 ms
+Cold Start / Stable Ratio: 1.03x
 
-===== 稳定状态详细统计 =====
-平均延迟: 691.41652 ms
-标准差: 3.08986 ms
-变异系数: 0.45%
-FPS: 1.45
-最小延迟: 672.49544 ms
-最大延迟: 927.32942 ms
-P50延迟: 683.87241 ms
-P90延迟: 700.04261 ms
-P99延迟: 845.43001 ms
+===== Stable State Detailed Stats =====
+Avg Latency: 588.30323 ms
+Std Dev: 8.32626 ms
+Coeff of Variation: 1.42%
+FPS: 1.70
+Min Latency: 573.82556 ms
+Max Latency: 684.33494 ms
+P50 Latency: 583.37147 ms
+P90 Latency: 600.01259 ms
+P99 Latency: 666.74333 ms
 
-===== 内存使用情况 =====
-Start RSS: 300.98984 MB
-Cold Start RSS: 533.37422 MB
-Stable RSS: 554.94687 MB
-内存增长 (Start -> Cold Start): 232.38437 MB
-内存增长 (Cold Start -> Stable): 21.57266 MB
+===== Memory Usage =====
+Start RSS: 708.62969 MB
+Cold Start RSS: 973.98672 MB
+Stable RSS: 973.97734 MB
+Memory Growth (Start -> Cold Start): 265.35703 MB
+Memory Growth (Cold Start -> Stable): -0.00937 MB

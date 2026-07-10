@@ -1,13 +1,20 @@
+# -*- coding: utf-8 -*-
 # python_memory_standardization.py
-# Python 内存标准化测试
-# 
-# 测试目的：
-# - 记录解释器常驻内存（基础内存）
-# - 记录模型加载后的内存
-# - 记录推理后的内存
-# - 执行多次测试，计算平均值
-# - 确保数据稳定性和可重复性
-
+# Python memory standardization test
+#
+# Technical notes:
+# - Uses Python baseline Session API (InferenceSession)
+# - Explicitly configures thread params via SessionOptions (intraOp=12, interOp=1)
+# - Uses sess.run() standard call path, no I/O Binding
+# - Binds to first 4 CPU cores (cpu_affinity=[0,1,2,3])
+# - Runs 10 inferences to stabilize memory before sampling
+#
+# Test purpose:
+# - Record interpreter resident memory (base memory)
+# - Record memory after model loading
+# - Record memory after inference
+# - Run multiple tests, calculate averages
+# - Ensure data stability and reproducibility
 import onnxruntime as ort
 import numpy as np
 import time
@@ -16,53 +23,53 @@ import sys
 import psutil
 from dataclasses import dataclass
 
-# 固定随机种子，确保可复现
+# Fixed random seed for reproducibility
 np.random.seed(12345)
 
-# 获取当前工作目录
+# Get current working directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 构建模型路径 - 同时测试大模型和轻模型
+# Build model paths - test both large model and small model
 model_path_large = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
 model_path_small = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11n.onnx'))
 
-# 构建项目根路径
+# Build project root path
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
 
-# 检查模型文件是否存在
+# Check if model files exist
 if not os.path.exists(model_path_large):
-    print(f"错误: 大模型文件不存在: {model_path_large}")
+    print(f"Error: Large model file not found: {model_path_large}")
     sys.exit(1)
 if not os.path.exists(model_path_small):
-    print(f"错误: 轻模型文件不存在: {model_path_small}")
+    print(f"Error: Small model file not found: {model_path_small}")
     sys.exit(1)
 
 @dataclass
 class MemoryResult:
-    interpreter_memory: float  # 解释器常驻内存
-    model_loaded_memory: float  # 模型加载后内存
-    post_inference_memory: float  # 推理后内存
-    memory_increase: float  # 内存增加量（模型加载+推理）
+    interpreter_memory: float  # Interpreter resident memory
+    model_loaded_memory: float  # Memory after model loading
+    post_inference_memory: float  # Memory after inference
+    memory_increase: float  # Memory increase (model loading + inference)
 
 def run_memory_test(model_path, model_name):
-    print(f"\n===== Python 内存测试 - {model_name} ====")
+    print(f"\n===== Python Memory Test - {model_name} ====")
     
-    # 绑定CPU核心
+    # Bind CPU cores
     process = psutil.Process(os.getpid())
     process.cpu_affinity([0, 1, 2, 3])
     
-    # 1. 测量解释器常驻内存（基础内存）
-    print("测量解释器常驻内存...")
-    interpreter_memory = process.memory_info().rss / 1024 / 1024
-    print(f"解释器常驻内存: {interpreter_memory:.2f} MB")
+    # 1. Measure interpreter resident memory (base memory)
+    print("Measuring interpreter resident memory...")
+    interpreter_memory = process.memory_info().private / 1024 / 1024
+    print(f"Interpreter Resident Memory: {interpreter_memory:.2f} MB")
     
-    # 2. 创建 Session（加载模型）
-    print("加载模型...")
+    # 2. Create Session (load model)
+    print("Loading model...")
     try:
         sess_options = ort.SessionOptions()
         
-        # 显式设置所有 SessionOptions 参数
-        # 线程配置 - 12线程，与其他测试保持一致
+        # Explicitly set all SessionOptions params
+        # Thread config - 12 threads, consistent with other tests
         sess_options.intra_op_num_threads = 12
         sess_options.inter_op_num_threads = 1
         sess_options.log_severity_level = 3
@@ -75,37 +82,37 @@ def run_memory_test(model_path, model_name):
             providers=["CPUExecutionProvider"]
         )
     except Exception as e:
-        print(f"错误: 创建 InferenceSession 失败: {e}")
+        print(f"Error: Failed to create InferenceSession: {e}")
         sys.exit(1)
     
-    # 3. 测量模型加载后的内存
-    model_loaded_memory = process.memory_info().rss / 1024 / 1024
-    print(f"模型加载后内存: {model_loaded_memory:.2f} MB")
+    # 3. Measure memory after model loading
+    model_loaded_memory = process.memory_info().private / 1024 / 1024
+    print(f"Memory After Model Loading: {model_loaded_memory:.2f} MB")
     
-    # 获取输入信息
+    # Get input info
     input_name = sess.get_inputs()[0].name
     input_shape = sess.get_inputs()[0].shape
 
-    # 使用与 Go 完全一致的输入数据（从文件加载，使用固定种子）
+    # Use input data completely consistent with Go (loaded from file, using fixed seed)
     input_data_path = os.path.join(base_path, "test", "data", "input_data.bin")
     try:
         input_data = np.fromfile(input_data_path, dtype=np.float32).reshape(input_shape)
     except Exception as e:
-        print(f"加载输入数据失败: {e}")
+        print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # 4. 执行推理
-    print("执行推理...")
-    for _ in range(10):  # 执行10次推理以稳定内存使用
+    # 4. Run inference
+    print("Running inference...")
+    for _ in range(10):  # Run 10 inferences to stabilize memory usage
         sess.run(None, {input_name: input_data})
     
-    # 5. 测量推理后的内存
-    post_inference_memory = process.memory_info().rss / 1024 / 1024
-    print(f"推理后内存: {post_inference_memory:.2f} MB")
+    # 5. Measure memory after inference
+    post_inference_memory = process.memory_info().private / 1024 / 1024
+    print(f"Memory After Inference: {post_inference_memory:.2f} MB")
     
-    # 计算内存增加量
+    # Calculate memory increase
     memory_increase = post_inference_memory - interpreter_memory
-    print(f"内存增加量: {memory_increase:.2f} MB")
+    print(f"Memory Increase: {memory_increase:.2f} MB")
     
     return MemoryResult(
         interpreter_memory=interpreter_memory,
@@ -115,84 +122,84 @@ def run_memory_test(model_path, model_name):
     )
 
 def main():
-    print("===== Python 内存标准化测试（10次运行）=====")
+    print("===== Python Memory Standardization Test (10 runs) =====")
 
-    # 运行10次测试 - 大模型
+    # Run 10 tests - large model
     num_runs = 10
     results_large = []
     results_small = []
 
-    print("\n===== 测试大模型 (YOLO11x) =====")
+    print("\n===== Testing Large Model (YOLO11x) =====")
     for i in range(num_runs):
-        print(f"\n===== 第 {i+1} 次测试 =====")
+        print(f"\n===== Run #{i+1} =====")
         result = run_memory_test(model_path_large, "YOLO11x")
         results_large.append(result)
 
-    print("\n===== 测试轻模型 (YOLO11n) =====")
+    print("\n===== Testing Small Model (YOLO11n) =====")
     for i in range(num_runs):
-        print(f"\n===== 第 {i+1} 次测试 =====")
+        print(f"\n===== Run #{i+1} =====")
         result = run_memory_test(model_path_small, "YOLO11n")
         results_small.append(result)
 
-    # 计算大模型平均值
+    # Calculate large model averages
     avg_interpreter_large = sum(r.interpreter_memory for r in results_large) / num_runs
     avg_model_loaded_large = sum(r.model_loaded_memory for r in results_large) / num_runs
     avg_post_inference_large = sum(r.post_inference_memory for r in results_large) / num_runs
     avg_memory_increase_large = sum(r.memory_increase for r in results_large) / num_runs
 
-    # 计算轻模型平均值
+    # Calculate small model averages
     avg_interpreter_small = sum(r.interpreter_memory for r in results_small) / num_runs
     avg_model_loaded_small = sum(r.model_loaded_memory for r in results_small) / num_runs
     avg_post_inference_small = sum(r.post_inference_memory for r in results_small) / num_runs
     avg_memory_increase_small = sum(r.memory_increase for r in results_small) / num_runs
 
-    print("\n===== 大模型 (YOLO11x) 10次测试平均值 =====")
-    print(f"解释器常驻内存: {avg_interpreter_large:.2f} MB")
-    print(f"模型加载后内存: {avg_model_loaded_large:.2f} MB")
-    print(f"推理后内存: {avg_post_inference_large:.2f} MB")
-    print(f"内存增加量: {avg_memory_increase_large:.2f} MB")
+    print("\n===== Large Model (YOLO11x) 10-Run Average =====")
+    print(f"Interpreter Resident Memory: {avg_interpreter_large:.2f} MB")
+    print(f"Memory After Model Loading: {avg_model_loaded_large:.2f} MB")
+    print(f"Memory After Inference: {avg_post_inference_large:.2f} MB")
+    print(f"Memory Increase: {avg_memory_increase_large:.2f} MB")
 
-    print("\n===== 轻模型 (YOLO11n) 10次测试平均值 =====")
-    print(f"解释器常驻内存: {avg_interpreter_small:.2f} MB")
-    print(f"模型加载后内存: {avg_model_loaded_small:.2f} MB")
-    print(f"推理后内存: {avg_post_inference_small:.2f} MB")
-    print(f"内存增加量: {avg_memory_increase_small:.2f} MB")
+    print("\n===== Small Model (YOLO11n) 10-Run Average =====")
+    print(f"Interpreter Resident Memory: {avg_interpreter_small:.2f} MB")
+    print(f"Memory After Model Loading: {avg_model_loaded_small:.2f} MB")
+    print(f"Memory After Inference: {avg_post_inference_small:.2f} MB")
+    print(f"Memory Increase: {avg_memory_increase_small:.2f} MB")
 
-    # 保存结果
+    # Save results
     result_path = os.path.join(base_path, "results", "python_memory_standardization_result.txt")
     with open(result_path, 'w', encoding='utf-8') as f:
-        f.write("===== Python 内存标准化测试结果 =====\n\n")
+        f.write("===== Python Memory Standardization Test Results =====\n\n")
         
-        f.write("===== 大模型 (YOLO11x) =====\n")
+        f.write("===== Large Model (YOLO11x) =====\n")
         for i, r in enumerate(results_large):
-            f.write(f"===== 第 {i+1} 次测试 =====\n")
-            f.write(f"解释器常驻内存: {r.interpreter_memory:.5f} MB\n")
-            f.write(f"模型加载后内存: {r.model_loaded_memory:.5f} MB\n")
-            f.write(f"推理后内存: {r.post_inference_memory:.5f} MB\n")
-            f.write(f"内存增加量: {r.memory_increase:.5f} MB\n\n")
+            f.write(f"===== Run #{i+1} =====\n")
+            f.write(f"Interpreter Resident Memory: {r.interpreter_memory:.5f} MB\n")
+            f.write(f"Memory After Model Loading: {r.model_loaded_memory:.5f} MB\n")
+            f.write(f"Memory After Inference: {r.post_inference_memory:.5f} MB\n")
+            f.write(f"Memory Increase: {r.memory_increase:.5f} MB\n\n")
         
-        f.write("===== 大模型 (YOLO11x) 10次测试平均值 =====\n")
-        f.write(f"解释器常驻内存: {avg_interpreter_large:.5f} MB\n")
-        f.write(f"模型加载后内存: {avg_model_loaded_large:.5f} MB\n")
-        f.write(f"推理后内存: {avg_post_inference_large:.5f} MB\n")
-        f.write(f"内存增加量: {avg_memory_increase_large:.5f} MB\n\n")
+        f.write("===== Large Model (YOLO11x) 10-Run Average =====\n")
+        f.write(f"Interpreter Resident Memory: {avg_interpreter_large:.5f} MB\n")
+        f.write(f"Memory After Model Loading: {avg_model_loaded_large:.5f} MB\n")
+        f.write(f"Memory After Inference: {avg_post_inference_large:.5f} MB\n")
+        f.write(f"Memory Increase: {avg_memory_increase_large:.5f} MB\n\n")
         
-        f.write("===== 轻模型 (YOLO11n) =====\n")
+        f.write("===== Small Model (YOLO11n) =====\n")
         for i, r in enumerate(results_small):
-            f.write(f"===== 第 {i+1} 次测试 =====\n")
-            f.write(f"解释器常驻内存: {r.interpreter_memory:.5f} MB\n")
-            f.write(f"模型加载后内存: {r.model_loaded_memory:.5f} MB\n")
-            f.write(f"推理后内存: {r.post_inference_memory:.5f} MB\n")
-            f.write(f"内存增加量: {r.memory_increase:.5f} MB\n\n")
+            f.write(f"===== Run #{i+1} =====\n")
+            f.write(f"Interpreter Resident Memory: {r.interpreter_memory:.5f} MB\n")
+            f.write(f"Memory After Model Loading: {r.model_loaded_memory:.5f} MB\n")
+            f.write(f"Memory After Inference: {r.post_inference_memory:.5f} MB\n")
+            f.write(f"Memory Increase: {r.memory_increase:.5f} MB\n\n")
         
-        f.write("===== 轻模型 (YOLO11n) 10次测试平均值 =====\n")
-        f.write(f"解释器常驻内存: {avg_interpreter_small:.5f} MB\n")
-        f.write(f"模型加载后内存: {avg_model_loaded_small:.5f} MB\n")
-        f.write(f"推理后内存: {avg_post_inference_small:.5f} MB\n")
-        f.write(f"内存增加量: {avg_memory_increase_small:.5f} MB\n")
+        f.write("===== Small Model (YOLO11n) 10-Run Average =====\n")
+        f.write(f"Interpreter Resident Memory: {avg_interpreter_small:.5f} MB\n")
+        f.write(f"Memory After Model Loading: {avg_model_loaded_small:.5f} MB\n")
+        f.write(f"Memory After Inference: {avg_post_inference_small:.5f} MB\n")
+        f.write(f"Memory Increase: {avg_memory_increase_small:.5f} MB\n")
 
-    print(f"\n结果已保存到: {result_path}")
-    print("测试完成!")
+    print(f"\nResults saved to: {result_path}")
+    print("Test complete!")
 
 if __name__ == "__main__":
     main()

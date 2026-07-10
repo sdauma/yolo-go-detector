@@ -1,3 +1,16 @@
+// go_cpu_monitoring.go
+// Go CPU 使用率监控测试
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置 intraOp=8, interOp=1
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+// - 使用 gopsutil 库监控进程级 CPU 和内存
+//
+// 测试目的：
+// - 测试四个场景的 CPU 使用率：空闲状态、单次推理、连续推理（100次）、并发推理（4 goroutine × 25次）
+// - 记录 CPU 百分比、内存百分比、RSS
+// - 为论文 CPU 利用率分析提供数据
+
 package main
 
 import (

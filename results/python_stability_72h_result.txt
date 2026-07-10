@@ -1,0 +1,19 @@
+Python 72-Hour Long-Term Stability Test Summary
+==================================================
+Model:            yolo11x.onnx
+Duration:         72.00 hours
+Total Inferences: 238675
+Errors:           0
+Start RSS:        965.21 MB
+End RSS:          984.23 MB
+Peak RSS:         984.23 MB
+Min RSS:          965.02 MB
+RSS Drift:        19.02 MB
+Drift Rate:       0.2642 MB/hour
+Avg Latency:      585.58 ms
+P50 Latency:      582.47 ms
+P95 Latency:      599.48 ms
+P99 Latency:      613.61 ms
+Std Latency:      25.65 ms
+Min Latency:      569.25 ms
+Max Latency:      1779.24 ms

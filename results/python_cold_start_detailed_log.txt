@@ -1,82 +1,82 @@
-===== 第 1 次测试 =====
-冷启动时间: 714.52470 ms
-稳定状态平均时间: 690.54744 ms
-最小延迟: 670.27440 ms
-最大延迟: 919.73900 ms
-P50延迟: 683.35455 ms
-P90延迟: 698.22445 ms
-P99延迟: 801.61497 ms
-Start RSS: 294.04688 MB
-Cold Start RSS: 527.76172 MB
-Stable RSS: 546.48438 MB
+===== Test Run #1 =====
+Cold Start Time: 590.58670 ms
+Avg Stable Latency: 584.21105 ms
+Min Latency: 574.65270 ms
+Max Latency: 598.07170 ms
+P50 Latency: 583.92305 ms
+P90 Latency: 590.80950 ms
+P99 Latency: 597.75856 ms
+Start RSS: 705.66406 MB
+Cold Start RSS: 971.17188 MB
+Stable RSS: 971.07422 MB
 
-===== 第 2 次测试 =====
-冷启动时间: 712.23200 ms
-稳定状态平均时间: 697.30297 ms
-最小延迟: 674.67110 ms
-最大延迟: 1008.62550 ms
-P50延迟: 686.24165 ms
-P90延迟: 707.12918 ms
-P99延迟: 905.50611 ms
-Start RSS: 302.07422 MB
-Cold Start RSS: 530.60547 MB
-Stable RSS: 563.37500 MB
+===== Test Run #2 =====
+Cold Start Time: 649.34500 ms
+Avg Stable Latency: 584.43613 ms
+Min Latency: 574.81680 ms
+Max Latency: 607.62920 ms
+P50 Latency: 583.23135 ms
+P90 Latency: 591.66938 ms
+P99 Latency: 604.76077 ms
+Start RSS: 706.30859 MB
+Cold Start RSS: 971.58984 MB
+Stable RSS: 971.55859 MB
 
-===== 第 3 次测试 =====
-冷启动时间: 729.27840 ms
-稳定状态平均时间: 688.50267 ms
-最小延迟: 672.78090 ms
-最大延迟: 881.95570 ms
-P50延迟: 683.18970 ms
-P90延迟: 696.30015 ms
-P99延迟: 858.30411 ms
-Start RSS: 303.12109 MB
-Cold Start RSS: 536.32812 MB
-Stable RSS: 555.07812 MB
+===== Test Run #3 =====
+Cold Start Time: 600.02930 ms
+Avg Stable Latency: 583.28633 ms
+Min Latency: 573.49090 ms
+Max Latency: 599.89400 ms
+P50 Latency: 582.95475 ms
+P90 Latency: 591.44926 ms
+P99 Latency: 599.77223 ms
+Start RSS: 706.71875 MB
+Cold Start RSS: 972.01953 MB
+Stable RSS: 971.95703 MB
 
-===== 第 4 次测试 =====
-冷启动时间: 735.66470 ms
-稳定状态平均时间: 691.26692 ms
-最小延迟: 672.28870 ms
-最大延迟: 867.88740 ms
-P50延迟: 684.74755 ms
-P90延迟: 702.73672 ms
-P99延迟: 820.53827 ms
-Start RSS: 302.56641 MB
-Cold Start RSS: 535.81641 MB
-Stable RSS: 554.68750 MB
+===== Test Run #4 =====
+Cold Start Time: 599.18640 ms
+Avg Stable Latency: 584.65295 ms
+Min Latency: 574.28880 ms
+Max Latency: 619.59670 ms
+P50 Latency: 583.99415 ms
+P90 Latency: 591.35404 ms
+P99 Latency: 608.48722 ms
+Start RSS: 717.31641 MB
+Cold Start RSS: 982.65625 MB
+Stable RSS: 982.65625 MB
 
-===== 第 5 次测试 =====
-冷启动时间: 710.34080 ms
-稳定状态平均时间: 689.46261 ms
-最小延迟: 672.46210 ms
-最大延迟: 958.43950 ms
-P50延迟: 681.82860 ms
-P90延迟: 695.82254 ms
-P99延迟: 841.18657 ms
-Start RSS: 303.14062 MB
-Cold Start RSS: 536.35938 MB
-Stable RSS: 555.10938 MB
+===== Test Run #5 =====
+Cold Start Time: 600.98230 ms
+Avg Stable Latency: 604.92968 ms
+Min Latency: 571.87860 ms
+Max Latency: 996.48310 ms
+P50 Latency: 582.75405 ms
+P90 Latency: 634.78075 ms
+P99 Latency: 922.93788 ms
+Start RSS: 707.14062 MB
+Cold Start RSS: 972.49609 MB
+Stable RSS: 972.64062 MB
 
-===== 5次测试平均值 =====
-冷启动时间: 720.40812 ms
-稳定状态平均时间: 691.41652 ms
-冷启动时间 / 稳定状态平均时间: 1.04 倍
+===== 5-Test Average =====
+Cold Start Time: 608.02594 ms
+Avg Stable Latency: 588.30323 ms
+Cold Start / Stable Ratio: 1.03x
 
-===== 稳定状态详细统计 =====
-平均延迟: 691.41652 ms
-标准差: 3.08986 ms
-变异系数: 0.45%
-FPS: 1.45
-最小延迟: 672.49544 ms
-最大延迟: 927.32942 ms
-P50延迟: 683.87241 ms
-P90延迟: 700.04261 ms
-P99延迟: 845.43001 ms
+===== Stable State Detailed Stats =====
+Avg Latency: 588.30323 ms
+Std Dev: 8.32626 ms
+Coeff of Variation: 1.42%
+FPS: 1.70
+Min Latency: 573.82556 ms
+Max Latency: 684.33494 ms
+P50 Latency: 583.37147 ms
+P90 Latency: 600.01259 ms
+P99 Latency: 666.74333 ms
 
-===== 内存使用情况 =====
-Start RSS: 300.98984 MB
-Cold Start RSS: 533.37422 MB
-Stable RSS: 554.94687 MB
-内存增长 (Start -> Cold Start): 232.38437 MB
-内存增长 (Cold Start -> Stable): 21.57266 MB
+===== Memory Usage =====
+Start RSS: 708.62969 MB
+Cold Start RSS: 973.98672 MB
+Stable RSS: 973.97734 MB
+Memory Growth (Start -> Cold Start): 265.35703 MB
+Memory Growth (Cold Start -> Stable): -0.00937 MB

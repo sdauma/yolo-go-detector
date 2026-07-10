@@ -1,4 +1,4 @@
-// Package main 批量图片检测验证工具
+﻿// Package main 批量图片检测验证工具
 // 从目录读取图片，使用 SessionPool 并发推理，输出 JSONL 结果和统计报告
 package main
 
@@ -21,8 +21,12 @@ import (
 	"sync/atomic"
 	"time"
 
-	ort "github.com/yalue/onnxruntime_go"
 	"github.com/nfnt/resize"
+
+	ort "github.com/yalue/onnxruntime_go"
+
+	"yolo-go-detector/engine"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 var (
@@ -33,6 +37,7 @@ var (
 	inSize    = flag.Int("size", 640, "输入尺寸")
 	workers   = flag.Int("workers", 0, "并发数 (0=自动)")
 	poolSize   = flag.Int("pool", 0, "SessionPool 大小 (0=自动)")
+	intraOpFlag = flag.Int("intraop", 0, "每Session intra_op线程数 (0=自动)")
 	limit     = flag.Int("limit", 0, "限制处理图片数 (0=全部)")
 	outDir    = flag.String("out", "./output", "输出目录")
 	sampleAlert = flag.Int("alert-sample", 50, "保存告警图片样本数")
@@ -61,6 +66,7 @@ type ImageResult struct {
 	Height         int         `json:"height"`
 	Detections     []Detection `json:"detections"`
 	InferTimeMs    float64     `json:"infer_time_ms"`
+	PureInferMs    float64     `json:"pure_infer_ms"`
 	CompletedAtSec float64     `json:"completed_at_sec"`
 	Error          string      `json:"error,omitempty"`
 }
@@ -86,7 +92,17 @@ type RoundStats struct {
 	P90InferMs      float64 `json:"p90_infer_ms"`
 	P99InferMs      float64 `json:"p99_infer_ms"`
 	MaxInferMs      float64 `json:"max_infer_ms"`
+	AvgPureInferMs  float64 `json:"avg_pure_infer_ms"`
+	P50PureInferMs  float64 `json:"p50_pure_infer_ms"`
+	P99PureInferMs  float64 `json:"p99_pure_infer_ms"`
 	PeakMemoryMB    float64 `json:"peak_memory_mb"`
+	StartRSSMB      float64 `json:"start_rss_mb"`
+	EndRSSMB        float64 `json:"end_rss_mb"`
+	RSSDriftMBPerHour float64 `json:"rss_drift_mb_per_hour"`
+	PoolSize        int     `json:"pool_size"`
+	IntraOp         int     `json:"intra_op"`
+	CPUCores        int     `json:"cpu_cores"`
+	Model           string  `json:"model"`
 	TotalDetections int     `json:"total_detections"`
 	AlertSummary    AlertSummary `json:"alert_summary"`
 }
@@ -95,7 +111,7 @@ type RoundStats struct {
 type TimelinePoint struct {
 	ElapsedSec float64 `json:"elapsed_sec"`
 	Completed  int64   `json:"completed"`
-	MemMB      float64 `json:"mem_mb"`
+	RSSMB      float64 `json:"rss_mb"`
 	Goroutines int     `json:"goroutines"`
 }
 
@@ -164,8 +180,11 @@ func main() {
 		p = max(1, numCPU/4)
 		if p > 3 { p = 3 }
 	}
-	intraOp := numCPU / p
-	if intraOp < 1 { intraOp = 1 }
+	intraOp := *intraOpFlag
+	if intraOp <= 0 {
+		intraOp = numCPU / p
+		if intraOp < 1 { intraOp = 1 }
+	}
 	w := *workers
 	if w <= 0 { w = p + 2 }
 	if w > p*2 { w = p * 2 }
@@ -199,15 +218,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	// 初始化 ORT
-	if err := initORTEnv(); err != nil {
-		fmt.Printf("初始化失败: %v\n", err)
+// 创建 SessionPool（与生产系统同一份 engine.SessionPool 代码）
+libPath := findONNXLib()
+if libPath != "" {
+	engine.SetONNXLibPath(libPath)
+}
+pool := engine.NewSessionPool(p, *model, *inSize, 1, intraOp)
+	_, idle := pool.GetStats()
+	if idle == 0 {
+		fmt.Println("FATAL: SessionPool创建失败，无法继续")
 		os.Exit(1)
 	}
-
-	// 创建 SessionPool
-	sp := newSessionPool(p, *model, *inSize, intraOp)
-	defer sp.destroy()
+	startRSS := memutil.PrivateMemoryMB()
 
 	// 处理 - Worker Pool 模式（仅 workers 个 goroutine，避免 39775 个 goroutine 的调度开销）
 	results := make([]ImageResult, len(imgs))
@@ -235,7 +257,7 @@ func main() {
 		go func() {
 			defer wg.Done()
 			for t := range taskCh {
-				results[t.idx] = processImage(sp, t.path)
+				results[t.idx] = processImage(pool, t.path)
 			}
 		}()
 	}
@@ -248,7 +270,8 @@ func main() {
 	elapsed := time.Since(startTime).Seconds()
 
 	// 统计
-	stats := computeStats(results, elapsed)
+	endRSS := memutil.PrivateMemoryMB()
+	stats := computeStats(results, elapsed, startRSS, endRSS, p, intraOp, *model)
 	printStats(stats)
 	saveResults(results, stats)
 
@@ -281,130 +304,21 @@ func collectImages(dir string) []string {
 	return imgs
 }
 
-// ---------- SessionPool ----------
-type sessionPool struct {
-	ch        chan *poolSession
-	modelPath string
-	inputSize int
-	mu        sync.Mutex
-}
-
-type poolSession struct {
-	session *ort.AdvancedSession
-	input   *ort.Tensor[float32]
-	output  *ort.Tensor[float32]
-}
-
-func (s *poolSession) destroy() {
-	if s.input != nil { s.input.Destroy() }
-	if s.output != nil { s.output.Destroy() }
-	if s.session != nil { s.session.Destroy() }
-}
-
-func newSessionPool(maxSize int, modelPath string, inputSize, intraOpThreads int) *sessionPool {
-	sp := &sessionPool{
-		ch:        make(chan *poolSession, maxSize),
-		modelPath: modelPath,
-		inputSize: inputSize,
-	}
-	// 预创建满池的 Session，确保后续 get() 只需从 channel 拿，无需创建
-	for i := 0; i < maxSize; i++ {
-		if s, err := createSession(modelPath, inputSize, intraOpThreads); err == nil {
-			sp.ch <- s
-		} else {
-			fmt.Printf("  警告: 创建第 %d 个 Session 失败: %v\n", i+1, err)
-		}
-	}
-	fmt.Printf("  SessionPool: 预创建 %d 个 Session（池容量 %d，每 Session %d 线程）\n", len(sp.ch), maxSize, intraOpThreads)
-	return sp
-}
-
-func (sp *sessionPool) get() (*poolSession, error) {
-	// 阻塞等待，确保不会超过池容量创建过多 Session
-	// 这是关键：不阻塞会导致 12 个 worker 同时创建 12+ 个 Session，
-	// CPU 争抢让每个推理从 0.92s 变成 35s+
-	s := <-sp.ch
-	return s, nil
-}
-
-func (sp *sessionPool) put(s *poolSession) {
-	select {
-	case sp.ch <- s:
-	default:
-		s.destroy()
-	}
-}
-
-func (sp *sessionPool) destroy() {
-	close(sp.ch)
-	for s := range sp.ch {
-		s.destroy()
-	}
-}
-
-func createSession(modelPath string, inputSize, intraOpThreads int) (*poolSession, error) {
-	inputShape := ort.NewShape(1, 3, int64(inputSize), int64(inputSize))
-	inputTensor, err := ort.NewEmptyTensor[float32](inputShape)
-	if err != nil { return nil, err }
-
-	outputShape := ort.NewShape(1, 84, 8400)
-	outputTensor, err := ort.NewEmptyTensor[float32](outputShape)
-	if err != nil {
-		inputTensor.Destroy()
-		return nil, err
-	}
-
-	opts, err := ort.NewSessionOptions()
-	if err != nil {
-		inputTensor.Destroy()
-		outputTensor.Destroy()
-		return nil, err
-	}
-	defer opts.Destroy()
-
-	// ★ 按池大小自动分配线程：total_threads = pool × intra_op ≤ CPU核数
-	// 避免 ONNX Runtime 默认用满所有核心导致线程争抢
-	opts.SetIntraOpNumThreads(intraOpThreads)
-	opts.SetInterOpNumThreads(1)
-
-	session, err := ort.NewAdvancedSession(modelPath,
-		[]string{"images"}, []string{"output0"},
-		[]ort.ArbitraryTensor{inputTensor}, []ort.ArbitraryTensor{outputTensor}, opts)
-	if err != nil {
-		inputTensor.Destroy()
-		outputTensor.Destroy()
-		return nil, err
-	}
-
-	return &poolSession{session: session, input: inputTensor, output: outputTensor}, nil
-}
-
-func initORTEnv() error {
-	onceInit.Do(func() {
-		lib := findONNXLib()
-		if lib == "" {
-			ortErr = fmt.Errorf("未找到 onnxruntime.dll")
-			return
-		}
-		ort.SetSharedLibraryPath(lib)
-		ortErr = ort.InitializeEnvironment()
-	})
-	return ortErr
-}
-
 func findONNXLib() string {
 	for i := 0; i < 6; i++ {
 		prefix := strings.Repeat("../", i)
 		candidate := filepath.Join(prefix, "third_party", "onnxruntime.dll")
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
+		if abs, err := filepath.Abs(candidate); err == nil {
+			if _, err := os.Stat(abs); err == nil {
+				return abs
+			}
 		}
 	}
 	return "./third_party/onnxruntime.dll"
 }
 
 // ---------- 图片处理 ----------
-func processImage(sp *sessionPool, imgPath string) ImageResult {
+func processImage(pool *engine.SessionPool, imgPath string) ImageResult {
 	result := ImageResult{File: filepath.Base(imgPath)}
 	start := time.Now()
 
@@ -424,22 +338,23 @@ func processImage(sp *sessionPool, imgPath string) ImageResult {
 	result.Height = img.Bounds().Dy()
 
 	// 获取 session
-	sess, err := sp.get()
+	sess, err := pool.GetSession()
 	if err != nil {
 		result.Error = err.Error()
 		return result
 	}
-	defer sp.put(sess)
+	defer pool.PutSession(sess)
 
 	// 预处理
-	si := preprocess(img, *inSize, sess.input)
-	// 推理
-	if err := sess.session.Run(); err != nil {
+	si := preprocess(img, *inSize, sess.Input)
+	// 推理（★拆计时：PureInferMs 仅统计 Run() 耗时）
+	pureStart := time.Now()
+	if err := sess.Session.Run(); err != nil {
 		result.Error = err.Error()
 		return result
 	}
 	// 后处理
-	boxes := postprocess(sess.output.GetData(), result.Width, result.Height,
+	boxes := postprocess(sess.Output.GetData(), result.Width, result.Height,
 		float32(*confTh), float32(*iouTh), si)
 
 	for _, b := range boxes {
@@ -451,6 +366,7 @@ func processImage(sp *sessionPool, imgPath string) ImageResult {
 		})
 	}
 
+	result.PureInferMs = float64(time.Since(pureStart).Microseconds()) / 1000.0
 	result.InferTimeMs = float64(time.Since(start).Microseconds()) / 1000.0
 	result.CompletedAtSec = time.Since(processStartTime).Seconds()
 
@@ -635,18 +551,19 @@ func saveAlertSample(img image.Image, result *ImageResult) {
 
 // ---------- 统计 ----------
 func updatePeakMemory() {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
+	rss := memutil.PrivateMemoryMB()
+	rssBytes := uint64(rss * 1024 * 1024)
 	for {
 		old := atomic.LoadUint64(&peakMemBytes)
-		if m.Alloc <= old { break }
-		if atomic.CompareAndSwapUint64(&peakMemBytes, old, m.Alloc) { break }
+		if rssBytes <= old { break }
+		if atomic.CompareAndSwapUint64(&peakMemBytes, old, rssBytes) { break }
 	}
 }
 
-func computeStats(results []ImageResult, elapsedSec float64) RoundStats {
+func computeStats(results []ImageResult, elapsedSec float64, startRSS, endRSS float64, poolSz, intraOpVal int, modelPath string) RoundStats {
 	var totalInferMs float64
 	var inferTimes []float64
+	var pureInferTimes []float64
 	var success, fail int
 	alert := AlertSummary{}
 
@@ -658,6 +575,7 @@ func computeStats(results []ImageResult, elapsedSec float64) RoundStats {
 		success++
 		inferTimes = append(inferTimes, r.InferTimeMs)
 		totalInferMs += r.InferTimeMs
+		pureInferTimes = append(pureInferTimes, r.PureInferMs)
 
 		for _, d := range r.Detections {
 			switch d.ClassID {
@@ -678,9 +596,20 @@ func computeStats(results []ImageResult, elapsedSec float64) RoundStats {
 	p90 := percentile(inferTimes, 0.9)
 	p99 := percentile(inferTimes, 0.99)
 	avgInfer := totalInferMs / float64(max(len(inferTimes), 1))
+
+	sort.Float64s(pureInferTimes)
+	pureAvg := float64(0)
+	pureSum := float64(0)
+	for _, t := range pureInferTimes { pureSum += t }
+	if len(pureInferTimes) > 0 { pureAvg = pureSum / float64(len(pureInferTimes)) }
+	pureP50 := percentile(pureInferTimes, 0.5)
+	pureP99 := percentile(pureInferTimes, 0.99)
 	maxInfer := float64(0)
 	if len(inferTimes) > 0 { maxInfer = inferTimes[len(inferTimes)-1] }
 
+	elapsedHours := elapsedSec / 3600.0
+	rssDriftPerHour := float64(0)
+	if elapsedHours > 0 { rssDriftPerHour = (endRSS - startRSS) / elapsedHours }
 	return RoundStats{
 		TotalImages:     len(results),
 		SuccessCount:    success,
@@ -692,7 +621,17 @@ func computeStats(results []ImageResult, elapsedSec float64) RoundStats {
 		P90InferMs:      p90,
 		P99InferMs:      p99,
 		MaxInferMs:      maxInfer,
+		AvgPureInferMs:  pureAvg,
+		P50PureInferMs:  pureP50,
+		P99PureInferMs:  pureP99,
 		PeakMemoryMB:    float64(atomic.LoadUint64(&peakMemBytes)) / 1024 / 1024,
+		StartRSSMB:      startRSS,
+		EndRSSMB:        endRSS,
+		RSSDriftMBPerHour: rssDriftPerHour,
+		PoolSize:        poolSz,
+		IntraOp:         intraOpVal,
+		CPUCores:        runtime.NumCPU(),
+		Model:           modelPath,
 		TotalDetections: alert.Total,
 		AlertSummary:    alert,
 	}
@@ -720,6 +659,9 @@ func printStats(s RoundStats) {
 	fmt.Printf("  P99 延迟:       %.2f ms\n", s.P99InferMs)
 	fmt.Printf("  最大延迟:       %.2f ms\n", s.MaxInferMs)
 	fmt.Printf("  Go 峰值内存:    %.1f MB\n", s.PeakMemoryMB)
+	fmt.Printf("  纯推理延迟:     %.2f ms (P50: %.2f, P99: %.2f)\n", s.AvgPureInferMs, s.P50PureInferMs, s.P99PureInferMs)
+	fmt.Printf("  RSS:           起 %.1f → 终 %.1f MB | 漂移 %.2f MB/h\n", s.StartRSSMB, s.EndRSSMB, s.RSSDriftMBPerHour)
+	fmt.Printf("  配置:          pool=%d intra_op=%d CPU=%d核\n", s.PoolSize, s.IntraOp, s.CPUCores)
 	fmt.Printf("  总检测目标数:   %d\n", s.TotalDetections)
 	fmt.Printf("    人员:         %d\n", s.AlertSummary.Person)
 	fmt.Printf("    汽车:         %d\n", s.AlertSummary.Car)
@@ -778,15 +720,14 @@ func collectTimeline(stop <-chan struct{}) {
 }
 
 func appendTimelineSample() {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
+	rss := memutil.PrivateMemoryMB()
 	completed := atomic.LoadInt64(&completedCount)
 	elapsed := time.Since(processStartTime).Seconds()
 
 	pt := TimelinePoint{
 		ElapsedSec: elapsed,
 		Completed:  completed,
-		MemMB:      float64(m.Alloc) / 1024 / 1024,
+		RSSMB:      rss,
 		Goroutines: runtime.NumGoroutine(),
 	}
 	timelineMu.Lock()
@@ -800,7 +741,7 @@ func appendTimelineSample() {
 	}
 	fmt.Printf("  [%5.0fs] 已完成 %d/%d (%5.1f%%) | 内存 %7.1f MB | goroutine %d | ~%.1f FPS\n",
 		elapsed, completed, totalImages, float64(completed)/float64(totalImages)*100,
-		pt.MemMB, pt.Goroutines, fps)
+		pt.RSSMB, pt.Goroutines, fps)
 }
 
 // ---------- 大规模稳定性测试：分段统计 ----------
@@ -923,10 +864,10 @@ func writeTimelineCSV() {
 	}
 	defer f.Close()
 
-	f.WriteString("elapsed_sec,completed,mem_mb,goroutines\n")
+	f.WriteString("elapsed_sec,completed,rss_mb,goroutines\n")
 	timelineMu.Lock()
 	for _, p := range timeline {
-		fmt.Fprintf(f, "%.1f,%d,%.1f,%d\n", p.ElapsedSec, p.Completed, p.MemMB, p.Goroutines)
+		fmt.Fprintf(f, "%.1f,%d,%.1f,%d\n", p.ElapsedSec, p.Completed, p.RSSMB, p.Goroutines)
 	}
 	timelineMu.Unlock()
 	fmt.Printf("  时间线已保存至: %s (%d 个采样点)\n", path, len(timeline))

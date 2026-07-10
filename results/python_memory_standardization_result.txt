@@ -1,135 +1,135 @@
-===== Python 内存标准化测试结果 =====
+===== Python Memory Standardization Test Results =====
 
-===== 大模型 (YOLO11x) =====
-===== 第 1 次测试 =====
-解释器常驻内存: 48.24219 MB
-模型加载后内存: 289.51953 MB
-推理后内存: 546.33594 MB
-内存增加量: 498.09375 MB
+===== Large Model (YOLO11x) =====
+===== Run #1 =====
+Interpreter Resident Memory: 415.57422 MB
+Memory After Model Loading: 693.61719 MB
+Memory After Inference: 963.52734 MB
+Memory Increase: 547.95312 MB
 
-===== 第 2 次测试 =====
-解释器常驻内存: 57.03125 MB
-模型加载后内存: 289.82031 MB
-推理后内存: 550.94141 MB
-内存增加量: 493.91016 MB
+===== Run #2 =====
+Interpreter Resident Memory: 419.93359 MB
+Memory After Model Loading: 692.35547 MB
+Memory After Inference: 962.34375 MB
+Memory Increase: 542.41016 MB
 
-===== 第 3 次测试 =====
-解释器常驻内存: 56.89062 MB
-模型加载后内存: 289.87500 MB
-推理后内存: 541.69531 MB
-内存增加量: 484.80469 MB
+===== Run #3 =====
+Interpreter Resident Memory: 423.66016 MB
+Memory After Model Loading: 693.74219 MB
+Memory After Inference: 963.42188 MB
+Memory Increase: 539.76172 MB
 
-===== 第 4 次测试 =====
-解释器常驻内存: 57.08984 MB
-模型加载后内存: 290.44922 MB
-推理后内存: 556.58203 MB
-内存增加量: 499.49219 MB
+===== Run #4 =====
+Interpreter Resident Memory: 422.50781 MB
+Memory After Model Loading: 695.96484 MB
+Memory After Inference: 965.80469 MB
+Memory Increase: 543.29688 MB
 
-===== 第 5 次测试 =====
-解释器常驻内存: 57.76172 MB
-模型加载后内存: 290.59375 MB
-推理后内存: 551.75781 MB
-内存增加量: 493.99609 MB
+===== Run #5 =====
+Interpreter Resident Memory: 422.34766 MB
+Memory After Model Loading: 695.30078 MB
+Memory After Inference: 965.14453 MB
+Memory Increase: 542.79688 MB
 
-===== 第 6 次测试 =====
-解释器常驻内存: 58.10938 MB
-模型加载后内存: 290.22266 MB
-推理后内存: 551.35938 MB
-内存增加量: 493.25000 MB
+===== Run #6 =====
+Interpreter Resident Memory: 424.32422 MB
+Memory After Model Loading: 695.51562 MB
+Memory After Inference: 965.57812 MB
+Memory Increase: 541.25391 MB
 
-===== 第 7 次测试 =====
-解释器常驻内存: 57.44531 MB
-模型加载后内存: 290.96875 MB
-推理后内存: 542.79688 MB
-内存增加量: 485.35156 MB
+===== Run #7 =====
+Interpreter Resident Memory: 421.13281 MB
+Memory After Model Loading: 699.02344 MB
+Memory After Inference: 969.53125 MB
+Memory Increase: 548.39844 MB
 
-===== 第 8 次测试 =====
-解释器常驻内存: 56.99609 MB
-模型加载后内存: 291.62891 MB
-推理后内存: 552.95312 MB
-内存增加量: 495.95703 MB
+===== Run #8 =====
+Interpreter Resident Memory: 420.85547 MB
+Memory After Model Loading: 693.61328 MB
+Memory After Inference: 963.55859 MB
+Memory Increase: 542.70312 MB
 
-===== 第 9 次测试 =====
-解释器常驻内存: 57.92578 MB
-模型加载后内存: 290.87891 MB
-推理后内存: 547.17188 MB
-内存增加量: 489.24609 MB
+===== Run #9 =====
+Interpreter Resident Memory: 423.71484 MB
+Memory After Model Loading: 693.25391 MB
+Memory After Inference: 963.40625 MB
+Memory Increase: 539.69141 MB
 
-===== 第 10 次测试 =====
-解释器常驻内存: 57.56641 MB
-模型加载后内存: 291.68359 MB
-推理后内存: 557.45703 MB
-内存增加量: 499.89062 MB
+===== Run #10 =====
+Interpreter Resident Memory: 423.52734 MB
+Memory After Model Loading: 694.09375 MB
+Memory After Inference: 964.02734 MB
+Memory Increase: 540.50000 MB
 
-===== 大模型 (YOLO11x) 10次测试平均值 =====
-解释器常驻内存: 56.50586 MB
-模型加载后内存: 290.56406 MB
-推理后内存: 549.90508 MB
-内存增加量: 493.39922 MB
+===== Large Model (YOLO11x) 10-Run Average =====
+Interpreter Resident Memory: 421.75781 MB
+Memory After Model Loading: 694.64805 MB
+Memory After Inference: 964.63437 MB
+Memory Increase: 542.87656 MB
 
-===== 轻模型 (YOLO11n) =====
-===== 第 1 次测试 =====
-解释器常驻内存: 57.58594 MB
-模型加载后内存: 72.49609 MB
-推理后内存: 148.07422 MB
-内存增加量: 90.48828 MB
+===== Small Model (YOLO11n) =====
+===== Run #1 =====
+Interpreter Resident Memory: 421.85547 MB
+Memory After Model Loading: 444.86719 MB
+Memory After Inference: 566.09375 MB
+Memory Increase: 144.23828 MB
 
-===== 第 2 次测试 =====
-解释器常驻内存: 57.97656 MB
-模型加载后内存: 72.40625 MB
-推理后内存: 148.45703 MB
-内存增加量: 90.48047 MB
+===== Run #2 =====
+Interpreter Resident Memory: 424.59375 MB
+Memory After Model Loading: 441.72656 MB
+Memory After Inference: 562.57031 MB
+Memory Increase: 137.97656 MB
 
-===== 第 3 次测试 =====
-解释器常驻内存: 57.67969 MB
-模型加载后内存: 72.93359 MB
-推理后内存: 149.90625 MB
-内存增加量: 92.22656 MB
+===== Run #3 =====
+Interpreter Resident Memory: 421.69922 MB
+Memory After Model Loading: 442.23047 MB
+Memory After Inference: 563.00391 MB
+Memory Increase: 141.30469 MB
 
-===== 第 4 次测试 =====
-解释器常驻内存: 58.09375 MB
-模型加载后内存: 73.09375 MB
-推理后内存: 148.69141 MB
-内存增加量: 90.59766 MB
+===== Run #4 =====
+Interpreter Resident Memory: 426.37500 MB
+Memory After Model Loading: 442.75000 MB
+Memory After Inference: 563.44922 MB
+Memory Increase: 137.07422 MB
 
-===== 第 5 次测试 =====
-解释器常驻内存: 58.25000 MB
-模型加载后内存: 74.18750 MB
-推理后内存: 151.03516 MB
-内存增加量: 92.78516 MB
+===== Run #5 =====
+Interpreter Resident Memory: 421.12891 MB
+Memory After Model Loading: 441.45703 MB
+Memory After Inference: 562.35547 MB
+Memory Increase: 141.22656 MB
 
-===== 第 6 次测试 =====
-解释器常驻内存: 59.03125 MB
-模型加载后内存: 74.80469 MB
-推理后内存: 151.57422 MB
-内存增加量: 92.54297 MB
+===== Run #6 =====
+Interpreter Resident Memory: 426.58203 MB
+Memory After Model Loading: 444.81641 MB
+Memory After Inference: 565.76562 MB
+Memory Increase: 139.18359 MB
 
-===== 第 7 次测试 =====
-解释器常驻内存: 59.62109 MB
-模型加载后内存: 74.58984 MB
-推理后内存: 149.67578 MB
-内存增加量: 90.05469 MB
+===== Run #7 =====
+Interpreter Resident Memory: 424.80859 MB
+Memory After Model Loading: 443.89844 MB
+Memory After Inference: 564.69531 MB
+Memory Increase: 139.88672 MB
 
-===== 第 8 次测试 =====
-解释器常驻内存: 58.92578 MB
-模型加载后内存: 74.28125 MB
-推理后内存: 150.43359 MB
-内存增加量: 91.50781 MB
+===== Run #8 =====
+Interpreter Resident Memory: 422.70312 MB
+Memory After Model Loading: 443.98438 MB
+Memory After Inference: 564.79688 MB
+Memory Increase: 142.09375 MB
 
-===== 第 9 次测试 =====
-解释器常驻内存: 59.30859 MB
-模型加载后内存: 74.52734 MB
-推理后内存: 151.29297 MB
-内存增加量: 91.98438 MB
+===== Run #9 =====
+Interpreter Resident Memory: 423.23047 MB
+Memory After Model Loading: 442.10938 MB
+Memory After Inference: 562.94922 MB
+Memory Increase: 139.71875 MB
 
-===== 第 10 次测试 =====
-解释器常驻内存: 59.35547 MB
-模型加载后内存: 74.75391 MB
-推理后内存: 150.10547 MB
-内存增加量: 90.75000 MB
+===== Run #10 =====
+Interpreter Resident Memory: 432.73047 MB
+Memory After Model Loading: 444.46875 MB
+Memory After Inference: 564.71484 MB
+Memory Increase: 131.98438 MB
 
-===== 轻模型 (YOLO11n) 10次测试平均值 =====
-解释器常驻内存: 58.58281 MB
-模型加载后内存: 73.80742 MB
-推理后内存: 149.92461 MB
-内存增加量: 91.34180 MB
+===== Small Model (YOLO11n) 10-Run Average =====
+Interpreter Resident Memory: 424.57070 MB
+Memory After Model Loading: 443.23086 MB
+Memory After Inference: 564.03945 MB
+Memory Increase: 139.46875 MB

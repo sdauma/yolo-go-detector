@@ -1,3 +1,16 @@
+// go_advanced_session_supplementary.go
+// Go AdvancedSession 补充实验（工程级接口能力评估）
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置动态线程数
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+// - 非语言级性能比较，仅评估 AdvancedSession 接口的工程能力
+//
+// 测试目的：
+// - 验证 NewAdvancedSession 的 I/O Binding 能力
+// - 统计 Tensor 分配计数、Session 创建计数等工程指标
+// - 作为 NewSession vs AdvancedSession 接口差异的补充说明
+
 package main
 
 import (
@@ -5,13 +18,11 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"strconv"
-	"strings"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 type PerformanceMetrics struct {
@@ -233,20 +244,8 @@ func calculateMetrics(latencies []float64) PerformanceMetrics {
 	}
 }
 
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 func findProjectRoot(currentDir string) string {
 	fmt.Printf("调试: 开始查找项目根目录，当前目录: %s\n", currentDir)

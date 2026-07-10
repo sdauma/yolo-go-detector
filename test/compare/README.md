@@ -78,7 +78,7 @@ y1 = clamp(y1, 0, float32(origH))
 | 测试类型 | 已有工具 | 本工具补充 |
 |----------|----------|-----------|
 | 模型输出张量一致性 | `go_output_consistency` / `python_output_consistency` | ✅ 端到端检测结果（类别+坐标+置信度） |
-| 延迟/内存/并发 | 41 个标准化 Benchmark | — |
+| 延迟/内存/并发 | 48 个标准化 Benchmark | — |
 | **跨语言检测一致性** | — | ✅ `compare` + `batch_verify` |
 
 ## 参数

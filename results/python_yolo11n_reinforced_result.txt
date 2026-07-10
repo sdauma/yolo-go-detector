@@ -1,24 +1,24 @@
-===== Python YOLO11n 强化测试结果（10轮运行） =====
-第1轮平均延迟: 44.42947 ms
-第2轮平均延迟: 44.49728 ms
-第3轮平均延迟: 46.21695 ms
-第4轮平均延迟: 44.66386 ms
-第5轮平均延迟: 44.51322 ms
-第6轮平均延迟: 44.98206 ms
-第7轮平均延迟: 45.30349 ms
-第8轮平均延迟: 44.86580 ms
-第9轮平均延迟: 44.94634 ms
-第10轮平均延迟: 45.11563 ms
+===== Python YOLO11n Reinforced Test Results (10 rounds) =====
+Round 1 avg latency: 36.80022 ms
+Round 2 avg latency: 36.97505 ms
+Round 3 avg latency: 37.10252 ms
+Round 4 avg latency: 37.21354 ms
+Round 5 avg latency: 36.99503 ms
+Round 6 avg latency: 37.09215 ms
+Round 7 avg latency: 37.17348 ms
+Round 8 avg latency: 37.27673 ms
+Round 9 avg latency: 37.06829 ms
+Round 10 avg latency: 37.34482 ms
 
-===== 10轮测试平均值 =====
-平均延迟: 44.95341 ms
-标准差: 2.66297 ms
-P50延迟: 44.21585 ms
-P90延迟: 46.43777 ms
-P95延迟: 48.73850 ms
-最小延迟: 43.38111 ms
-最大延迟: 65.44343 ms
-Start RSS: 78.16367 MB
-Peak RSS: 149.92969 MB
-Stable RSS: 149.92461 MB
-RSS Drift: 71.76094 MB
+===== 10-Round Average =====
+Avg latency: 37.10418 ms
+Std dev: 1.44506 ms
+P50 latency: 36.68319 ms
+P90 latency: 38.08258 ms
+P95 latency: 39.36088 ms
+Min latency: 36.04143 ms
+Max latency: 46.89703 ms
+Start RSS: 448.81445 MB
+Peak RSS: 565.33320 MB
+Stable RSS: 565.32500 MB
+RSS Drift: 116.51055 MB

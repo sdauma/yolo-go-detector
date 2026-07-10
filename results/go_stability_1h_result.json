@@ -1,0 +1,35 @@
+{
+  "test_name": "1h_Long_Stability",
+  "model": "YOLO11x",
+  "duration_hours": 1.0001640535833334,
+  "total_inferences": 5740,
+  "avg_latency_ms": 625.1107953135892,
+  "p50_latency_ms": 610.9513,
+  "p99_latency_ms": 705.9472,
+  "min_latency_ms": 588.7879,
+  "max_latency_ms": 1419.3593,
+  "start_pm_mb": 578.1328125,
+  "end_pm_mb": 578.6328125,
+  "peak_pm_mb": 578.6328125,
+  "min_pm_mb": 578.1328125,
+  "pm_drift_mb": 0.5,
+  "drift_rate_mb_per_hour": 0.49991798666291515,
+  "total_gc_num": 30,
+  "perf_degrade_pct": 14.214586858366514,
+  "hourly_snapshots": [
+    {
+      "hour": 1,
+      "total_infer": 5740,
+      "hourly_infer": 5740,
+      "throughput": 1.594209424718261,
+      "avg_latency_ms": 625.1107953135892,
+      "p50_latency_ms": 610.9513,
+      "p99_latency_ms": 705.9472,
+      "pm_mb": 578.6328125,
+      "gc_num": 30,
+      "timestamp": "2026-06-30 09:07:01"
+    }
+  ],
+  "start_time": "2026-06-30 08:07:01",
+  "end_time": "2026-06-30 09:07:01"
+}

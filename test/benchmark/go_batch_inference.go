@@ -1,3 +1,16 @@
+// go_batch_inference.go
+// Go 批处理推理性能测试
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置 intraOp=8, interOp=1
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+// - 通过循环填充 batch 维度实现批处理
+//
+// 测试目的：
+// - 测试不同 batch size（1/2/4/8）下的推理性能
+// - 计算总时间、单图时间和吞吐量（images/sec）
+// - 分析批处理对推理效率的影响
+
 package main
 
 import (
@@ -11,6 +24,7 @@ import (
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 // BatchResult 批处理结果
@@ -32,11 +46,7 @@ type TestResult struct {
 }
 
 // 获取RSS内存（MB）
-func getRSSMB() float64 {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	return float64(m.Sys) / 1024 / 1024
-}
+func getRSSMB() float64 { return memutil.PrivateMemoryMB() }
 
 // 创建Session
 func createSession(modelPath string, inputData []byte, inputShape, outputShape []int64) (*ort.AdvancedSession, *ort.Tensor[float32], *ort.Tensor[float32], error) {

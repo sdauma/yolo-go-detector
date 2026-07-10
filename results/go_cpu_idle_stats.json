@@ -1,182 +1,176 @@
 [
   {
-    "timestamp": "2026-03-10 09:48:45",
-    "cpu_percent": 1.2378351503036875,
-    "memory_percent": 0.13347073,
-    "rss_mb": 21.66796875
+    "timestamp": "2026-06-26 06:04:37",
+    "cpu_percent": 3.8995719829791478,
+    "memory_percent": 0.13303754,
+    "rss_mb": 21.59765625
   },
   {
-    "timestamp": "2026-03-10 09:48:46",
-    "cpu_percent": 1.3809150557390342,
-    "memory_percent": 0.13433711,
-    "rss_mb": 21.8046875
+    "timestamp": "2026-06-26 06:04:38",
+    "cpu_percent": 2.8384125780279614,
+    "memory_percent": 0.13402426,
+    "rss_mb": 21.75390625
   },
   {
-    "timestamp": "2026-03-10 09:48:47",
-    "cpu_percent": 0.9577752006899168,
-    "memory_percent": 0.13440931,
-    "rss_mb": 21.81640625
+    "timestamp": "2026-06-26 06:04:39",
+    "cpu_percent": 1.9520231439359714,
+    "memory_percent": 0.13412052,
+    "rss_mb": 21.76953125
   },
   {
-    "timestamp": "2026-03-10 09:48:48",
-    "cpu_percent": 0.7331717493182325,
-    "memory_percent": 0.13445744,
-    "rss_mb": 21.82421875
+    "timestamp": "2026-06-26 06:04:40",
+    "cpu_percent": 1.4873459344612556,
+    "memory_percent": 0.13416865,
+    "rss_mb": 21.77734375
   },
   {
-    "timestamp": "2026-03-10 09:48:49",
-    "cpu_percent": 0.5937913029354496,
-    "memory_percent": 0.13445744,
-    "rss_mb": 21.82421875
+    "timestamp": "2026-06-26 06:04:41",
+    "cpu_percent": 1.2014780217374095,
+    "memory_percent": 0.13416865,
+    "rss_mb": 21.77734375
   },
   {
-    "timestamp": "2026-03-10 09:48:50",
-    "cpu_percent": 0.4989851918599659,
-    "memory_percent": 0.13452965,
-    "rss_mb": 21.8359375
+    "timestamp": "2026-06-26 06:04:42",
+    "cpu_percent": 1.007770620958104,
+    "memory_percent": 0.13421679,
+    "rss_mb": 21.78515625
   },
   {
-    "timestamp": "2026-03-10 09:48:51",
-    "cpu_percent": 0.43026671483267326,
-    "memory_percent": 0.13455372,
-    "rss_mb": 21.83984375
+    "timestamp": "2026-06-26 06:04:43",
+    "cpu_percent": 0.8678009282998436,
+    "memory_percent": 0.13421679,
+    "rss_mb": 21.78515625
   },
   {
-    "timestamp": "2026-03-10 09:48:52",
-    "cpu_percent": 0.3782132010204374,
-    "memory_percent": 0.13455372,
-    "rss_mb": 21.83984375
+    "timestamp": "2026-06-26 06:04:44",
+    "cpu_percent": 0.7620162525752491,
+    "memory_percent": 0.13421679,
+    "rss_mb": 21.78515625
   },
   {
-    "timestamp": "2026-03-10 09:48:53",
-    "cpu_percent": 0.3373813080412583,
-    "memory_percent": 0.13455372,
-    "rss_mb": 21.83984375
+    "timestamp": "2026-06-26 06:04:45",
+    "cpu_percent": 0.6792159843581667,
+    "memory_percent": 0.13421679,
+    "rss_mb": 21.78515625
   },
   {
-    "timestamp": "2026-03-10 09:48:54",
-    "cpu_percent": 0.3045050316021655,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:46",
+    "cpu_percent": 0.6126433932296318,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:48:55",
-    "cpu_percent": 0.2774581509205067,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:47",
+    "cpu_percent": 0.5579469509038286,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:48:56",
-    "cpu_percent": 0.2548346973758053,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:48",
+    "cpu_percent": 0.5122249491348332,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:48:57",
-    "cpu_percent": 0.23562080317409043,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:49",
+    "cpu_percent": 0.4734109210657884,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:48:58",
-    "cpu_percent": 0.21910544512298344,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:50",
+    "cpu_percent": 0.4400802565562276,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:48:59",
-    "cpu_percent": 0.20474881091554764,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:51",
+    "cpu_percent": 0.4111358912397296,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:49:00",
-    "cpu_percent": 0.19215640668183598,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:52",
+    "cpu_percent": 0.38576237366143384,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:49:01",
-    "cpu_percent": 0.18102626471552372,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:53",
+    "cpu_percent": 0.36333180544073623,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:49:02",
-    "cpu_percent": 0.17111560204845253,
-    "memory_percent": 0.13457778,
-    "rss_mb": 21.84375
+    "timestamp": "2026-06-26 06:04:54",
+    "cpu_percent": 0.34337204300976026,
+    "memory_percent": 0.13424085,
+    "rss_mb": 21.7890625
   },
   {
-    "timestamp": "2026-03-10 09:49:03",
-    "cpu_percent": 0.16223169006942292,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:04:55",
+    "cpu_percent": 0.3254918103135804,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:04",
-    "cpu_percent": 0.15422548818560708,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:04:56",
+    "cpu_percent": 0.3093737963503079,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:05",
-    "cpu_percent": 0.146973074250609,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:04:57",
+    "cpu_percent": 0.2947835374063164,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:06",
-    "cpu_percent": 0.1403689755511023,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:04:58",
+    "cpu_percent": 0.28150753872008955,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:07",
-    "cpu_percent": 0.1343362957115947,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:04:59",
+    "cpu_percent": 0.26937713334837016,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:08",
-    "cpu_percent": 0.1287999212214344,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:05:00",
+    "cpu_percent": 0.25824270532843413,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:09",
-    "cpu_percent": 0.12369920538045072,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:05:01",
+    "cpu_percent": 0.24799771505618848,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:10",
-    "cpu_percent": 0.11899025169412038,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:05:02",
+    "cpu_percent": 0.23853067607157885,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:11",
-    "cpu_percent": 0.11462469359077108,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:05:03",
+    "cpu_percent": 0.22976475412495007,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:12",
-    "cpu_percent": 0.11056995990818172,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
+    "timestamp": "2026-06-26 06:05:04",
+    "cpu_percent": 0.22161540575272107,
+    "memory_percent": 0.13426492,
+    "rss_mb": 21.79296875
   },
   {
-    "timestamp": "2026-03-10 09:49:13",
-    "cpu_percent": 0.10679055218209611,
-    "memory_percent": 0.13460185,
-    "rss_mb": 21.84765625
-  },
-  {
-    "timestamp": "2026-03-10 09:49:14",
-    "cpu_percent": 0.10326260019252047,
-    "memory_percent": 0.13489063,
-    "rss_mb": 21.89453125
+    "timestamp": "2026-06-26 06:05:05",
+    "cpu_percent": 0.21402801306162625,
+    "memory_percent": 0.13428898,
+    "rss_mb": 21.796875
   }
 ]

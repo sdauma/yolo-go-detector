@@ -1,14 +1,19 @@
+# -*- coding: utf-8 -*-
 # python_cold_start_benchmark.py
-# Python 冷启动时间对比分析测试 - Baseline 执行路径
+# Python cold start time comparison analysis - Baseline execution path
 # 
-# 重要声明（P0原则）：
-# 本测试使用 Python baseline Session 接口（InferenceSession），不启用 I/O Binding。
-# 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+# Important statement (P0 principle):
+# This test uses Python baseline Session API (InferenceSession).
+# Python ONNX Runtime's run() method copies data on each call (no Go-style I/O Binding).
+# Per P0 principle, this test is for phenomenon observation only, NOT for language-level performance conclusions.
 # 
-# 测试目的：
-# - 观察不同线程配置下的性能趋势
-# - 验证 ONNX Runtime 的线程扩展性
-# - 不用于语言级线程扩展性结论
+# Technical notes:
+# - Uses fixed thread config: intra_op_num_threads=12, inter_op_num_threads=1
+# - All SessionOptions params explicitly set (P2 principle)
+# Test purpose:
+# - Measure cold start time (first inference after Session creation) and stable state time
+# - Provide reference data for comparison with Go cold start
+# - Not for language-level performance conclusions
 
 import onnxruntime as ort
 import numpy as np
@@ -17,31 +22,31 @@ import os
 import sys
 import psutil
 
-# 固定随机种子，确保可复现
+# Fixed random seed for reproducibility
 np.random.seed(12345)
 
-# 获取当前工作目录
+# Get current working directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-print(f"当前目录: {current_dir}")
+print(f"Current directory: {current_dir}")
 
-# 构建模型路径
+# Build model path
 model_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
-print(f"模型路径: {model_path}")
+print(f"Model path: {model_path}")
 
-# 构建项目根路径
+# Build project root path
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
-print(f"项目根路径: {base_path}")
+print(f"Project root: {base_path}")
 
-# 检查模型文件是否存在
+# Check if model file exists
 if not os.path.exists(model_path):
-    print(f"错误: 模型文件不存在: {model_path}")
+    print(f"Error: Model file not found: {model_path}")
     sys.exit(1)
 
-print("===== Python 冷启动时间对比分析测试 ====")
-print(f"模型路径: {model_path}")
+print("===== Python Cold Start Time Comparison Analysis =====")
+print(f"Model path: {model_path}")
 
-# 执行5次独立测试
+# Run 5 independent tests
 test_count = 5
 all_cold_start_times = []
 all_avg_stable_latencies = []
@@ -55,72 +60,72 @@ all_cold_start_rss = []
 all_stable_rss = []
 
 for test_idx in range(1, test_count + 1):
-    print(f"\n=== 独立测试 {test_idx}/{test_count} ===")
+    print(f"\n=== Independent Test {test_idx}/{test_count} ===")
 
-    # 创建 Session
-    print("创建 InferenceSession...")
+    # Create Session
+    print("Creating InferenceSession...")
     try:
         sess_options = ort.SessionOptions()
         
-        # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-        # 线程配置 - 12线程，与其他测试保持一致
+        # Explicitly set all SessionOptions params (P2 principle: forbid relying on defaults)
+        # Thread config - 12 threads, consistent with other tests
         sess_options.intra_op_num_threads = 12
         sess_options.inter_op_num_threads = 1
         
-        # 日志配置（关闭所有日志，避免日志IO干扰性能）
+        # Log config (disable all logs to avoid log I/O interfering with performance)
         sess_options.log_severity_level = 3  # 3 = ORT_LOGGING_LEVEL_ERROR
         
-        # 性能分析配置（关闭性能分析，避免额外开销）
+        # Execution config (disable profiling to avoid extra overhead)
         sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
         
-        # 内存池配置（启用内存池复用）
+        # Memory pool config (enable memory pool reuse)
         sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         
-        # 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
+        # All unmentioned Session params use ONNX Runtime 1.23.2 official defaults
         
         sess = ort.InferenceSession(
             model_path,
             sess_options=sess_options,
             providers=["CPUExecutionProvider"]
         )
-        print("InferenceSession 创建成功!")
+        print("InferenceSession created successfully!")
     except Exception as e:
-        print(f"错误: 创建 InferenceSession 失败: {e}")
+        print(f"Error: Failed to create InferenceSession: {e}")
         sys.exit(1)
 
-    # 获取输入信息
+    # Get input info
     input_name = sess.get_inputs()[0].name
     input_shape = sess.get_inputs()[0].shape
 
-    # 使用与 Go 完全一致的输入数据（从文件加载）
-    print("加载输入数据...")
+    # Use input data completely consistent with Go (loaded from file)
+    print("Loading input data...")
     input_data_path = os.path.join(base_path, "test", "data", "input_data.bin")
     try:
         input_data = np.fromfile(input_data_path, dtype=np.float32).reshape(input_shape)
-        print(f"输入数据加载成功: {input_data_path}")
+        print(f"Input data loaded successfully: {input_data_path}")
     except Exception as e:
-        print(f"加载输入数据失败: {e}")
+        print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # 内存采样点 1：Session 创建后（Start RSS）
+    # Memory sample point 1: after Session creation (Start RSS)
     process = psutil.Process(os.getpid())
-    start_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+    start_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
     print(f"Start RSS: {start_rss:.5f} MB")
 
-    # 测试冷启动时间
-    print("\n===== 测试冷启动时间 =====")
+    # Test cold start time
+    print("\n===== Testing Cold Start Time =====")
     t0 = time.perf_counter()
     sess.run(None, {input_name: input_data})
     t1 = time.perf_counter()
     cold_start_time = (t1 - t0) * 1000.0
-    print(f"冷启动时间: {cold_start_time:.5f} ms")
+    print(f"Cold Start Time: {cold_start_time:.5f} ms")
 
-    # 内存采样点 2：冷启动后（Cold Start RSS）
-    cold_start_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+    # Memory sample point 2: after cold start (Cold Start RSS)
+    cold_start_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
     print(f"Cold Start RSS: {cold_start_rss:.5f} MB")
 
-    # 预热阶段
-    print("\n===== 预热阶段 =====")
+    # Warmup phase
+    print("\n===== Warmup Phase =====")
     warmup_count = 10
     warmup_latencies = []
     for i in range(warmup_count):
@@ -130,8 +135,8 @@ for test_idx in range(1, test_count + 1):
         dt = (t1 - t0) * 1000.0
         warmup_latencies.append(dt)
 
-    # 稳定状态测试
-    print("\n===== 稳定状态测试 =====")
+    # Stable state test
+    print("\n===== Stable State Test =====")
     stable_count = 100
     stable_latencies = []
     peak_rss = cold_start_rss
@@ -143,18 +148,18 @@ for test_idx in range(1, test_count + 1):
         dt = (t1 - t0) * 1000.0
         stable_latencies.append(dt)
 
-        # 每10次推理采样一次内存，记录峰值
+        # Sample memory every 10 inferences, record peak
         if i % 10 == 0:
-            current_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+            current_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
             if current_rss > peak_rss:
                 peak_rss = current_rss
 
-    # 内存采样点 3：稳定状态后（Stable RSS）
-    stable_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+    # Memory sample point 3: after stable state (Stable RSS)
+    stable_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
     print(f"\nStable RSS: {stable_rss:.5f} MB")
     print(f"Peak RSS: {peak_rss:.5f} MB")
 
-    # 计算稳定状态的统计数据
+    # Calculate stable state statistics
     avg_stable_latency = sum(stable_latencies) / len(stable_latencies)
     min_stable_latency = min(stable_latencies)
     max_stable_latency = max(stable_latencies)
@@ -162,7 +167,7 @@ for test_idx in range(1, test_count + 1):
     p90_stable_latency = np.percentile(stable_latencies, 90)
     p99_stable_latency = np.percentile(stable_latencies, 99)
 
-    # 保存本次测试结果
+    # Save this test's results
     all_cold_start_times.append(cold_start_time)
     all_avg_stable_latencies.append(avg_stable_latency)
     all_min_stable_latencies.append(min_stable_latency)
@@ -174,9 +179,9 @@ for test_idx in range(1, test_count + 1):
     all_cold_start_rss.append(cold_start_rss)
     all_stable_rss.append(stable_rss)
 
-    print(f"测试 {test_idx} 完成: 冷启动时间={cold_start_time:.5f} ms, 稳定状态平均时间={avg_stable_latency:.5f} ms")
+    print(f"Test {test_idx} complete: Cold Start={cold_start_time:.5f} ms, Avg Stable={avg_stable_latency:.5f} ms")
 
-# 计算3次测试的平均值
+# Calculate average of 5 tests
 cold_start_time = np.mean(all_cold_start_times)
 avg_stable_latency = np.mean(all_avg_stable_latencies)
 min_stable_latency = np.mean(all_min_stable_latencies)
@@ -188,168 +193,111 @@ start_rss = np.mean(all_start_rss)
 cold_start_rss = np.mean(all_cold_start_rss)
 stable_rss = np.mean(all_stable_rss)
 
-# 计算标准差
+# Calculate std dev
 std_dev_stable = np.std(all_avg_stable_latencies)
-# 计算变异系数
+# Calculate coefficient of variation
 coeff_var_stable = (std_dev_stable / avg_stable_latency) * 100
-# 计算FPS
+# Calculate FPS
 fps = 1000.0 / avg_stable_latency
 
-# 输出结果
-print("\n===== 冷启动与稳定状态对比结果 =====")
-print(f"冷启动时间: {cold_start_time:.5f} ms")
-print(f"稳定状态平均时间: {avg_stable_latency:.5f} ms")
-print(f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍")
-print("\n===== 稳定状态详细统计 =====")
-print(f"平均延迟: {avg_stable_latency:.5f} ms")
-print(f"标准差: {std_dev_stable:.5f} ms")
-print(f"变异系数: {coeff_var_stable:.2f}%")
+# Output results
+print("\n===== Cold Start vs Stable State Comparison =====")
+print(f"Cold Start Time: {cold_start_time:.5f} ms")
+print(f"Avg Stable Latency: {avg_stable_latency:.5f} ms")
+print(f"Cold Start / Stable Ratio: {cold_start_time/avg_stable_latency:.2f}x")
+print("\n===== Stable State Detailed Stats =====")
+print(f"Avg Latency: {avg_stable_latency:.5f} ms")
+print(f"Std Dev: {std_dev_stable:.5f} ms")
+print(f"Coeff of Variation: {coeff_var_stable:.2f}%")
 print(f"FPS: {fps:.2f}")
-print(f"最小延迟: {min_stable_latency:.5f} ms")
-print(f"最大延迟: {max_stable_latency:.5f} ms")
-print(f"P50延迟: {p50_stable_latency:.5f} ms")
-print(f"P90延迟: {p90_stable_latency:.5f} ms")
-print(f"P99延迟: {p99_stable_latency:.5f} ms")
-print("\n===== 内存使用情况 =====")
+print(f"Min Latency: {min_stable_latency:.5f} ms")
+print(f"Max Latency: {max_stable_latency:.5f} ms")
+print(f"P50 Latency: {p50_stable_latency:.5f} ms")
+print(f"P90 Latency: {p90_stable_latency:.5f} ms")
+print(f"P99 Latency: {p99_stable_latency:.5f} ms")
+print("\n===== Memory Usage =====")
 print(f"Start RSS: {start_rss:.5f} MB")
 print(f"Cold Start RSS: {cold_start_rss:.5f} MB")
 print(f"Stable RSS: {stable_rss:.5f} MB")
-print(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB")
-print(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB")
+print(f"Memory Growth (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB")
+print(f"Memory Growth (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB")
 
-# 保存详细日志
+# Save detailed log
 log_path = os.path.join(current_dir, '..', '..', 'results', 'python_cold_start_detailed_log.txt')
 with open(log_path, 'w', encoding='utf-8') as f:
     for i in range(len(all_cold_start_times)):
-        f.write(f"===== 第 {i+1} 次测试 =====\n")
-        f.write(f"冷启动时间: {all_cold_start_times[i]:.5f} ms\n")
-        f.write(f"稳定状态平均时间: {all_avg_stable_latencies[i]:.5f} ms\n")
-        f.write(f"最小延迟: {all_min_stable_latencies[i]:.5f} ms\n")
-        f.write(f"最大延迟: {all_max_stable_latencies[i]:.5f} ms\n")
-        f.write(f"P50延迟: {all_p50_stable_latencies[i]:.5f} ms\n")
-        f.write(f"P90延迟: {all_p90_stable_latencies[i]:.5f} ms\n")
-        f.write(f"P99延迟: {all_p99_stable_latencies[i]:.5f} ms\n")
+        f.write(f"===== Test Run #{i+1} =====\n")
+        f.write(f"Cold Start Time: {all_cold_start_times[i]:.5f} ms\n")
+        f.write(f"Avg Stable Latency: {all_avg_stable_latencies[i]:.5f} ms\n")
+        f.write(f"Min Latency: {all_min_stable_latencies[i]:.5f} ms\n")
+        f.write(f"Max Latency: {all_max_stable_latencies[i]:.5f} ms\n")
+        f.write(f"P50 Latency: {all_p50_stable_latencies[i]:.5f} ms\n")
+        f.write(f"P90 Latency: {all_p90_stable_latencies[i]:.5f} ms\n")
+        f.write(f"P99 Latency: {all_p99_stable_latencies[i]:.5f} ms\n")
         f.write(f"Start RSS: {all_start_rss[i]:.5f} MB\n")
         f.write(f"Cold Start RSS: {all_cold_start_rss[i]:.5f} MB\n")
         f.write(f"Stable RSS: {all_stable_rss[i]:.5f} MB\n")
         f.write("\n")
 
-    f.write("===== 5次测试平均值 =====\n")
-    f.write(f"冷启动时间: {cold_start_time:.5f} ms\n")
-    f.write(f"稳定状态平均时间: {avg_stable_latency:.5f} ms\n")
-    f.write(f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍\n\n")
+    f.write("===== 5-Test Average =====\n")
+    f.write(f"Cold Start Time: {cold_start_time:.5f} ms\n")
+    f.write(f"Avg Stable Latency: {avg_stable_latency:.5f} ms\n")
+    f.write(f"Cold Start / Stable Ratio: {cold_start_time/avg_stable_latency:.2f}x\n\n")
 
-    f.write("===== 稳定状态详细统计 =====\n")
-    f.write(f"平均延迟: {avg_stable_latency:.5f} ms\n")
-    f.write(f"标准差: {std_dev_stable:.5f} ms\n")
-    f.write(f"变异系数: {coeff_var_stable:.2f}%\n")
+    f.write("===== Stable State Detailed Stats =====\n")
+    f.write(f"Avg Latency: {avg_stable_latency:.5f} ms\n")
+    f.write(f"Std Dev: {std_dev_stable:.5f} ms\n")
+    f.write(f"Coeff of Variation: {coeff_var_stable:.2f}%\n")
     f.write(f"FPS: {fps:.2f}\n")
-    f.write(f"最小延迟: {min_stable_latency:.5f} ms\n")
-    f.write(f"最大延迟: {max_stable_latency:.5f} ms\n")
-    f.write(f"P50延迟: {p50_stable_latency:.5f} ms\n")
-    f.write(f"P90延迟: {p90_stable_latency:.5f} ms\n")
-    f.write(f"P99延迟: {p99_stable_latency:.5f} ms\n")
+    f.write(f"Min Latency: {min_stable_latency:.5f} ms\n")
+    f.write(f"Max Latency: {max_stable_latency:.5f} ms\n")
+    f.write(f"P50 Latency: {p50_stable_latency:.5f} ms\n")
+    f.write(f"P90 Latency: {p90_stable_latency:.5f} ms\n")
+    f.write(f"P99 Latency: {p99_stable_latency:.5f} ms\n")
 
-    f.write("\n===== 内存使用情况 =====\n")
+    f.write("\n===== Memory Usage =====\n")
     f.write(f"Start RSS: {start_rss:.5f} MB\n")
     f.write(f"Cold Start RSS: {cold_start_rss:.5f} MB\n")
     f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
-    f.write(f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB\n")
-    f.write(f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB\n")
+    f.write(f"Memory Growth (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB\n")
+    f.write(f"Memory Growth (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB\n")
 
-print(f"\n详细日志已保存到: {log_path}")
+print(f"\nDetailed log saved to: {log_path}")
 
-# 保存结果
+# Save results
 result_path = os.path.join(current_dir, '..', '..', 'results', 'python_cold_start_result.txt')
-print(f"\n保存结果到: {result_path}")
+print(f"\nSaving results to: {result_path}")
 
-# 构建结果字符串
+# Build result strings
 result_lines = [
-    "===== Python 冷启动时间对比分析测试结果（5次运行平均值） =====",
-    f"冷启动时间: {cold_start_time:.5f} ms",
-    f"稳定状态平均时间: {avg_stable_latency:.5f} ms",
-    f"冷启动时间 / 稳定状态平均时间: {cold_start_time/avg_stable_latency:.2f} 倍",
+    "===== Python Cold Start Time Comparison Analysis (5-run average) =====",
+    f"Cold Start Time: {cold_start_time:.5f} ms",
+    f"Avg Stable Latency: {avg_stable_latency:.5f} ms",
+    f"Cold Start / Stable Ratio: {cold_start_time/avg_stable_latency:.2f}x",
     "",
-    "===== 稳定状态详细统计 =====",
-    f"平均延迟: {avg_stable_latency:.5f} ms",
-    f"标准差: {std_dev_stable:.5f} ms",
-    f"变异系数: {coeff_var_stable:.2f}%",
+    "===== Stable State Detailed Stats =====",
+    f"Avg Latency: {avg_stable_latency:.5f} ms",
+    f"Std Dev: {std_dev_stable:.5f} ms",
+    f"Coeff of Variation: {coeff_var_stable:.2f}%",
     f"FPS: {fps:.2f}",
-    f"最小延迟: {min_stable_latency:.5f} ms",
-    f"最大延迟: {max_stable_latency:.5f} ms",
-    f"P50延迟: {p50_stable_latency:.5f} ms",
-    f"P90延迟: {p90_stable_latency:.5f} ms",
-    f"P99延迟: {p99_stable_latency:.5f} ms",
+    f"Min Latency: {min_stable_latency:.5f} ms",
+    f"Max Latency: {max_stable_latency:.5f} ms",
+    f"P50 Latency: {p50_stable_latency:.5f} ms",
+    f"P90 Latency: {p90_stable_latency:.5f} ms",
+    f"P99 Latency: {p99_stable_latency:.5f} ms",
     "",
-    "===== 内存使用情况 =====",
+    "===== Memory Usage =====",
     f"Start RSS: {start_rss:.5f} MB",
     f"Cold Start RSS: {cold_start_rss:.5f} MB",
     f"Stable RSS: {stable_rss:.5f} MB",
-    f"内存增长 (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB",
-    f"内存增长 (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB"
+    f"Memory Growth (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB",
+    f"Memory Growth (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB"
 ]
 
-# 尝试多种编码方式
-try:
-    # 方法1: 使用utf-8编码写入
-    print("尝试使用UTF-8编码写入...")
-    with open(result_path, 'w', encoding='utf-8') as f:
-        for line in result_lines:
-            f.write(line + '\n')
-    print("UTF-8编码写入成功!")
-    
-    # 验证文件内容
-    print("验证文件内容...")
-    with open(result_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    print(f"文件前500字符: {content[:500]}...")
-    
-    # 显示完整文件内容
-    print("\n文件完整内容:")
-    print(content)
-    
-except Exception as e:
-    print(f"UTF-8编码写入失败: {e}")
-    
-    # 方法2: 使用gbk编码写入
-    try:
-        print("尝试使用GBK编码写入...")
-        with open(result_path, 'w', encoding='gbk') as f:
-            for line in result_lines:
-                f.write(line + '\n')
-        print("GBK编码写入成功!")
-        
-        # 验证文件内容
-        with open(result_path, 'r', encoding='gbk') as f:
-            content = f.read()
-        print(f"文件前500字符: {content[:500]}...")
-        
-        # 显示完整文件内容
-        print("\n文件完整内容:")
-        print(content)
-        
-    except Exception as e2:
-        print(f"GBK编码写入失败: {e2}")
-        
-        # 方法3: 使用二进制模式写入
-        try:
-            print("尝试使用二进制模式写入...")
-            with open(result_path, 'wb') as f:
-                for line in result_lines:
-                    f.write((line + '\n').encode('utf-8'))
-            print("二进制模式写入成功!")
-            
-            # 验证文件内容
-            with open(result_path, 'rb') as f:
-                content = f.read().decode('utf-8')
-            print(f"文件前500字符: {content[:500]}...")
-            
-            # 显示完整文件内容
-            print("\n文件完整内容:")
-            print(content)
-            
-        except Exception as e3:
-            print(f"二进制模式写入失败: {e3}")
+# Write with UTF-8 encoding
+with open(result_path, 'w', encoding='utf-8') as f:
+    for line in result_lines:
+        f.write(line + '\n')
 
-print(f"\n结果已保存到: {result_path}")
-print("\n===== 冷启动时间对比分析测试完成 ====")
+print(f"\nResults saved to: {result_path}")
+print("\n===== Cold Start Time Comparison Analysis Complete =====")

@@ -1,3 +1,16 @@
+// go_memory_copy_overhead.go
+// Go 内存拷贝开销分析测试
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 nil 作为 opts（无显式线程配置）
+// - 传入 nil 作为输入/输出 Tensor（不启用 I/O Binding）
+// - 使用 ort.NewEnvironment 创建环境，不设置线程数
+//
+// 测试目的：
+// - 测量每次推理中 Data Copy 时间、CGO Call 时间、GC Pause 时间相对于纯推理时间的占比
+// - 共 10 轮，计算平均开销百分比
+// - 分析 Go ↔ ONNX Runtime 之间的数据传输开销
+
 package main
 
 import (
@@ -5,15 +18,13 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 type MemoryCopyResult struct {
@@ -25,20 +36,8 @@ type MemoryCopyResult struct {
 	OverheadPercent float64
 }
 
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 func measureDataCopyOverhead(inputData []byte, inputShape []int64) (float64, float64) {
 	startTime := time.Now()
@@ -79,7 +78,7 @@ func measureGCPause() float64 {
 	return gcPauseTime
 }
 
-func runMemoryCopyBenchmark(session *ort.Session, inputData []byte, inputShape []int64) *MemoryCopyResult {
+func runMemoryCopyBenchmark(session *ort.AdvancedSession, inputData []byte, inputShape []int64) *MemoryCopyResult {
 	dataCopyTime, cgoCallTime := measureDataCopyOverhead(inputData, inputShape)
 	gcPauseTime := measureGCPause()
 
@@ -126,6 +125,13 @@ func main() {
 	}
 	basePath := filepath.Dir(filepath.Dir(wd))
 
+	ort.SetSharedLibraryPath(filepath.Join(basePath, "third_party", "onnxruntime-win-x64-1.23.2", "lib", "onnxruntime.dll"))
+	if err := ort.InitializeEnvironment(); err != nil {
+		fmt.Printf("Failed to initialize ONNX Runtime: %v\n", err)
+		os.Exit(1)
+	}
+	defer ort.DestroyEnvironment()
+
 	modelPath := filepath.Join(basePath, "third_party", "yolo11x.onnx")
 	inputDataPath := filepath.Join(basePath, "test", "data", "input_data.bin")
 
@@ -137,17 +143,39 @@ func main() {
 
 	runtime.GOMAXPROCS(12)
 
-	env := ort.NewEnvironment(ort.LogLevel(ort.ORT_LOGGING_LEVEL_WARNING))
-	defer env.Destroy()
+	inputShape := []int64{1, 3, 640, 640}
+	outputShape := []int64{1, 84, 8400}
 
-	session, err := ort.NewAdvancedSession(modelPath, []string{"images"}, []string{"output0"}, nil)
+	opts, err := ort.NewSessionOptions()
+	if err != nil {
+		fmt.Printf("创建SessionOptions失败: %v\n", err)
+		return
+	}
+	defer opts.Destroy()
+	opts.SetIntraOpNumThreads(1)
+
+	it, err := ort.NewEmptyTensor[float32](inputShape)
+	if err != nil {
+		fmt.Printf("创建输入Tensor失败: %v\n", err)
+		return
+	}
+	defer it.Destroy()
+
+	ot, err := ort.NewEmptyTensor[float32](outputShape)
+	if err != nil {
+		fmt.Printf("创建输出Tensor失败: %v\n", err)
+		return
+	}
+	defer ot.Destroy()
+
+	session, err := ort.NewAdvancedSession(modelPath,
+		[]string{"images"}, []string{"output0"},
+		[]ort.ArbitraryTensor{it}, []ort.ArbitraryTensor{ot}, opts)
 	if err != nil {
 		fmt.Printf("创建Session失败: %v\n", err)
 		return
 	}
 	defer session.Destroy()
-
-	inputShape := []int64{1, 3, 640, 640}
 
 	fmt.Println("\n===== 内存拷贝开销分析 =====")
 	results := make([]*MemoryCopyResult, 0, 10)

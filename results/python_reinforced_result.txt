@@ -1,24 +1,24 @@
-===== Python 强化测试结果（10轮运行） =====
-第1轮平均延迟: 691.33715 ms
-第2轮平均延迟: 691.90400 ms
-第3轮平均延迟: 692.94796 ms
-第4轮平均延迟: 688.83186 ms
-第5轮平均延迟: 693.71734 ms
-第6轮平均延迟: 691.59367 ms
-第7轮平均延迟: 695.11899 ms
-第8轮平均延迟: 689.75007 ms
-第9轮平均延迟: 693.21244 ms
-第10轮平均延迟: 691.25601 ms
+===== Python Reinforced Test Results (10 rounds) =====
+Round 1 avg latency: 586.40505 ms
+Round 2 avg latency: 587.40469 ms
+Round 3 avg latency: 584.87720 ms
+Round 4 avg latency: 583.36078 ms
+Round 5 avg latency: 585.43553 ms
+Round 6 avg latency: 585.85959 ms
+Round 7 avg latency: 584.04689 ms
+Round 8 avg latency: 584.82349 ms
+Round 9 avg latency: 585.54562 ms
+Round 10 avg latency: 585.69573 ms
 
-===== 10轮测试平均值 =====
-平均延迟: 691.96695 ms
-标准差: 34.54746 ms
-P50延迟: 684.02537 ms
-P90延迟: 699.63930 ms
-P95延迟: 725.21807 ms
+===== 10-Round Average =====
+Avg latency: 585.34546 ms
+Std dev: 6.81761 ms
+P50 latency: 584.43864 ms
+P90 latency: 593.38859 ms
+P95 latency: 596.08789 ms
 
-===== 内存使用情况（10轮运行平均值） =====
-Start RSS: 296.96055 MB
-Peak RSS: 550.53320 MB
-Stable RSS: 550.52227 MB
-RSS Drift: 253.56172 MB
+===== Memory Usage (10-round average) =====
+Start RSS: 705.32852 MB
+Peak RSS: 970.80625 MB
+Stable RSS: 970.78750 MB
+RSS Drift: 265.45898 MB

@@ -1,3 +1,16 @@
+// go_warmup_effect.go
+// Go 首次推理预热效应测试
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置 intraOp=8, interOp=1
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+//
+// 测试目的：
+// - 连续执行 50 次推理，记录每次推理延迟和 RSS
+// - 计算首次/第二次/稳定状态延迟差异
+// - 通过变异系数 CV < 5% 判定预热所需次数
+// - 输出详细 JSON + CSV + 摘要 JSON
+
 package main
 
 import (
@@ -12,6 +25,7 @@ import (
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 // WarmupResult 预热效应结果
@@ -36,11 +50,7 @@ type TestSummary struct {
 }
 
 // 获取RSS内存（MB）
-func getRSSMB() float64 {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	return float64(m.Sys) / 1024 / 1024
-}
+func getRSSMB() float64 { return memutil.PrivateMemoryMB() }
 
 // 创建Session
 func createSession(modelPath string, inputData []byte, inputShape, outputShape []int64) (*ort.AdvancedSession, *ort.Tensor[float32], *ort.Tensor[float32], error) {

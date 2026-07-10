@@ -1,10 +1,17 @@
+# -*- coding: utf-8 -*-
 # python_cpu_monitoring.py
-# Python CPU 监控测试 - 监测推理过程中的 CPU 使用率
+# Python CPU 鐩戞帶娴嬭瘯 - 鐩戞祴鎺ㄧ悊杩囩▼涓殑 CPU 浣跨敤鐜?
 #
-# 测试目的：
-# - 监测 ONNX Runtime 推理时的 CPU 使用率
-# - 分析不同并发配置下的 CPU 负载分布
-# - 为论文提供 CPU 利用率数据
+# 鎶€鏈鏄庯細
+# - 浣跨敤 Python baseline Session 鎺ュ彛锛圛nferenceSession锛?
+# - 閫氳繃 SessionOptions 鏄惧紡閰嶇疆threads鍙傛暟锛坕ntraOp=1, interOp=1锛?
+# - 浣跨敤 sess.run() 鏍囧噯璋冪敤璺緞锛屼笉鍚敤 I/O Binding
+# - 浣跨敤 psutil 閲囨牱鎺ㄧ悊鍓嶅悗鐨?CPU 浣跨敤鐜?
+#
+# 娴嬭瘯鐩殑锛?
+# - 鐩戞祴 ONNX Runtime 鎺ㄧ悊鏃剁殑 CPU 浣跨敤鐜?
+# - 鍒嗘瀽涓嶅悓concurrency閰嶇疆涓嬬殑 CPU 璐熻浇鍒嗗竷
+# - 涓鸿鏂囨彁渚?CPU 鍒╃敤鐜囨暟鎹?
 
 import onnxruntime as ort
 import numpy as np
@@ -16,69 +23,69 @@ from dataclasses import dataclass
 from typing import List
 import threading
 
-# 固定随机种子，确保可复现
+# 鍥哄畾闅忔満绉嶅瓙锛岀‘淇濆彲澶嶇幇
 np.random.seed(12345)
 
-# 获取当前工作目录
+# 鑾峰彇褰撳墠宸ヤ綔鐩綍
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 构建模型路径
+# 鏋勫缓model璺緞
 model_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
 
-# 构建项目根路径
+# 鏋勫缓椤圭洰鏍硅矾寰?
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
 
-# 检查模型文件是否存在
+# 妫€鏌odel鏂囦欢鏄惁瀛樺湪
 if not os.path.exists(model_path):
-    print(f"错误: 模型文件不存在: {model_path}")
+    print(f"Error: Model file not found: {model_path}")
     sys.exit(1)
 
-print("===== Python CPU 监控测试 =====")
-print(f"模型路径: {model_path}")
+print("===== Python CPU Monitoring Test =====")
+print(f"model璺緞: {model_path}")
 
-# 创建输入数据
+# 鍒涘缓杈撳叆鏁版嵁
 input_data = np.random.randn(1, 3, 640, 640).astype(np.float32)
 
-# 获取 CPU 信息
-print(f"\n系统 CPU 信息:")
-print(f"  物理核心数: {psutil.cpu_count(logical=False)}")
-print(f"  逻辑核心数: {psutil.cpu_count(logical=True)}")
-print(f"  当前 CPU 频率: {psutil.cpu_freq().current:.0f} MHz")
+# 鑾峰彇 CPU 淇℃伅
+print(f"\n绯荤粺 CPU 淇℃伅:")
+print(f"  鐗╃悊鏍稿績鏁? {psutil.cpu_count(logical=False)}")
+print(f"  閫昏緫鏍稿績鏁? {psutil.cpu_count(logical=True)}")
+print(f"  褰撳墠 CPU 棰戠巼: {psutil.cpu_freq().current:.0f} MHz")
 
-# 创建 Session
+# Create Session
 sess_options = ort.SessionOptions()
 sess_options.intra_op_num_threads = 1
 sess_options.inter_op_num_threads = 1
 
-print(f"\n创建 InferenceSession...")
+print(f"\nCreating InferenceSession...")
 session = ort.InferenceSession(model_path, sess_options, providers=['CPUExecutionProvider'])
 input_name = session.get_inputs()[0].name
 
-# 预热
-print("预热...")
+# 棰勭儹
+print("Warming up...")
 for _ in range(5):
     session.run(None, {input_name: input_data})
 
-# 监测 CPU 使用率
-print("\n开始监测 CPU 使用率...")
+# 鐩戞祴 CPU 浣跨敤鐜?
+print("\nStarting CPU usage monitoring...")
 num_requests = 50
 cpu_samples = []
 
-# 获取初始 CPU 使用率
+# 鑾峰彇鍒濆 CPU 浣跨敤鐜?
 process = psutil.Process()
 initial_cpu_percent = process.cpu_percent()
 initial_time = time.time()
 
 for i in range(num_requests):
-    # 记录推理前的 CPU 使用率
+    # 璁板綍鎺ㄧ悊鍓嶇殑 CPU 浣跨敤鐜?
     cpu_before = process.cpu_percent()
     
-    # 执行推理
-    start = time.time()
+    # 鎵ц鎺ㄧ悊
+    start = time.perf_counter()
     session.run(None, {input_name: input_data})
-    latency = (time.time() - start) * 1000  # ms
+    latency = (time.perf_counter() - start) * 1000  # ms
     
-    # 记录推理后的 CPU 使用率
+    # 璁板綍鎺ㄧ悊鍚庣殑 CPU 浣跨敤鐜?
     cpu_after = process.cpu_percent()
     
     cpu_samples.append({
@@ -89,9 +96,9 @@ for i in range(num_requests):
     })
     
     if (i + 1) % 10 == 0:
-        print(f"  完成 {i+1}/{num_requests} 次推理")
+        print(f"  Completed {i+1}/{num_requests} requests")
 
-# 计算统计信息
+# 璁＄畻缁熻淇℃伅
 latencies = [s['latency'] for s in cpu_samples]
 cpu_afters = [s['cpu_after'] for s in cpu_samples]
 
@@ -100,37 +107,38 @@ avg_cpu = sum(cpu_afters) / len(cpu_afters)
 max_cpu = max(cpu_afters)
 min_cpu = min(cpu_afters)
 
-print(f"\n===== 测试结果 =====")
-print(f"总请求数: {num_requests}")
-print(f"平均延迟: {avg_latency:.2f} ms")
-print(f"平均 CPU 使用率: {avg_cpu:.2f}%")
-print(f"峰值 CPU 使用率: {max_cpu:.2f}%")
-print(f"最低 CPU 使用率: {min_cpu:.2f}%")
+print(f"\n===== Test Results =====")
+print(f"total_requests: {num_requests}")
+print(f"avg_latency: {avg_latency:.2f} ms")
+print(f"avg_cpu: {avg_cpu:.2f}%")
+print(f"max_cpu: {max_cpu:.2f}%")
+print(f"min_cpu: {min_cpu:.2f}%")
 
-# 保存结果
+# 淇濆瓨缁撴灉
 result_path = os.path.join(base_path, "results", "python_cpu_monitoring_result.txt")
 os.makedirs(os.path.dirname(result_path), exist_ok=True)
 
 with open(result_path, 'w', encoding='utf-8') as f:
-    f.write("===== Python CPU 监控测试结果 =====\n\n")
-    f.write(f"模型: YOLO11x\n")
-    f.write(f"输入尺寸: 1x3x640x640\n")
+    f.write("===== Python CPU 鐩戞帶娴嬭瘯缁撴灉 =====\n\n")
+    f.write(f"model: YOLO11x\n")
+    f.write(f"杈撳叆灏哄: 1x3x640x640\n")
     f.write(f"intra_op_num_threads: 1\n")
     f.write(f"inter_op_num_threads: 1\n\n")
-    f.write(f"系统信息:\n")
-    f.write(f"  物理核心数: {psutil.cpu_count(logical=False)}\n")
-    f.write(f"  逻辑核心数: {psutil.cpu_count(logical=True)}\n")
-    f.write(f"  当前 CPU 频率: {psutil.cpu_freq().current:.0f} MHz\n\n")
-    f.write(f"性能指标:\n")
-    f.write(f"  总请求数: {num_requests}\n")
-    f.write(f"  平均延迟: {avg_latency:.2f} ms\n")
-    f.write(f"  平均 CPU 使用率: {avg_cpu:.2f}%\n")
-    f.write(f"  峰值 CPU 使用率: {max_cpu:.2f}%\n")
-    f.write(f"  最低 CPU 使用率: {min_cpu:.2f}%\n\n")
-    f.write("详细数据:\n")
-    f.write("请求号, 延迟(ms), CPU使用率(%)\n")
+    f.write(f"绯荤粺淇℃伅:\n")
+    f.write(f"  鐗╃悊鏍稿績鏁? {psutil.cpu_count(logical=False)}\n")
+    f.write(f"  閫昏緫鏍稿績鏁? {psutil.cpu_count(logical=True)}\n")
+    f.write(f"  褰撳墠 CPU 棰戠巼: {psutil.cpu_freq().current:.0f} MHz\n\n")
+    f.write(f"鎬ц兘鎸囨爣:\n")
+    f.write(f"  total_requests: {num_requests}\n")
+    f.write(f"  avg_latency: {avg_latency:.2f} ms\n")
+    f.write(f"  avg_cpu: {avg_cpu:.2f}%\n")
+    f.write(f"  max_cpu: {max_cpu:.2f}%\n")
+    f.write(f"  min_cpu: {min_cpu:.2f}%\n\n")
+    f.write("璇︾粏鏁版嵁:\n")
+    f.write("璇锋眰鍙? 寤惰繜(ms), cpu_usage(%)\n")
     for s in cpu_samples:
         f.write(f"{s['request']}, {s['latency']:.2f}, {s['cpu_after']:.2f}\n")
 
-print(f"\n结果已保存到: {result_path}")
-print("===== 测试完成 =====")
+print(f"\nResults saved to: {result_path}")
+print("===== Test Completed =====")
+

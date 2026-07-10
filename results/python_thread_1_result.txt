@@ -1,15 +1,15 @@
-===== Python 线程配置测试结果（5次运行平均值） (intra_op_num_threads=1) =====
-平均延迟: 2831.75659 ms
-标准差: 2.02821 ms
-变异系数: 0.07%
-FPS: 0.35
-P50延迟: 2832.37804 ms
-P90延迟: 2842.53084 ms
-P99延迟: 2857.78874 ms
-最小延迟: 2803.99276 ms
-最大延迟: 2874.76754 ms
+===== Python Thread Config Benchmark Results (5-run average) (intra_op_num_threads=1) =====
+Avg Latency: 2073.85247 ms
+Std Dev: 18.80944 ms
+Coeff of Variation: 0.91%
+FPS: 0.48
+P50 Latency: 2064.65236 ms
+P90 Latency: 2106.62232 ms
+P99 Latency: 2186.12759 ms
+Min Latency: 2038.72616 ms
+Max Latency: 2320.51928 ms
 
-===== 内存使用情况 =====
-Start RSS: 298.42891 MB
-Peak RSS: 552.63281 MB
-Stable RSS: 552.62656 MB
+===== Memory Usage =====
+Start RSS: 705.07969 MB
+Peak RSS: 969.86641 MB
+Stable RSS: 969.80234 MB

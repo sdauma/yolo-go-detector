@@ -1,3 +1,16 @@
+// go_architecture_benchmark.go
+// Go 并发推理架构对比测试（三种架构：Unsafe Shared / Mutex / Session Pool）
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置动态 intraOp（测试时 intraOp=1）
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+// - 每种架构在不同并发度（1/2/4/8/12）下测试吞吐量、延迟、内存
+//
+// 测试目的：
+// - 对比三种并发推理架构的性能特征
+// - 验证 Session Pool 架构在并发场景下的优势
+// - 为论文架构对比实验提供数据
+
 package main
 
 import (
@@ -5,16 +18,15 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 type Architecture int
@@ -50,20 +62,8 @@ type TestResult struct {
 	RSSDrift           float64
 }
 
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // sessionWithTensors 包含 session 和绑定的 tensor
 type sessionWithTensors struct {
@@ -151,8 +151,11 @@ func calculatePercentile(sorted []float64, percentile float64) float64 {
 	return sorted[index]
 }
 
-// testUnsafeShared 测试 Unsafe Shared 架构
-// 共享 session，但每个 goroutine 有独立的 tensor（避免 tensor data race）
+// testUnsafeShared 测试 Unsafe Shared 架构（Single-Session Concurrent）
+// 共享单个 Session（ORT Run 线程安全），每个 goroutine 持有独立的 I/O Tensor
+// 避免在共享单 Session 时复用同一组 I/O OrtValue 导致逻辑冲突。
+// 注意：本实现仍共享 Session 的 CPU 内存分配器（Arena）与线程池，
+// 高并发下 Arena 的高水位保持与碎片化会导致 RSS 漂移（见论文 4.1 节）。
 func testUnsafeShared(
 	modelPath string,
 	inputData []byte,
@@ -238,7 +241,7 @@ func testUnsafeShared(
 				// 填充数据
 				fillInputData(inputTensor, inputData)
 
-				// 运行推理（共享 session，独立 tensor）
+				// 运行推理（共享 Session，ORT Run 线程安全；各 goroutine 独立 Tensor）
 				start := time.Now()
 				err := session.Run()
 				latency := float64(time.Since(start).Milliseconds())
@@ -392,11 +395,9 @@ func testSessionPool(
 		}(swt)
 	}
 
-	go func() {
-		wg.Wait()
-		close(latencyChan)
-		close(errorChan)
-	}()
+	wg.Wait()
+	close(latencyChan)
+	close(errorChan)
 
 	totalTime := float64(time.Since(startTime).Milliseconds())
 	endRSS := getProcessRSS()

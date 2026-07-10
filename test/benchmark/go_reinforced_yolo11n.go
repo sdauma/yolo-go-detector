@@ -1,3 +1,18 @@
+// go_reinforced_yolo11n.go
+// Go YOLO11n 轻模型强化测试 - 10轮×200次推理
+//
+// 技术说明：
+// - 使用 Go baseline Session 接口（NewSession），该接口通过传入输入/输出 Tensor
+//   自动启用 I/O Binding，但不接受 SessionOptions 参数
+// - 线程配置由 ONNX Runtime 默认行为决定（intra_op_num_threads 默认等于 CPU 核数）
+// - 代码中创建了 SessionOptions 并设置了 intraOp=12，但由于 NewSession 不接受 opts，
+//   这些设置实际上不生效。保留 opts 创建代码仅用于记录意图
+//
+// 测试目的：
+// - 使用 YOLO11n 轻模型执行 10 轮×200 次推理，每轮前 warmup 20 次
+// - 记录详细性能指标（avg/p50/p90/p95 延迟、RSS 内存、Go Heap）
+// - 与 YOLO11x 强化测试结果对比，分析模型规模对性能的影响
+
 package main
 
 import (
@@ -7,32 +22,17 @@ import (
 	"log"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
-	"strings"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
-// getProcessRSS 获取进程的 RSS（Working Set）内存使用量（MB）
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // BenchmarkResult 单次测试结果
 type BenchmarkResult struct {

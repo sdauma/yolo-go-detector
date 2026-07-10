@@ -1,0 +1,18 @@
+{
+  "test_name": "C++_Baseline_Benchmark",
+  "model": "yolo11x",
+  "total_inferences": 10,
+  "avg_latency_ms": 1122.53,
+  "std_latency_ms": 167.391,
+  "p50_latency_ms": 1090.73,
+  "p90_latency_ms": 1457.78,
+  "p99_latency_ms": 1457.78,
+  "min_latency_ms": 915.206,
+  "max_latency_ms": 1457.78,
+  "throughput_reqs": 0.890841,
+  "start_rss_mb": 515.418,
+  "peak_rss_mb": 515.418,
+  "end_rss_mb": 515.41,
+  "rss_drift_mb": -0.0078125,
+  "duration_sec": 11.2254
+}

@@ -1,37 +1,37 @@
-===== Python 纯推理测试结果 =====
-测试时间: 2026-03-09 08:25:30
-系统信息: Windows-11-10.0.22631-SP0
-CPU型号: Intel64 Family 6 Model 165 Stepping 3, GenuineIntel
-测试配置：
-- 线程数: 12
-- 输入数据: 只加载一次，每次推理创建副本
-- 推理次数: 2000次
-- Warmup: 20次
+===== Python Pure Inference Benchmark Results =====
+Test time: 2026-06-27 22:58:21
+System info: Windows-11-10.0.22631-SP0
+CPU model: Intel64 Family 6 Model 165 Stepping 3, GenuineIntel
+Test config:
+- Threads: 12
+- Input data: loaded once, copy created for each inference
+- Inferences: 2000
+- Warmup: 20 runs
 
-===== YOLO11x 测试结果 =====
-模型: YOLO11x
-平均延迟: 693.68708 ms
-标准差: 33.21520 ms
-P50延迟: 685.68585 ms
-P90延迟: 700.24210 ms
-P95延迟: 734.34109 ms
-最小延迟: 673.18800 ms
-最大延迟: 1018.44560 ms
-Start RSS: 293.95703 MB
-Peak RSS: 556.09766 MB
-Stable RSS: 556.09766 MB
-RSS Drift: 262.14062 MB
+===== YOLO11x Test Results =====
+Model: YOLO11x
+Avg Latency: 587.37680 ms
+Std Dev: 10.25105 ms
+P50 Latency: 586.30490 ms
+P90 Latency: 595.34772 ms
+P95 Latency: 598.25864 ms
+Min Latency: 575.03780 ms
+Max Latency: 904.82780 ms
+Start RSS: 706.51172 MB
+Peak RSS: 976.65234 MB
+Stable RSS: 976.59375 MB
+RSS Drift: 270.08203 MB
 
-===== YOLO11n 测试结果 =====
-模型: YOLO11n
-平均延迟: 49.73683 ms
-标准差: 6.33990 ms
-P50延迟: 48.48645 ms
-P90延迟: 52.37897 ms
-P95延迟: 55.41361 ms
-最小延迟: 46.42790 ms
-最大延迟: 179.56780 ms
-Start RSS: 78.37109 MB
-Peak RSS: 154.28125 MB
-Stable RSS: 154.28125 MB
-RSS Drift: 75.91016 MB
+===== YOLO11n Test Results =====
+Model: YOLO11n
+Avg Latency: 37.22862 ms
+Std Dev: 1.34448 ms
+P50 Latency: 36.90375 ms
+P90 Latency: 38.11213 ms
+P95 Latency: 38.95784 ms
+Min Latency: 35.68890 ms
+Max Latency: 49.26730 ms
+Start RSS: 452.17969 MB
+Peak RSS: 573.53125 MB
+Stable RSS: 573.52734 MB
+RSS Drift: 121.34766 MB

@@ -1,3 +1,18 @@
+// go_performance_diagnostic.go
+// Go 性能诊断测试
+//
+// 技术说明：
+// - 使用 Go baseline Session 接口（NewSession），该接口通过传入输入/输出 Tensor
+//   自动启用 I/O Binding，但不接受 SessionOptions 参数
+// - 线程配置由 ONNX Runtime 默认行为决定（intra_op_num_threads 默认等于 CPU 核数）
+// - 代码中创建了 SessionOptions 并设置了 intraOp=12，但由于 NewSession 不接受 opts，
+//   这些设置实际上不生效。保留 opts 创建代码仅用于记录意图
+//
+// 测试目的：
+// - 验证线程配置、读取输入数据、运行 100 次推理
+// - 分离测量 Tensor 构造延迟和推理延迟
+// - 输出 avg/p50/p90/p99/Min/Max 等统计信息
+
 package main
 
 import (
@@ -5,15 +20,13 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
-	"strings"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 // fileExists 检查文件是否存在
@@ -297,21 +310,8 @@ func (r *DiagnosticResult) calculateStats() {
 	r.P95InferenceLatency = sortedInference[int(float64(len(sortedInference))*0.95)]
 }
 
-// getProcessRSS 获取进程的 RSS（Working Set）内存使用量（MB）
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // 打印诊断结果
 func printDiagnosticResult(result *DiagnosticResult) {
@@ -335,9 +335,9 @@ func printDiagnosticResult(result *DiagnosticResult) {
 
 	// 内存统计
 	fmt.Println("\n3. 内存统计:")
-	fmt.Printf("Start RSS: %.2f MB\n", float64(result.StartRSS)/1024/1024)
-	fmt.Printf("Peak RSS: %.2f MB\n", float64(result.PeakRSS)/1024/1024)
-	fmt.Printf("Stable RSS: %.2f MB\n", float64(result.StableRSS)/1024/1024)
+	fmt.Printf("Start RSS: %.2f MB\n", float64(result.StartRSS))
+	fmt.Printf("Peak RSS: %.2f MB\n", float64(result.PeakRSS))
+	fmt.Printf("Stable RSS: %.2f MB\n", float64(result.StableRSS))
 	fmt.Printf("Go Heap Alloc: %.2f MB\n", float64(result.GoHeapAlloc)/1024/1024)
 	fmt.Printf("Go Heap Sys: %.2f MB\n", float64(result.GoHeapSys)/1024/1024)
 	fmt.Printf("GC 次数: %d\n", result.GoGCs)
@@ -389,9 +389,9 @@ func main() {
 	fmt.Fprintf(file, "P50推理延迟: %.5f ms\n", result.P50InferenceLatency)
 	fmt.Fprintf(file, "P90推理延迟: %.5f ms\n", result.P90InferenceLatency)
 	fmt.Fprintf(file, "P95推理延迟: %.5f ms\n", result.P95InferenceLatency)
-	fmt.Fprintf(file, "Start RSS: %.2f MB\n", float64(result.StartRSS)/1024/1024)
-	fmt.Fprintf(file, "Peak RSS: %.2f MB\n", float64(result.PeakRSS)/1024/1024)
-	fmt.Fprintf(file, "Stable RSS: %.2f MB\n", float64(result.StableRSS)/1024/1024)
+	fmt.Fprintf(file, "Start RSS: %.2f MB\n", float64(result.StartRSS))
+	fmt.Fprintf(file, "Peak RSS: %.2f MB\n", float64(result.PeakRSS))
+	fmt.Fprintf(file, "Stable RSS: %.2f MB\n", float64(result.StableRSS))
 	fmt.Fprintf(file, "Go Heap Alloc: %.2f MB\n", float64(result.GoHeapAlloc)/1024/1024)
 	fmt.Fprintf(file, "Go Heap Sys: %.2f MB\n", float64(result.GoHeapSys)/1024/1024)
 	fmt.Fprintf(file, "GC 次数: %d\n", result.GoGCs)

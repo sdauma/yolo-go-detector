@@ -1,70 +1,70 @@
-===== 第 1 次测试 =====
-平均延迟: 2832.41452 ms
-最小延迟: 2800.69440 ms
-最大延迟: 2864.79340 ms
-P50延迟: 2832.73450 ms
-P90延迟: 2842.95274 ms
-P99延迟: 2852.38068 ms
-Start RSS: 292.12891 MB
-Peak RSS: 553.30859 MB
-Stable RSS: 553.30859 MB
+===== Run #1 =====
+Avg Latency: 2062.97909 ms
+Min Latency: 2040.05970 ms
+Max Latency: 2216.93370 ms
+P50 Latency: 2062.80280 ms
+P90 Latency: 2072.84213 ms
+P99 Latency: 2097.43525 ms
+Start RSS: 694.24219 MB
+Peak RSS: 959.48438 MB
+Stable RSS: 959.29297 MB
 
-===== 第 2 次测试 =====
-平均延迟: 2833.95036 ms
-最小延迟: 2802.16830 ms
-最大延迟: 2890.04060 ms
-P50延迟: 2833.34460 ms
-P90延迟: 2843.55733 ms
-P99延迟: 2864.85352 ms
-Start RSS: 299.16016 MB
-Peak RSS: 550.53906 MB
-Stable RSS: 550.53906 MB
+===== Run #2 =====
+Avg Latency: 2110.84420 ms
+Min Latency: 2044.22980 ms
+Max Latency: 2914.69730 ms
+P50 Latency: 2072.77275 ms
+P90 Latency: 2233.92851 ms
+P99 Latency: 2416.67869 ms
+Start RSS: 708.75000 MB
+Peak RSS: 973.50000 MB
+Stable RSS: 973.43359 MB
 
-===== 第 3 次测试 =====
-平均延迟: 2829.15220 ms
-最小延迟: 2805.39040 ms
-最大延迟: 2874.46910 ms
-P50延迟: 2830.56160 ms
-P90延迟: 2841.62515 ms
-P99延迟: 2853.27568 ms
-Start RSS: 299.79297 MB
-Peak RSS: 551.05469 MB
-Stable RSS: 551.02344 MB
+===== Run #3 =====
+Avg Latency: 2062.44523 ms
+Min Latency: 2035.69680 ms
+Max Latency: 2149.73320 ms
+P50 Latency: 2062.76630 ms
+P90 Latency: 2071.22787 ms
+P99 Latency: 2136.53818 ms
+Start RSS: 705.92969 MB
+Peak RSS: 970.67969 MB
+Stable RSS: 970.61719 MB
 
-===== 第 4 次测试 =====
-平均延迟: 2833.69563 ms
-最小延迟: 2810.89080 ms
-最大延迟: 2891.12020 ms
-P50延迟: 2833.22675 ms
-P90延迟: 2841.83091 ms
-P99延迟: 2865.39950 ms
-Start RSS: 300.32422 MB
-Peak RSS: 551.60156 MB
-Stable RSS: 551.60156 MB
+===== Run #4 =====
+Avg Latency: 2071.18851 ms
+Min Latency: 2036.97120 ms
+Max Latency: 2228.03050 ms
+P50 Latency: 2062.23485 ms
+P90 Latency: 2084.00005 ms
+P99 Latency: 2201.31812 ms
+Start RSS: 710.72656 MB
+Peak RSS: 975.32422 MB
+Stable RSS: 975.32422 MB
 
-===== 第 5 次测试 =====
-平均延迟: 2829.57026 ms
-最小延迟: 2800.81990 ms
-最大延迟: 2853.41440 ms
-P50延迟: 2832.02275 ms
-P90延迟: 2842.68808 ms
-P99延迟: 2853.03434 ms
-Start RSS: 300.73828 MB
-Peak RSS: 556.66016 MB
-Stable RSS: 556.66016 MB
+===== Run #5 =====
+Avg Latency: 2061.80530 ms
+Min Latency: 2036.67330 ms
+Max Latency: 2093.20170 ms
+P50 Latency: 2062.68510 ms
+P90 Latency: 2071.11302 ms
+P99 Latency: 2078.66771 ms
+Start RSS: 705.75000 MB
+Peak RSS: 970.34375 MB
+Stable RSS: 970.34375 MB
 
-===== 5次测试平均值 =====
-平均延迟: 2831.75659 ms
-标准差: 2.02821 ms
-变异系数: 0.07%
-FPS: 0.35
-P50延迟: 2832.37804 ms
-P90延迟: 2842.53084 ms
-P99延迟: 2857.78874 ms
-最小延迟: 2803.99276 ms
-最大延迟: 2874.76754 ms
+===== 5-Test Average =====
+Avg Latency: 2073.85247 ms
+Std Dev: 18.80944 ms
+Coeff of Variation: 0.91%
+FPS: 0.48
+P50 Latency: 2064.65236 ms
+P90 Latency: 2106.62232 ms
+P99 Latency: 2186.12759 ms
+Min Latency: 2038.72616 ms
+Max Latency: 2320.51928 ms
 
-===== 内存使用情况 =====
-Start RSS: 298.42891 MB
-Peak RSS: 552.63281 MB
-Stable RSS: 552.62656 MB
+===== Memory Usage =====
+Start RSS: 705.07969 MB
+Peak RSS: 969.86641 MB
+Stable RSS: 969.80234 MB

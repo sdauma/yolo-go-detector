@@ -1,3 +1,15 @@
+// go_memory_breakdown.go
+// Go 内存分解测试
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置 intraOp=8, interOp=1
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+//
+// 测试目的：
+// - 逐步测量 Runtime 基础内存、模型权重内存、输入/输出 Tensor 内存、中间缓冲区、Session 管理开销
+// - 计算总内存和峰值 RSS
+// - 输出 JSON 格式结果
+
 package main
 
 import (

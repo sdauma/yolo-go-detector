@@ -1,14 +1,22 @@
+# -*- coding: utf-8 -*-
 # python_long_stability.py
-# Python 长时间稳定性测试 - Baseline 执行路径
-# 
-# 重要声明（P0原则）：
-# 本测试使用 Python baseline Session 接口（InferenceSession），不启用 I/O Binding。
-# 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
-# 
-# 测试目的：
-# - 观察不同线程配置下的性能趋势
-# - 验证 ONNX Runtime 的线程扩展性
-# - 不用于语言级线程扩展性结论
+# Python 10-minute stability test - baseline execution path
+#
+# Important (P0 principle):
+# This test uses Python baseline Session API (InferenceSession).
+# Python ONNX Runtime's run() method copies data on each call
+# (no Go-style I/O Binding). Per P0 principle, this test is for
+# observing phenomena only, not for language-level performance conclusions.
+#
+# Technical:
+# - Uses fixed thread config: intra_op_num_threads=12, inter_op_num_threads=1
+# - All SessionOptions params explicitly set (P2 principle)
+#
+# Test purpose:
+# - Measure baseline stability over 10 minutes of continuous inference
+#   under fixed thread configuration
+# - Record RSS memory drift and latency fluctuation indicators
+# - Not for language-level performance conclusions
 
 import onnxruntime as ort
 import numpy as np
@@ -19,107 +27,106 @@ import psutil
 import csv
 from datetime import datetime
 
-# 固定随机种子，确保可复现
+# Fixed random seed for reproducibility
 np.random.seed(12345)
 
-# 获取当前工作目录
+# Get current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-print(f"当前目录: {current_dir}")
+print(f"Current dir: {current_dir}")
 
-# 构建模型路径
+# Build model path
 model_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
-print(f"模型路径: {model_path}")
+print(f"Model path: {model_path}")
 
-# 构建项目根路径
+# Build project root path
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
-print(f"项目根路径: {base_path}")
+print(f"Project root: {base_path}")
 
-# 检查模型文件是否存在
+# Check model file
 if not os.path.exists(model_path):
-    print(f"错误: 模型文件不存在: {model_path}")
+    print(f"Error: Model file not found: {model_path}")
     sys.exit(1)
 
-print("===== Python 长时间稳定性测试 =====")
-print("测试时长: 10分钟")
-print("采样间隔: 1秒")
+print("===== Python Long-Term Stability Test =====")
+print("Test duration: 10 minutes")
+print("Sample interval: 1 second")
 
-# 创建 Session
-print("创建 InferenceSession...")
+# Create Session
+print("Creating InferenceSession...")
 try:
     sess_options = ort.SessionOptions()
-    
-    # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-    # 线程配置 - 12线程，与其他测试保持一致
+
+    # Explicitly set all SessionOptions params (P2 principle: no reliance on defaults)
+    # Thread config - 12 threads, consistent with other tests
     sess_options.intra_op_num_threads = 12
     sess_options.inter_op_num_threads = 1
-    
-    # 日志配置（关闭所有日志，避免日志IO干扰性能）
+
+    # Log config (disable all logs to avoid log IO interference)
     sess_options.log_severity_level = 3  # 3 = ORT_LOGGING_LEVEL_ERROR
-    
-    # 性能分析配置（关闭性能分析，避免额外开销）
+
+    # Execution mode config (sequential to avoid extra overhead)
     sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-    
-    # 内存池配置（启用内存池复用）
+
+    # Memory pool config (enable memory pool reuse)
     sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-    
-    # 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
-    
+
+    # All unmentioned Session params use ONNX Runtime 1.23.2 official defaults
     sess = ort.InferenceSession(
         model_path,
         sess_options=sess_options,
         providers=["CPUExecutionProvider"]
     )
-    print("InferenceSession 创建成功!")
+    print("InferenceSession created successfully!")
 except Exception as e:
-    print(f"错误: 创建 InferenceSession 失败: {e}")
+    print(f"Error: Failed to create InferenceSession: {e}")
     sys.exit(1)
 
-# 获取输入信息
+# Get input info
 input_name = sess.get_inputs()[0].name
 input_shape = sess.get_inputs()[0].shape
-print(f"输入名称: {input_name}")
-print(f"输入形状: {input_shape}")
+print(f"Input name: {input_name}")
+print(f"Input shape: {input_shape}")
 
-# 使用与 Go 完全一致的输入数据（从文件加载，使用固定种子）
-print("加载输入数据...")
+# Use input data consistent with Go (loaded from file, fixed seed)
+print("Loading input data...")
 input_data_path = os.path.join(base_path, "test", "data", "input_data.bin")
 try:
     input_data = np.fromfile(input_data_path, dtype=np.float32).reshape(input_shape)
-    print(f"输入数据加载成功: {input_data_path}")
+    print(f"Input data loaded: {input_data_path}")
 except Exception as e:
-    print(f"加载输入数据失败: {e}")
+    print(f"Failed to load input data: {e}")
     sys.exit(1)
 
-# 获取进程对象
+# Get process object
 process = psutil.Process(os.getpid())
 
 # Warmup
 print("Warming up...")
 for _ in range(10):
     sess.run(None, {input_name: input_data})
-print("Warmup 完成!")
+print("Warmup complete!")
 
-# 开始长时间稳定性测试
-print("\n===== 开始长时间稳定性测试 =====")
-print("测试时长: 10分钟 (600秒)")
-print("采样间隔: 1秒")
-print("推理模式: 连续推理")
+# Start long-term stability test
+print("\n===== Starting Long-Term Stability Test =====")
+print("Test duration: 10 minutes (600 seconds)")
+print("Sample interval: 1 second")
+print("Inference mode: continuous")
 
-# 测试参数
-test_duration = 10 * 60  # 10分钟，单位：秒
-sample_interval = 1  # 1秒采样间隔
+# Test params
+test_duration = 10 * 60  # 10 minutes in seconds
+sample_interval = 1  # 1 second sample interval
 start_time = time.time()
 end_time = start_time + test_duration
 
-# RSS采样数据
+# RSS sample data
 rss_samples = []
 inference_times = []
 peak_rss = 0
 min_rss = float('inf')
 
-# 初始RSS采样
-initial_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+# Initial RSS sample
+initial_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
 peak_rss = initial_rss
 min_rss = initial_rss
 rss_samples.append({
@@ -127,28 +134,28 @@ rss_samples.append({
     'elapsed': 0,
     'rss': initial_rss
 })
-print(f"初始 RSS: {initial_rss:.5f} MB")
+print(f"Initial RSS: {initial_rss:.5f} MB")
 
-# 推理计数器
+# Inference counter
 inference_count = 0
 
-# 主测试循环
+# Main test loop
 while time.time() < end_time:
-    # 执行推理
+    # Execute inference
     t0 = time.perf_counter()
     sess.run(None, {input_name: input_data})
     t1 = time.perf_counter()
-    dt = (t1 - t0) * 1000  # 转换为毫秒
+    dt = (t1 - t0) * 1000  # Convert to ms
     inference_times.append(dt)
     inference_count += 1
 
-    # 采样RSS（每秒采样一次）
-    current_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+    # Sample RSS (once per second)
+    current_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
     if current_rss > peak_rss:
         peak_rss = current_rss
     if current_rss < min_rss:
         min_rss = current_rss
-    
+
     elapsed = time.time() - start_time
     rss_samples.append({
         'timestamp': datetime.now(),
@@ -156,23 +163,23 @@ while time.time() < end_time:
         'rss': current_rss
     })
 
-    # 每分钟输出一次进度
-    if inference_count % 60 == 0:
+    # Print progress every minute
+    if int(elapsed) % 60 == 0 and int(elapsed) > 0:
         remaining = end_time - time.time()
-        print(f"进度: {inference_count} 次推理, 已运行: {elapsed:.0f}秒, 剩余: {remaining:.0f}秒, 当前RSS: {current_rss:.5f} MB")
+        print(f"Progress: {inference_count} inferences, elapsed: {elapsed:.0f}s, remaining: {remaining:.0f}s, current RSS: {current_rss:.5f} MB")
 
-    # 等待1秒（确保采样间隔）
+    # Wait 1 second (note: actual interval = inference time + sleep(1), negligible for long-term tests)
     time.sleep(sample_interval)
 
-# 最终RSS采样
-final_rss = process.memory_info().rss / 1024 / 1024  # 转换为 MB
+# Final RSS sample
+final_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
 rss_samples.append({
     'timestamp': datetime.now(),
     'elapsed': time.time() - start_time,
     'rss': final_rss
 })
 
-# 计算统计结果
+# Compute statistics
 total_duration = time.time() - start_time
 avg_inference_time = np.mean(inference_times)
 min_inference_time = np.min(inference_times)
@@ -181,83 +188,79 @@ p50_inference_time = np.percentile(inference_times, 50)
 p90_inference_time = np.percentile(inference_times, 90)
 p99_inference_time = np.percentile(inference_times, 99)
 
-# 计算RSS统计
+# Compute RSS statistics
 rss_values = [sample['rss'] for sample in rss_samples]
 avg_rss = np.mean(rss_values)
 rss_drift = final_rss - initial_rss
 rss_range = peak_rss - min_rss
 rss_range_percent = (rss_range / avg_rss) * 100 if avg_rss > 0 else 0
 
-# 输出测试结果
-print(f"\n===== 长时间稳定性测试结果 =====")
-print(f"测试时长: {total_duration:.0f}秒")
-print(f"推理次数: {inference_count}")
-print(f"推理频率: {inference_count / total_duration:.2f} 次/秒")
+# Output test results
+print(f"\n===== Long-Term Stability Test Results =====")
+print(f"Test duration: {total_duration:.0f}s")
+print(f"Inference count: {inference_count}")
+print(f"Inference rate: {inference_count / total_duration:.2f} inferences/s")
 
-print(f"\n===== 推理性能统计 =====")
-print(f"平均推理时间: {avg_inference_time:.5f} ms")
-print(f"P50推理时间: {p50_inference_time:.5f} ms")
-print(f"P90推理时间: {p90_inference_time:.5f} ms")
-print(f"P99推理时间: {p99_inference_time:.5f} ms")
-print(f"最小推理时间: {min_inference_time:.5f} ms")
-print(f"最大推理时间: {max_inference_time:.5f} ms")
+print(f"\n===== Inference Performance Statistics =====")
+print(f"Avg inference time: {avg_inference_time:.5f} ms")
+print(f"P50 inference time: {p50_inference_time:.5f} ms")
+print(f"P90 inference time: {p90_inference_time:.5f} ms")
+print(f"P99 inference time: {p99_inference_time:.5f} ms")
+print(f"Min inference time: {min_inference_time:.5f} ms")
+print(f"Max inference time: {max_inference_time:.5f} ms")
 
-print(f"\n===== 内存使用统计 =====")
-print(f"初始 RSS: {initial_rss:.5f} MB")
-print(f"最终 RSS: {final_rss:.5f} MB")
-print(f"平均 RSS: {avg_rss:.5f} MB")
-print(f"峰值 RSS: {peak_rss:.5f} MB")
-print(f"最小 RSS: {min_rss:.5f} MB")
+print(f"\n===== Memory Usage Statistics =====")
+print(f"Initial RSS: {initial_rss:.5f} MB")
+print(f"Final RSS: {final_rss:.5f} MB")
+print(f"Avg RSS: {avg_rss:.5f} MB")
+print(f"Peak RSS: {peak_rss:.5f} MB")
+print(f"Min RSS: {min_rss:.5f} MB")
 print(f"RSS Drift: {rss_drift:.5f} MB")
-print(f"RSS 波动范围: {rss_range:.5f} MB ({rss_range_percent:.2f}%)")
+print(f"RSS Fluctuation Range: {rss_range:.5f} MB ({rss_range_percent:.2f}%)")
 
-# 保存详细结果
+# Save detailed results
 result_path = os.path.join(current_dir, '..', '..', 'results', 'python_long_stability_result.txt')
-print(f"\n保存结果到: {result_path}")
+print(f"\nSaving results to: {result_path}")
 try:
-    # 使用utf-8编码写入文件
     with open(result_path, 'w', encoding='utf-8') as f:
-        f.write("===== Python 长时间稳定性测试结果 =====\n")
-        f.write(f"测试时长: {total_duration:.0f}秒\n")
-        f.write(f"推理次数: {inference_count}\n")
-        f.write(f"推理频率: {inference_count / total_duration:.2f} 次/秒\n")
-        f.write(f"\n===== 推理性能统计 =====\n")
-        f.write(f"平均推理时间: {avg_inference_time:.5f} ms\n")
-        f.write(f"P50推理时间: {p50_inference_time:.5f} ms\n")
-        f.write(f"P90推理时间: {p90_inference_time:.5f} ms\n")
-        f.write(f"P99推理时间: {p99_inference_time:.5f} ms\n")
-        f.write(f"最小推理时间: {min_inference_time:.5f} ms\n")
-        f.write(f"最大推理时间: {max_inference_time:.5f} ms\n")
-        f.write(f"\n===== 内存使用统计 =====\n")
-        f.write(f"初始 RSS: {initial_rss:.5f} MB\n")
-        f.write(f"最终 RSS: {final_rss:.5f} MB\n")
-        f.write(f"平均 RSS: {avg_rss:.5f} MB\n")
-        f.write(f"峰值 RSS: {peak_rss:.5f} MB\n")
-        f.write(f"最小 RSS: {min_rss:.5f} MB\n")
+        f.write("===== Python Long-Term Stability Test Results =====\n")
+        f.write(f"Test duration: {total_duration:.0f}s\n")
+        f.write(f"Inference count: {inference_count}\n")
+        f.write(f"Inference rate: {inference_count / total_duration:.2f} inferences/s\n")
+        f.write(f"\n===== Inference Performance Statistics =====\n")
+        f.write(f"Avg inference time: {avg_inference_time:.5f} ms\n")
+        f.write(f"P50 inference time: {p50_inference_time:.5f} ms\n")
+        f.write(f"P90 inference time: {p90_inference_time:.5f} ms\n")
+        f.write(f"P99 inference time: {p99_inference_time:.5f} ms\n")
+        f.write(f"Min inference time: {min_inference_time:.5f} ms\n")
+        f.write(f"Max inference time: {max_inference_time:.5f} ms\n")
+        f.write(f"\n===== Memory Usage Statistics =====\n")
+        f.write(f"Initial RSS: {initial_rss:.5f} MB\n")
+        f.write(f"Final RSS: {final_rss:.5f} MB\n")
+        f.write(f"Avg RSS: {avg_rss:.5f} MB\n")
+        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
+        f.write(f"Min RSS: {min_rss:.5f} MB\n")
         f.write(f"RSS Drift: {rss_drift:.5f} MB\n")
-        f.write(f"RSS 波动范围: {rss_range:.5f} MB ({rss_range_percent:.2f}%)\n")
-    print("结果保存成功!")
+        f.write(f"RSS Fluctuation Range: {rss_range:.5f} MB ({rss_range_percent:.2f}%)\n")
+    print("Results saved successfully!")
 except Exception as e:
-    print(f"保存结果时出错: {e}")
+    print(f"Error saving results: {e}")
 
-# 保存RSS曲线数据
+# Save RSS curve data
 rss_data_path = os.path.join(current_dir, '..', '..', 'results', 'python_rss_curve.csv')
-print(f"保存RSS曲线数据到: {rss_data_path}")
+print(f"Saving RSS curve data to: {rss_data_path}")
 try:
     with open(rss_data_path, 'w', encoding='utf-8', newline='') as f:
         writer = csv.writer(f)
-        # 写入CSV头部
         writer.writerow(['Timestamp', 'Elapsed_Seconds', 'RSS_MB'])
-        
-        # 写入RSS采样数据
         for sample in rss_samples:
             writer.writerow([
                 sample['timestamp'].strftime('%Y-%m-%d %H:%M:%S.%f')[:-3],
                 f"{sample['elapsed']:.3f}",
                 f"{sample['rss']:.5f}"
             ])
-    print(f"RSS曲线数据已保存: {len(rss_samples)} 个采样点")
+    print(f"RSS curve data saved: {len(rss_samples)} sample points")
 except Exception as e:
-    print(f"保存RSS曲线数据时出错: {e}")
+    print(f"Error saving RSS curve data: {e}")
 
-print("\n测试完成!")
+print("\nTest complete!")

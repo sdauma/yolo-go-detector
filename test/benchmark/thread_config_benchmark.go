@@ -1,17 +1,18 @@
 // thread_config_benchmark.go
-// Go 线程配置性能测试 - Baseline 执行路径
+// Go 线程配置性能测试
 //
 // 重要声明（P0原则）：
-// 本测试使用 Go baseline Session 接口（NewSession），由于技术限制，实际上启用了 I/O Binding。
+// 本测试使用 Go AdvancedSession 接口（NewAdvancedSession），该接口通过传入输入/输出 Tensor
+// 自动启用 I/O Binding，并接受 SessionOptions 参数以显式设置线程配置。
 // 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
 //
-// 技术限制说明：
-// - Go baseline Session 接口（NewSession）不支持显式设置线程参数
-// - 线程配置可能依赖 ONNX Runtime 的默认行为
+// 技术说明：
+// - 使用 NewAdvancedSession + opts 以支持显式设置 intra_op_num_threads
+// - 每个线程配置独立创建 Session，确保测试不受前一次配置的影响
 // - 因此，Go 和 Python 的线程配置测试结果不可直接对比
 //
 // 测试目的：
-// - 观察不同线程配置下的性能趋势
+// - 观察不同线程配置（1, 2, 4, 8）下的性能趋势
 // - 验证 ONNX Runtime 的线程扩展性
 // - 不用于语言级线程扩展性结论
 //
@@ -24,16 +25,14 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
-	"strings"
 	"time"
 	"unsafe"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 // Rand 简单的随机数生成器，用于生成固定种子的随机数
@@ -56,21 +55,8 @@ func fileExists(path string) bool {
 	return !info.IsDir()
 }
 
-// getProcessRSS 获取进程的 RSS（Working Set）内存使用量（MB）
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // loadInputDataFromFile 从二进制文件加载输入数据
 func loadInputDataFromFile(data []float32, filePath string) error {

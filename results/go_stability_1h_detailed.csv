@@ -1,0 +1,2 @@
+Hour,TotalInfer,HourlyInfer,Throughput(sec),AvgLatency(ms),P50Latency(ms),P99Latency(ms),PM_MB,GCNum,Timestamp
+1,5740,5740,1.594209,625.111,610.951,705.947,578.63,30,2026-06-30 09:07:01

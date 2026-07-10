@@ -1,10 +1,17 @@
+# -*- coding: utf-8 -*-
 # python_session_creation_benchmark.py
-# Python Session创建时间测试
+# Python Session鍒涘缓鏃堕棿娴嬭瘯
 #
-# 测试目的：
-# - 测量Python创建InferenceSession的时间
-# - 与Go的Session创建时间进行对比
-# - 提供客观的跨语言对比数据
+# 鎶€鏈鏄庯細
+# - 浣跨敤 Python baseline Session 鎺ュ彛锛圛nferenceSession锛?
+# - 閫氳繃 SessionOptions 鏄惧紡閰嶇疆threads鍙傛暟锛坕ntraOp=12, interOp=1锛?
+# - 寰幆鍒涘缓100娆?InferenceSession锛屾瘡娆″垱寤哄悗 del sess 閲婃斁璧勬簮
+# - 涓嶇粦瀹欳PU鏍稿績锛岃绯荤粺鑷敱璋冨害
+#
+# 娴嬭瘯鐩殑锛?
+# - 娴嬮噺Python鍒涘缓InferenceSession鐨勬椂闂?
+# - 涓嶨o鐨凷ession鍒涘缓鏃堕棿杩涜瀵规瘮
+# - 鎻愪緵瀹㈣鐨勮法璇█瀵规瘮鏁版嵁
 
 import onnxruntime as ort
 import numpy as np
@@ -14,17 +21,17 @@ import sys
 import psutil
 from dataclasses import dataclass
 
-# 固定随机种子，确保可复现
+# 鍥哄畾闅忔満绉嶅瓙锛岀‘淇濆彲澶嶇幇
 np.random.seed(12345)
 
-# 获取当前工作目录
+# 鑾峰彇褰撳墠宸ヤ綔鐩綍
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 构建模型路径
+# 鏋勫缓model璺緞
 yolo11x_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
 yolo11n_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11n.onnx'))
 
-# 构建项目根路径
+# 鏋勫缓椤圭洰鏍硅矾寰?
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
 
 @dataclass
@@ -38,29 +45,29 @@ class SessionCreationResult:
     times: list
 
 def run_session_creation_benchmark(model_name, model_path):
-    print(f"===== Python Session创建时间测试 - {model_name} ====")
+    print(f"===== Python Session鍒涘缓鏃堕棿娴嬭瘯 - {model_name} ====")
     
-    # 不绑定CPU核心，让系统自由调度（匹配Go的默认行为）
+    # 涓嶇粦瀹欳PU鏍稿績锛岃绯荤粺鑷敱璋冨害锛堝尮閰岹o鐨勯粯璁よ涓猴級
     process = psutil.Process(os.getpid())
-    print("CPU核心调度：系统默认")
+    print("CPU affinity: system default")
     
-    # 测试Session创建时间
-    print(f"测试{model_name}模型的Session创建时间...")
-    runs = 100  # 创建100次Session
+    # 娴嬭瘯Session鍒涘缓鏃堕棿
+    print(f"娴嬭瘯{model_name}model鐨凷ession鍒涘缓鏃堕棿...")
+    runs = 100  # 鍒涘缓100娆ession
     times = []
 
     for i in range(runs):
         t0 = time.perf_counter()
         try:
             sess_options = ort.SessionOptions()
-            # 线程配置 - 12线程，匹配Go的默认行为
+            # threads閰嶇疆 - 12threads锛屽尮閰岹o鐨勯粯璁よ涓?
             sess_options.intra_op_num_threads = 12
             sess_options.inter_op_num_threads = 1
-            # 日志配置（关闭所有日志）
+            # 鏃ュ織閰嶇疆锛堝叧闂墍鏈夋棩蹇楋級
             sess_options.log_severity_level = 3
-            # 性能分析配置（关闭性能分析）
+            # 鎬ц兘鍒嗘瀽閰嶇疆锛堝叧闂€ц兘鍒嗘瀽锛?
             sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-            # 内存池配置（启用内存池复用）
+            # 鍐呭瓨姹犻厤缃紙鍚敤鍐呭瓨姹犲鐢級
             sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
             
             sess = ort.InferenceSession(
@@ -69,16 +76,16 @@ def run_session_creation_benchmark(model_name, model_path):
                 providers=["CPUExecutionProvider"]
             )
         except Exception as e:
-            print(f"错误: 创建 InferenceSession 失败: {e}")
+            print(f"Error: Failed to create InferenceSession: {e}")
             sys.exit(1)
         t1 = time.perf_counter()
-        dt = (t1 - t0) * 1000  # 转换为毫秒
+        dt = (t1 - t0) * 1000  # 杞崲涓烘绉?
         times.append(dt)
         
-        # 释放Session资源
+        # 閲婃斁Session璧勬簮
         del sess
 
-    # 计算结果
+    # Calculate results
     avg_time = sum(times) / len(times)
     std_time = np.std(times)
     min_time = min(times)
@@ -97,72 +104,73 @@ def run_session_creation_benchmark(model_name, model_path):
     )
 
 def main():
-    print("===== Python Session创建时间测试 ====")
-    print("测试配置：")
-    print("- 线程数: 12")
-    print("- 创建次数: 100次")
+    print("===== Python Session Creation Time Test =====")
+    print("Test configuration:")
+    print("- threads: 12")
+    print("- creation count: 100")
     print()
 
-    # 测试 YOLO11x 模型
-    print("\n===== 测试 YOLO11x 模型 =====")
+    # 娴嬭瘯 YOLO11x model
+    print("\n===== Testing YOLO11x Model =====")
     if not os.path.exists(yolo11x_path):
-        print(f"错误: YOLO11x模型文件不存在: {yolo11x_path}")
+        print(f"閿欒: YOLO11xmodel鏂囦欢涓嶅瓨鍦? {yolo11x_path}")
         sys.exit(1)
     
     yolo11x_result = run_session_creation_benchmark("YOLO11x", yolo11x_path)
     
-    print(f"\nYOLO11x Session创建时间结果:")
-    print(f"平均时间: {yolo11x_result.avg_time:.3f} ms")
-    print(f"标准差: {yolo11x_result.std_time:.3f} ms")
-    print(f"P50时间: {yolo11x_result.p50_time:.3f} ms")
-    print(f"P90时间: {yolo11x_result.p90_time:.3f} ms")
-    print(f"最小时间: {yolo11x_result.min_time:.3f} ms")
-    print(f"最大时间: {yolo11x_result.max_time:.3f} ms")
+    print(f"\nYOLO11x Session鍒涘缓鏃堕棿缁撴灉:")
+    print(f"骞冲潎鏃堕棿: {yolo11x_result.avg_time:.3f} ms")
+    print(f"鏍囧噯宸? {yolo11x_result.std_time:.3f} ms")
+    print(f"P50鏃堕棿: {yolo11x_result.p50_time:.3f} ms")
+    print(f"P90鏃堕棿: {yolo11x_result.p90_time:.3f} ms")
+    print(f"鏈€灏忔椂闂? {yolo11x_result.min_time:.3f} ms")
+    print(f"鏈€澶ф椂闂? {yolo11x_result.max_time:.3f} ms")
 
-    # 测试 YOLO11n 模型
-    print("\n===== 测试 YOLO11n 模型 =====")
+    # 娴嬭瘯 YOLO11n model
+    print("\n===== Testing YOLO11n Model =====")
     if not os.path.exists(yolo11n_path):
-        print(f"错误: YOLO11n模型文件不存在: {yolo11n_path}")
+        print(f"閿欒: YOLO11nmodel鏂囦欢涓嶅瓨鍦? {yolo11n_path}")
         sys.exit(1)
     
     yolo11n_result = run_session_creation_benchmark("YOLO11n", yolo11n_path)
     
-    print(f"\nYOLO11n Session创建时间结果:")
-    print(f"平均时间: {yolo11n_result.avg_time:.3f} ms")
-    print(f"标准差: {yolo11n_result.std_time:.3f} ms")
-    print(f"P50时间: {yolo11n_result.p50_time:.3f} ms")
-    print(f"P90时间: {yolo11n_result.p90_time:.3f} ms")
-    print(f"最小时间: {yolo11n_result.min_time:.3f} ms")
-    print(f"最大时间: {yolo11n_result.max_time:.3f} ms")
+    print(f"\nYOLO11n Session鍒涘缓鏃堕棿缁撴灉:")
+    print(f"骞冲潎鏃堕棿: {yolo11n_result.avg_time:.3f} ms")
+    print(f"鏍囧噯宸? {yolo11n_result.std_time:.3f} ms")
+    print(f"P50鏃堕棿: {yolo11n_result.p50_time:.3f} ms")
+    print(f"P90鏃堕棿: {yolo11n_result.p90_time:.3f} ms")
+    print(f"鏈€灏忔椂闂? {yolo11n_result.min_time:.3f} ms")
+    print(f"鏈€澶ф椂闂? {yolo11n_result.max_time:.3f} ms")
 
-    # 保存结果
+    # 淇濆瓨缁撴灉
     result_path = os.path.join(base_path, "results", "python_session_creation_result.txt")
     with open(result_path, 'w', encoding='utf-8') as f:
-        f.write("===== Python Session创建时间测试结果 =====\n")
-        f.write("测试配置：\n")
-        f.write("- 线程数: 12\n")
-        f.write("- 创建次数: 100次\n")
+        f.write("===== Python Session鍒涘缓鏃堕棿娴嬭瘯缁撴灉 =====\n")
+        f.write("娴嬭瘯閰嶇疆锛歕n")
+        f.write("- threads鏁? 12\n")
+        f.write("- 鍒涘缓娆℃暟: 100娆n")
         f.write("\n")
         
-        f.write("===== YOLO11x 测试结果 =====\n")
-        f.write(f"平均时间: {yolo11x_result.avg_time:.5f} ms\n")
-        f.write(f"标准差: {yolo11x_result.std_time:.5f} ms\n")
-        f.write(f"P50时间: {yolo11x_result.p50_time:.5f} ms\n")
-        f.write(f"P90时间: {yolo11x_result.p90_time:.5f} ms\n")
-        f.write(f"最小时间: {yolo11x_result.min_time:.5f} ms\n")
-        f.write(f"最大时间: {yolo11x_result.max_time:.5f} ms\n")
+        f.write("===== YOLO11x 娴嬭瘯缁撴灉 =====\n")
+        f.write(f"骞冲潎鏃堕棿: {yolo11x_result.avg_time:.5f} ms\n")
+        f.write(f"鏍囧噯宸? {yolo11x_result.std_time:.5f} ms\n")
+        f.write(f"P50鏃堕棿: {yolo11x_result.p50_time:.5f} ms\n")
+        f.write(f"P90鏃堕棿: {yolo11x_result.p90_time:.5f} ms\n")
+        f.write(f"鏈€灏忔椂闂? {yolo11x_result.min_time:.5f} ms\n")
+        f.write(f"鏈€澶ф椂闂? {yolo11x_result.max_time:.5f} ms\n")
         f.write("\n")
         
-        f.write("===== YOLO11n 测试结果 =====\n")
-        f.write(f"平均时间: {yolo11n_result.avg_time:.5f} ms\n")
-        f.write(f"标准差: {yolo11n_result.std_time:.5f} ms\n")
-        f.write(f"P50时间: {yolo11n_result.p50_time:.5f} ms\n")
-        f.write(f"P90时间: {yolo11n_result.p90_time:.5f} ms\n")
-        f.write(f"最小时间: {yolo11n_result.min_time:.5f} ms\n")
-        f.write(f"最大时间: {yolo11n_result.max_time:.5f} ms\n")
+        f.write("===== YOLO11n 娴嬭瘯缁撴灉 =====\n")
+        f.write(f"骞冲潎鏃堕棿: {yolo11n_result.avg_time:.5f} ms\n")
+        f.write(f"鏍囧噯宸? {yolo11n_result.std_time:.5f} ms\n")
+        f.write(f"P50鏃堕棿: {yolo11n_result.p50_time:.5f} ms\n")
+        f.write(f"P90鏃堕棿: {yolo11n_result.p90_time:.5f} ms\n")
+        f.write(f"鏈€灏忔椂闂? {yolo11n_result.min_time:.5f} ms\n")
+        f.write(f"鏈€澶ф椂闂? {yolo11n_result.max_time:.5f} ms\n")
 
-    print(f"\n结果已保存到: {result_path}")
-    print("测试完成!")
+    print(f"\nResults saved to: {result_path}")
+    print("Test completed!")
 
 if __name__ == "__main__":
     main()
+

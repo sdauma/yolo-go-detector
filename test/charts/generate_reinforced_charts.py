@@ -3,6 +3,12 @@
 # 生成强化实验的图表文件
 
 import os
+import matplotlib
+matplotlib.use('Agg')
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, module='matplotlib')
+warnings.filterwarnings('ignore', message='.*iCCP.*')
+warnings.filterwarnings('ignore', category=DeprecationWarning, module='matplotlib')
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
@@ -251,15 +257,24 @@ def calculate_l2_error(boxes1, boxes2):
 # ========== 图表生成函数 ==========
 def generate_reinforced_performance_comparison():
     """生成强化性能测试对比图表"""
+    try:
+        py_large_result = read_result_file(os.path.join(results_dir, "python_reinforced_result.txt"))
+    except Exception:
+        py_large_result = {}
+    try:
+        go_large_result = read_result_file(os.path.join(results_dir, "go_reinforced_result.txt"))
+    except Exception:
+        go_large_result = {}
+    try:
+        py_small_result = read_result_file(os.path.join(results_dir, "python_reinforced_small_result.txt"))
+    except Exception:
+        py_small_result = {}
+    try:
+        go_small_result = read_result_file(os.path.join(results_dir, "go_reinforced_small_result.txt"))
+    except Exception:
+        go_small_result = {}
+    
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-    
-    # 读取大模型数据
-    py_large_result = read_result_file(os.path.join(results_dir, "python_reinforced_result.txt"))
-    go_large_result = read_result_file(os.path.join(results_dir, "go_reinforced_result.txt"))
-    
-    # 读取轻模型数据
-    py_small_result = read_result_file(os.path.join(results_dir, "python_reinforced_small_result.txt"))
-    go_small_result = read_result_file(os.path.join(results_dir, "go_reinforced_small_result.txt"))
     
     # 大模型对比
     if py_large_result and go_large_result:
@@ -339,11 +354,23 @@ def generate_ttest_visualization():
     """生成t-test结果可视化图表"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
-    # 读取延迟数据
-    py_large_times = read_latency_data(os.path.join(results_dir, "python_reinforced_latency_data.txt"))
-    go_large_times = read_latency_data(os.path.join(results_dir, "go_reinforced_latency_data.txt"))
-    py_small_times = read_latency_data(os.path.join(results_dir, "python_reinforced_small_latency_data.txt"))
-    go_small_times = read_latency_data(os.path.join(results_dir, "go_reinforced_small_latency_data.txt"))
+    # 读取延迟数据（容错）
+    try:
+        py_large_times = read_latency_data(os.path.join(results_dir, "python_reinforced_12threads_latency_data.txt"))
+    except Exception:
+        py_large_times = []
+    try:
+        go_large_times = read_latency_data(os.path.join(results_dir, "go_reinforced_latency_data.txt"))
+    except Exception:
+        go_large_times = []
+    try:
+        py_small_times = read_latency_data(os.path.join(results_dir, "python_reinforced_small_latency_data.txt"))
+    except Exception:
+        py_small_times = []
+    try:
+        go_small_times = read_latency_data(os.path.join(results_dir, "go_reinforced_small_latency_data.txt"))
+    except Exception:
+        go_small_times = []
     
     # 大模型延迟分布
     ax1 = axes[0, 0]
@@ -383,7 +410,7 @@ def generate_ttest_visualization():
     ax3 = axes[1, 0]
     if py_large_times and go_large_times:
         data = [py_large_times, go_large_times]
-        bp = ax3.boxplot(data, labels=['Python', 'Go'], patch_artist=True)
+        bp = ax3.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
         bp['boxes'][0].set_facecolor('#FF6B6B')
         bp['boxes'][0].set_alpha(0.6)
         bp['boxes'][1].set_facecolor('#4ECDC4')
@@ -396,7 +423,7 @@ def generate_ttest_visualization():
     ax4 = axes[1, 1]
     if py_small_times and go_small_times:
         data = [py_small_times, go_small_times]
-        bp = ax4.boxplot(data, labels=['Python', 'Go'], patch_artist=True)
+        bp = ax4.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
         bp['boxes'][0].set_facecolor('#FF6B6B')
         bp['boxes'][0].set_alpha(0.6)
         bp['boxes'][1].set_facecolor('#4ECDC4')
@@ -419,9 +446,18 @@ def generate_cold_start_decomposition():
     """生成冷启动分解测试图表"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
-    # 读取冷启动数据
-    py_large_cold = read_cold_start_detailed_log(os.path.join(results_dir, "python_cold_start_detailed_log.txt"))
-    go_large_cold = read_cold_start_detailed_log(os.path.join(results_dir, "go_cold_start_decomposition_log.txt"))
+    # 读取冷启动数据（容错）
+    try:
+        py_large_cold = read_cold_start_detailed_log(os.path.join(results_dir, "python_cold_start_detailed_log.txt"))
+    except Exception:
+        py_large_cold = {}
+    try:
+        go_large_cold = read_cold_start_detailed_log(os.path.join(results_dir, "go_cold_start_detailed_log.txt"))
+    except Exception:
+        try:
+            go_large_cold = read_cold_start_detailed_log(os.path.join(results_dir, "go_cold_start_decomposition_log.txt"))
+        except Exception:
+            go_large_cold = {}
     
     # 大模型冷启动分解
     ax1 = axes[0, 0]
@@ -476,8 +512,14 @@ def generate_cold_start_decomposition():
         py_total = safe_mean(py_large_cold.get('total_cold_start', []))
         go_total = safe_mean(go_large_cold.get('total_cold_start', []))
         
-        py_stable = read_result_file(os.path.join(results_dir, "python_reinforced_result.txt"))
-        go_stable = read_result_file(os.path.join(results_dir, "go_reinforced_result.txt"))
+        try:
+            py_stable = read_result_file(os.path.join(results_dir, "python_reinforced_result.txt"))
+        except Exception:
+            py_stable = {}
+        try:
+            go_stable = read_result_file(os.path.join(results_dir, "go_reinforced_result.txt"))
+        except Exception:
+            go_stable = {}
         
         if py_stable and go_stable:
             py_stable_latency = py_stable.get('avg', 0)
@@ -515,7 +557,7 @@ def generate_cold_start_decomposition():
     ax4 = axes[1, 1]
     if py_large_cold and go_large_cold:
         data = [py_large_cold['total_cold_start'], go_large_cold['total_cold_start']]
-        bp = ax4.boxplot(data, labels=['Python', 'Go'], patch_artist=True)
+        bp = ax4.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
         bp['boxes'][0].set_facecolor('#FF6B6B')
         bp['boxes'][0].set_alpha(0.6)
         bp['boxes'][1].set_facecolor('#4ECDC4')
@@ -538,9 +580,15 @@ def generate_memory_comparison():
     """生成内存使用对比图表"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
-    # 读取内存数据
-    py_large_memory = read_memory_detailed_log(os.path.join(results_dir, "python_memory_detailed_log.txt"))
-    go_large_memory = read_memory_detailed_log(os.path.join(results_dir, "go_memory_detailed_log.txt"))
+    # 读取内存数据（容错）
+    try:
+        py_large_memory = read_memory_detailed_log(os.path.join(results_dir, "python_memory_detailed_log.txt"))
+    except Exception:
+        py_large_memory = {}
+    try:
+        go_large_memory = read_memory_detailed_log(os.path.join(results_dir, "go_memory_detailed_log.txt"))
+    except Exception:
+        go_large_memory = {}
     
     # 大模型内存对比
     ax1 = axes[0, 0]
@@ -618,7 +666,7 @@ def generate_memory_comparison():
     ax4 = axes[1, 1]
     if py_large_memory and go_large_memory:
         data = [py_large_memory['post_inference_memory'], go_large_memory['post_inference_memory']]
-        bp = ax4.boxplot(data, labels=['Python', 'Go'], patch_artist=True)
+        bp = ax4.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
         bp['boxes'][0].set_facecolor('#FF6B6B')
         bp['boxes'][0].set_alpha(0.6)
         bp['boxes'][1].set_facecolor('#4ECDC4')
@@ -641,11 +689,23 @@ def generate_output_consistency():
     """生成输出一致性验证图表"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     
-    # 读取检测结果
-    py_large_boxes = read_detections(os.path.join(results_dir, "python_yolo11x_detections.txt"))
-    go_large_boxes = read_detections(os.path.join(results_dir, "go_yolo11x_detections.txt"))
-    py_small_boxes = read_detections(os.path.join(results_dir, "python_yolo11n_detections.txt"))
-    go_small_boxes = read_detections(os.path.join(results_dir, "go_yolo11n_detections.txt"))
+    # 读取检测结果（容错）
+    try:
+        py_large_boxes = read_detections(os.path.join(results_dir, "python_yolo11x_detections.txt"))
+    except Exception:
+        py_large_boxes = []
+    try:
+        go_large_boxes = read_detections(os.path.join(results_dir, "go_yolo11x_detections.txt"))
+    except Exception:
+        go_large_boxes = []
+    try:
+        py_small_boxes = read_detections(os.path.join(results_dir, "python_yolo11n_detections.txt"))
+    except Exception:
+        py_small_boxes = []
+    try:
+        go_small_boxes = read_detections(os.path.join(results_dir, "go_yolo11n_detections.txt"))
+    except Exception:
+        go_small_boxes = []
     
     # 大模型检测数量对比
     ax1 = axes[0, 0]
@@ -734,28 +794,27 @@ def generate_output_consistency():
 # ========== 主函数 ==========
 def main():
     print("===== 开始生成强化实验图表 =====\n")
+    failed = []
     
-    # 生成强化性能对比图表
-    print("生成强化性能对比图表...")
-    generate_reinforced_performance_comparison()
+    chart_funcs = [
+        ("强化性能对比图表", generate_reinforced_performance_comparison),
+        ("t-test可视化图表", generate_ttest_visualization),
+        ("冷启动分解图表", generate_cold_start_decomposition),
+        ("内存对比图表", generate_memory_comparison),
+        ("输出一致性图表", generate_output_consistency),
+    ]
     
-    # 生成t-test可视化图表
-    print("\n生成t-test可视化图表...")
-    generate_ttest_visualization()
-    
-    # 生成冷启动分解图表
-    print("\n生成冷启动分解图表...")
-    generate_cold_start_decomposition()
-    
-    # 生成内存对比图表
-    print("\n生成内存对比图表...")
-    generate_memory_comparison()
-    
-    # 生成输出一致性图表
-    print("\n生成输出一致性图表...")
-    generate_output_consistency()
+    for name, func in chart_funcs:
+        print(f"\n生成{name}...")
+        try:
+            func()
+        except Exception as e:
+            print(f"  [WARN] {name} 生成失败: {e}")
+            failed.append(name)
     
     print("\n===== 强化实验图表生成完成 =====")
+    if failed:
+        print(f"以下图表生成失败: {', '.join(failed)}")
     print(f"所有图表已保存到: {charts_dir}")
 
 if __name__ == "__main__":

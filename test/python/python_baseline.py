@@ -1,14 +1,20 @@
+# -*- coding: utf-8 -*-
 # python_baseline.py
-# Python 基准测试 - Baseline 执行路径
+# Python Baseline Test - Baseline Execution Path
 # 
-# 重要声明（P0原则）：
-# 本测试使用 Python baseline Session 接口（InferenceSession），不启用 I/O Binding。
-# 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+# Important Declaration (P0 Principle):
+# This test uses Python baseline Session API (InferenceSession).
+# Python ONNX Runtime's run() method performs data copy on each call (no Go-style I/O Binding).
+# Per P0 principle, this test is for observation only, not for language-level performance conclusions.
 # 
-# 测试目的：
-# - 观察不同线程配置下的性能趋势
-# - 验证 ONNX Runtime 的线程扩展性
-# - 不用于语言级线程扩展性结论
+# Technical Notes:
+# - Fixed thread configuration: intra_op_num_threads=12, inter_op_num_threads=1
+# - All SessionOptions parameters explicitly set (P2 principle)
+#
+# Test Purpose:
+# - Measure Python baseline performance under fixed thread configuration
+# - Provide reference baseline for comparison with Go side
+# - Not for language-level performance conclusions
 
 import onnxruntime as ort
 import numpy as np
@@ -18,21 +24,21 @@ import sys
 import psutil
 from dataclasses import dataclass
 
-# 固定随机种子，确保可复现
+# 鍥哄畾闅忔満绉嶅瓙锛岀‘淇濆彲澶嶇幇
 np.random.seed(12345)
 
-# 获取当前工作目录
+# 鑾峰彇褰撳墠宸ヤ綔鐩綍
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 构建模型路径
+# 鏋勫缓model璺緞
 model_path = os.path.abspath(os.path.join(current_dir, '..', '..', 'third_party', 'yolo11x.onnx'))
 
-# 构建项目根路径
+# 鏋勫缓椤圭洰鏍硅矾寰?
 base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
 
-# 检查模型文件是否存在
+# 妫€鏌odel鏂囦欢鏄惁瀛樺湪
 if not os.path.exists(model_path):
-    print(f"错误: 模型文件不存在: {model_path}")
+    print(f"Error: Model file not found: {model_path}")
     sys.exit(1)
 
 @dataclass
@@ -49,64 +55,64 @@ class BenchmarkResult:
     times: list
 
 def run_benchmark():
-    print("===== Python 基准测试 ====")
+    print("===== Python Baseline Test ====")
     
-    # 创建 Session
-    print("创建 InferenceSession...")
+    # Create Session
+    print("Creating InferenceSession...")
     try:
         sess_options = ort.SessionOptions()
         
-        # 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-        # 线程配置 - 12线程，与其他测试保持一致
+        # Explicitly set all SessionOptions parameters (P2 principle: no default value dependency)
+        # Thread configuration - 12 threads, consistent with other tests
         sess_options.intra_op_num_threads = 12
         sess_options.inter_op_num_threads = 1
         
-        # 日志配置（关闭所有日志，避免日志IO干扰性能）
+        # Log configuration (disable all logs to avoid IO interference)
         sess_options.log_severity_level = 3
         
-        # 性能分析配置（关闭性能分析，避免额外开销）
+        # Profiling configuration (disable profiling to avoid overhead)
         sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
         
-        # 内存池配置（启用内存池复用）
+        # Memory pool configuration (enable memory pool reuse)
         sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         
-        # 所有未提及的Session参数均使用ONNX Runtime 1.23.2官方默认值
+        # All unspecified Session parameters use ONNX Runtime 1.23.2 official default values
         
         sess = ort.InferenceSession(
             model_path,
             sess_options=sess_options,
             providers=["CPUExecutionProvider"]
         )
-        print("InferenceSession 创建成功!")
+        print("InferenceSession created successfully!")
     except Exception as e:
-        print(f"错误: 创建 InferenceSession 失败: {e}")
+        print(f"Error: Failed to create InferenceSession: {e}")
         sys.exit(1)
 
-    # 获取输入信息
+    # Get input information
     input_name = sess.get_inputs()[0].name
     input_shape = sess.get_inputs()[0].shape
 
-    # 使用与 Go 完全一致的输入数据（从文件加载，使用固定种子）
-    print("加载输入数据...")
+    # Use identical input data as Go (loaded from file with fixed seed)
+    print("Loading input data...")
     input_data_path = os.path.join(base_path, "test", "data", "input_data.bin")
     try:
         input_data = np.fromfile(input_data_path, dtype=np.float32).reshape(input_shape)
-        print(f"输入数据加载成功: {input_data_path}")
+        print(f"Input data loaded successfully: {input_data_path}")
     except Exception as e:
-        print(f"加载输入数据失败: {e}")
+        print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # 内存采样点 1：Session 创建后、warmup 前（Start RSS）
+    # Memory sample point 1: After Session creation, before warmup (Start RSS)
     process = psutil.Process(os.getpid())
-    start_rss = process.memory_info().rss / 1024 / 1024
+    start_rss = process.memory_info().private / 1024 / 1024
 
     # Warmup
     print("Warming up...")
     for _ in range(20):
         sess.run(None, {input_name: input_data})
 
-    # 内存采样点 2：Warmup 后
-    warmup_rss = process.memory_info().rss / 1024 / 1024
+    # Memory sample point 2: After warmup
+    warmup_rss = process.memory_info().private / 1024 / 1024
 
     # Benchmark
     print("Running benchmark...")
@@ -121,15 +127,15 @@ def run_benchmark():
         dt = (t1 - t0) * 1000
         times.append(dt)
 
-        # 采样内存，记录峰值
-        current_rss = process.memory_info().rss / 1024 / 1024
+        # Sample memory, record peak
+        current_rss = process.memory_info().private / 1024 / 1024
         if current_rss > peak_rss:
             peak_rss = current_rss
 
-    # 内存采样点 3：Benchmark 后稳定值
-    stable_rss = process.memory_info().rss / 1024 / 1024
+    # Memory sample point 3: Stable value after benchmark
+    stable_rss = process.memory_info().private / 1024 / 1024
 
-    # 计算结果
+    # Calculate results
     avg_latency = sum(times) / len(times)
     min_latency = min(times)
     max_latency = max(times)
@@ -151,29 +157,29 @@ def run_benchmark():
     )
 
 def main():
-    print("===== Python 基准测试（10次运行） =====")
+    print("===== Python Baseline Test (10 runs) =====")
 
-    # 运行10次测试
+    # Run 10 tests
     num_runs = 10
     results = []
 
     for i in range(num_runs):
-        print(f"\n===== 第 {i+1} 次测试 =====")
+        print(f"\n===== Run {i+1} =====")
         result = run_benchmark()
         results.append(result)
 
-        print(f"平均延迟: {result.avg_latency:.5f} ms")
-        print(f"P50延迟: {result.p50_latency:.5f} ms")
-        print(f"P90延迟: {result.p90_latency:.5f} ms")
-        print(f"P99延迟: {result.p99_latency:.5f} ms")
-        print(f"最小延迟: {result.min_latency:.5f} ms")
-        print(f"最大延迟: {result.max_latency:.5f} ms")
+        print(f"avg_latency: {result.avg_latency:.5f} ms")
+        print(f"P50寤惰繜: {result.p50_latency:.5f} ms")
+        print(f"P90寤惰繜: {result.p90_latency:.5f} ms")
+        print(f"P99寤惰繜: {result.p99_latency:.5f} ms")
+        print(f"min_latency: {result.min_latency:.5f} ms")
+        print(f"max_latency: {result.max_latency:.5f} ms")
         print(f"Start RSS: {result.start_rss:.5f} MB")
         print(f"Peak RSS: {result.peak_rss:.5f} MB")
         print(f"Stable RSS: {result.stable_rss:.5f} MB")
         print(f"RSS Drift: {result.stable_rss - result.start_rss:.5f} MB")
 
-    # 计算平均值
+    # 璁＄畻骞冲潎鍊?
     avg_latency = sum(r.avg_latency for r in results) / num_runs
     p50_latency = sum(r.p50_latency for r in results) / num_runs
     p90_latency = sum(r.p90_latency for r in results) / num_runs
@@ -184,76 +190,77 @@ def main():
     peak_rss = sum(r.peak_rss for r in results) / num_runs
     stable_rss = sum(r.stable_rss for r in results) / num_runs
 
-    print(f"\n===== 10次测试平均值 =====")
-    print(f"平均延迟: {avg_latency:.5f} ms")
-    print(f"P50延迟: {p50_latency:.5f} ms")
-    print(f"P90延迟: {p90_latency:.5f} ms")
-    print(f"P99延迟: {p99_latency:.5f} ms")
-    print(f"最小延迟: {min_latency:.5f} ms")
-    print(f"最大延迟: {max_latency:.5f} ms")
+    print(f"\n===== Average of 10 runs =====")
+    print(f"Average latency: {avg_latency:.5f} ms")
+    print(f"P50 latency: {p50_latency:.5f} ms")
+    print(f"P90 latency: {p90_latency:.5f} ms")
+    print(f"P99 latency: {p99_latency:.5f} ms")
+    print(f"Min latency: {min_latency:.5f} ms")
+    print(f"Max latency: {max_latency:.5f} ms")
     print(f"Start RSS: {start_rss:.5f} MB")
     print(f"Peak RSS: {peak_rss:.5f} MB")
     print(f"Stable RSS: {stable_rss:.5f} MB")
     print(f"RSS Drift: {stable_rss - start_rss:.5f} MB")
 
-    # 保存详细日志
+    # Save detailed log
     log_path = os.path.join(base_path, "results", "python_baseline_detailed_log.txt")
     with open(log_path, 'w', encoding='utf-8') as f:
         for i, r in enumerate(results):
-            f.write(f"===== 第 {i+1} 次测试 =====\n")
-            f.write(f"平均延迟: {r.avg_latency:.5f} ms\n")
-            f.write(f"P50延迟: {r.p50_latency:.5f} ms\n")
-            f.write(f"P90延迟: {r.p90_latency:.5f} ms\n")
-            f.write(f"P99延迟: {r.p99_latency:.5f} ms\n")
-            f.write(f"最小延迟: {r.min_latency:.5f} ms\n")
-            f.write(f"最大延迟: {r.max_latency:.5f} ms\n")
+            f.write(f"===== 绗?{i+1} 娆℃祴璇?=====\n")
+            f.write(f"avg_latency: {r.avg_latency:.5f} ms\n")
+            f.write(f"P50寤惰繜: {r.p50_latency:.5f} ms\n")
+            f.write(f"P90寤惰繜: {r.p90_latency:.5f} ms\n")
+            f.write(f"P99寤惰繜: {r.p99_latency:.5f} ms\n")
+            f.write(f"min_latency: {r.min_latency:.5f} ms\n")
+            f.write(f"max_latency: {r.max_latency:.5f} ms\n")
             f.write(f"Start RSS: {r.start_rss:.5f} MB\n")
             f.write(f"Peak RSS: {r.peak_rss:.5f} MB\n")
             f.write(f"Stable RSS: {r.stable_rss:.5f} MB\n")
             f.write(f"RSS Drift: {r.stable_rss - r.start_rss:.5f} MB\n")
             f.write("\n")
 
-        f.write("===== 10次测试平均值 =====\n")
-        f.write(f"平均延迟: {avg_latency:.5f} ms\n")
-        f.write(f"P50延迟: {p50_latency:.5f} ms\n")
-        f.write(f"P90延迟: {p90_latency:.5f} ms\n")
-        f.write(f"P99延迟: {p99_latency:.5f} ms\n")
-        f.write(f"最小延迟: {min_latency:.5f} ms\n")
-        f.write(f"最大延迟: {max_latency:.5f} ms\n")
+        f.write("===== Average of 10 runs =====\n")
+        f.write(f"avg_latency: {avg_latency:.5f} ms\n")
+        f.write(f"P50寤惰繜: {p50_latency:.5f} ms\n")
+        f.write(f"P90寤惰繜: {p90_latency:.5f} ms\n")
+        f.write(f"P99寤惰繜: {p99_latency:.5f} ms\n")
+        f.write(f"min_latency: {min_latency:.5f} ms\n")
+        f.write(f"max_latency: {max_latency:.5f} ms\n")
         f.write(f"Start RSS: {start_rss:.5f} MB\n")
         f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
         f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
         f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
 
-    print(f"\n详细日志已保存到: {log_path}")
+    print(f"\n璇︾粏鏃ュ織宸蹭繚瀛樺埌: {log_path}")
 
-    # 保存平均值结果
+    # Save average results
     result_path = os.path.join(base_path, "results", "python_baseline_result.txt")
     with open(result_path, 'w', encoding='utf-8') as f:
-        f.write("===== Python 基准测试结果（10 次运行平均值） =====\n")
-        f.write(f"平均延迟：{avg_latency:.5f} ms\n")
-        f.write(f"P50 延迟：{p50_latency:.5f} ms\n")
-        f.write(f"P90 延迟：{p90_latency:.5f} ms\n")
-        f.write(f"P99 延迟：{p99_latency:.5f} ms\n")
-        f.write(f"最小延迟：{min_latency:.5f} ms\n")
-        f.write(f"最大延迟：{max_latency:.5f} ms\n")
-        f.write("\n===== 内存使用情况（10 次运行平均值） =====\n")
+        f.write("===== Python Baseline Test Results (10 runs average) =====\n")
+        f.write(f"avg_latency: {avg_latency:.5f} ms\n")
+        f.write(f"P50 latency: {p50_latency:.5f} ms\n")
+        f.write(f"P90 latency: {p90_latency:.5f} ms\n")
+        f.write(f"P99 latency: {p99_latency:.5f} ms\n")
+        f.write(f"min_latency: {min_latency:.5f} ms\n")
+        f.write(f"max_latency: {max_latency:.5f} ms\n")
+        f.write("\n===== Memory Usage (10 runs average) =====\n")
         f.write(f"Start RSS: {start_rss:.5f} MB\n")
         f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
         f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
         f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
 
-    print(f"结果已保存到: {result_path}")
+    print(f"Results saved to: {result_path}")
 
-    # 保存最后一次测试的原始延迟数据（用于生成箱线图）
-    # 中间数据保留5位小数，符合核心期刊规范
+    # 淇濆瓨鏈€鍚庝竴娆℃祴璇曠殑鍘熷寤惰繜鏁版嵁锛堢敤浜庣敓鎴愮绾垮浘锛?
+    # Intermediate data keeps 5 decimal places, conforming to core journal standards
     latency_data_path = os.path.join(base_path, "results", "python_baseline_latency_data.txt")
     with open(latency_data_path, 'w', encoding='utf-8') as f:
         for t in results[num_runs-1].times:
             f.write(f"{t:.5f}\n")
 
-    print(f"原始延迟数据已保存到: {latency_data_path}")
-    print("测试完成!")
+    print(f"鍘熷寤惰繜鏁版嵁宸蹭繚瀛樺埌: {latency_data_path}")
+    print("Test completed!")
 
 if __name__ == "__main__":
     main()
+

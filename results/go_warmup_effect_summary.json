@@ -2,10 +2,10 @@
   "test_name": "Warmup_Effect",
   "model": "YOLO11x",
   "language": "Go",
-  "first_inference_ms": 912,
-  "second_inference_ms": 837,
-  "stable_inference_ms": 857.4,
+  "first_inference_ms": 705,
+  "second_inference_ms": 706,
+  "stable_inference_ms": 692,
   "warmup_required_num": 1,
-  "performance_gap_percent": 6.3680895731280645,
-  "stable_cv_percent": 2.197013907598732
+  "performance_gap_percent": 1.8786127167630058,
+  "stable_cv_percent": 0.8123392671997224
 }

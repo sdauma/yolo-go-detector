@@ -1,10 +1,15 @@
 // go_session_creation_benchmark.go
-// Go Session创建时间测试
+// Go Session 创建时间测试
+//
+// 技术说明：
+// - 使用 Go baseline Session 接口（NewSession），该接口通过传入输入/输出 Tensor
+//   自动启用 I/O Binding，但不接受 SessionOptions 参数
+// - 线程配置由 ONNX Runtime 默认行为决定，未显式设置
 //
 // 测试目的：
-// - 测量Go创建Session的时间
-// - 与Python的Session创建时间进行对比
-// - 提供客观的跨语言对比数据
+// - 分别对 YOLO11x 和 YOLO11n 模型各创建 100 次 Session，测量每次创建耗时
+// - 统计 avg/std/p50/p90/min/max 等指标
+// - 与 Python 的 Session 创建时间进行对比
 
 package main
 

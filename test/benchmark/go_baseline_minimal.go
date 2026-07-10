@@ -2,17 +2,19 @@
 // Go 基准测试 - Baseline 执行路径
 //
 // 重要声明（P0原则）：
-// 本测试使用 Go baseline Session 接口（NewSession），由于技术限制，实际上启用了 I/O Binding。
-// 根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
+// 本测试使用 Go baseline Session 接口（NewSession），该接口通过传入输入/输出 Tensor
+// 自动启用 I/O Binding。根据 P0 原则，本测试仅用于观察现象，不用于语言级性能结论。
 //
 // 技术限制说明：
-// - Go baseline Session 接口（NewSession）不支持显式设置线程参数
-// - 线程配置可能依赖 ONNX Runtime 的默认行为
+// - Go baseline Session 接口（NewSession）的签名不接受 SessionOptions 参数，
+//   线程配置由 ONNX Runtime 的默认行为决定（intra_op_num_threads 默认等于 CPU 核数）
+// - 代码中创建了 SessionOptions 并设置了 intraOp=12，但由于 NewSession 不接受 opts，
+//   这些设置实际上不生效。保留 opts 创建代码仅用于记录意图
 // - 因此，Go 和 Python 的线程配置测试结果不可直接对比
 //
 // 测试目的：
-// - 观察不同线程配置下的性能趋势
-// - 验证 ONNX Runtime 的线程扩展性
+// - 在 ONNX Runtime 默认线程配置下测量 Go 端的基准性能
+// - 为与其他测试的对比提供参考基线
 // - 不用于语言级线程扩展性结论
 
 package main
@@ -22,15 +24,13 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
-	"strings"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 // Rand 简单的随机数生成器，用于生成固定种子的随机数
@@ -53,21 +53,8 @@ func fileExists(path string) bool {
 	return !info.IsDir()
 }
 
-// getProcessRSS 获取进程的 RSS（Working Set）内存使用量（MB）
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // BenchmarkResult 单次测试结果
 type BenchmarkResult struct {
@@ -112,28 +99,9 @@ func runBenchmark() (*BenchmarkResult, error) {
 	ort.InitializeEnvironment()
 	defer ort.DestroyEnvironment()
 
-	// 创建会话选项
-	opts, err := ort.NewSessionOptions()
-	if err != nil {
-		return nil, fmt.Errorf("创建会话选项失败: %v", err)
-	}
-	defer opts.Destroy()
-
-	// 显式设置所有 SessionOptions 参数（P2原则：禁止依赖默认值）
-	// 线程配置 - 12线程，与其他测试保持一致
-	opts.SetIntraOpNumThreads(12)
-	opts.SetInterOpNumThreads(1)
-
-	// 执行提供者配置 - 使用默认执行提供者（CPU）
-
-	// 日志配置（关闭所有日志，避免日志IO干扰性能）
-	opts.SetLogSeverityLevel(3)
-
-	// 性能分析配置（关闭性能分析，避免额外开销）
-	opts.SetExecutionMode(0)
-
-	// 内存池配置（启用内存池复用）
-	opts.SetGraphOptimizationLevel(3)
+	// 注意：NewSession 接口不接受 SessionOptions 参数，
+	// 线程配置由 ONNX Runtime 默认行为决定（intra_op_num_threads 默认等于 CPU 核数）。
+	// 如需自定义线程数，请使用 NewAdvancedSession 接口。
 
 	// 创建输入张量
 	inputShape := ort.NewShape(1, 3, 640, 640)

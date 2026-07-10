@@ -1,0 +1,58 @@
+[
+  {
+    "segment": 1,
+    "from": 1,
+    "to": 500,
+    "success": 500,
+    "fail": 0,
+    "fps": 0.8224007213820169,
+    "avg_infer_ms": 4873.694092,
+    "p50_infer_ms": 4877.859,
+    "p90_infer_ms": 4938.51,
+    "p99_infer_ms": 5123.27,
+    "max_infer_ms": 5205.708,
+    "detections": 290
+  },
+  {
+    "segment": 2,
+    "from": 501,
+    "to": 1000,
+    "success": 500,
+    "fail": 0,
+    "fps": 0.8167287980140991,
+    "avg_infer_ms": 4915.038975999993,
+    "p50_infer_ms": 4904.369,
+    "p90_infer_ms": 4992.944,
+    "p99_infer_ms": 5244.9,
+    "max_infer_ms": 5336.116,
+    "detections": 290
+  },
+  {
+    "segment": 3,
+    "from": 1001,
+    "to": 1500,
+    "success": 500,
+    "fail": 0,
+    "fps": 0.8223558670058375,
+    "avg_infer_ms": 4885.278118000001,
+    "p50_infer_ms": 4874.523,
+    "p90_infer_ms": 4942.686,
+    "p99_infer_ms": 5262.248,
+    "max_infer_ms": 5465.675,
+    "detections": 235
+  },
+  {
+    "segment": 4,
+    "from": 1501,
+    "to": 2000,
+    "success": 500,
+    "fail": 0,
+    "fps": 0.8417247042149133,
+    "avg_infer_ms": 4768.899000000001,
+    "p50_infer_ms": 4873.166,
+    "p90_infer_ms": 4934.322,
+    "p99_infer_ms": 5240.56,
+    "max_infer_ms": 5881.529,
+    "detections": 343
+  }
+]

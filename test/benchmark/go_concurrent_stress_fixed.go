@@ -1,3 +1,16 @@
+// go_concurrent_stress_fixed.go
+// Go Session Pool 并发推理性能测试（修复版）
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置 intraOp=1, interOp=1
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+// - 关键修复：每个 goroutine 拥有独立的 Session 和绑定的 Tensor，循环复用
+// - 测试并发度 1/2/4/6/8/12，每并发度 500 次请求
+//
+// 测试目的：
+// - 验证 Session Pool 在修复后的正确并发行为
+// - 测量独立 Session 复用模式下的性能表现
+
 package main
 
 import (
@@ -5,16 +18,14 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 type ConcurrentTestResult struct {
@@ -42,20 +53,8 @@ type SessionBundle struct {
 	output  *ort.Tensor[float32]
 }
 
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 // createSessionBundle 创建Session和绑定的Tensor
 // 关键：Tensor在Session创建时绑定，之后循环复用，不能每次推理重新创建
@@ -213,11 +212,9 @@ func runConcurrentTest(
 		}(bundle)
 	}
 
-	go func() {
-		wg.Wait()
-		close(latencyChan)
-		close(errorChan)
-	}()
+	wg.Wait()
+	close(latencyChan)
+	close(errorChan)
 
 	totalTime := float64(time.Since(startTime).Milliseconds())
 	endRSS := getProcessRSS()

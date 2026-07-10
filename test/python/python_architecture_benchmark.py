@@ -1,3 +1,17 @@
+# -*- coding: utf-8 -*-
+# python_architecture_benchmark.py
+# Python Concurrent Inference Architecture Comparison Test (3 architectures: Shared / Mutex / Session Pool)
+#
+# Technical Notes:
+# - Uses Python baseline Session API (InferenceSession)
+# - Session Pool is implemented as a string constant in Architecture enum,
+#   actual sessions are still created via InferenceSession
+# - Concurrency implemented via ThreadPoolExecutor
+#
+# Test Purpose:
+# - Compare performance characteristics of three concurrent inference architectures
+# - Align with Go-side architecture comparison test, provide cross-language data
+
 import os
 import time
 import numpy as np
@@ -36,8 +50,9 @@ class TestResult:
     rss_drift: float = 0.0
 
 def get_process_rss():
+    """返回进程私有内存（PrivateMemorySize64），与 Go 端 memutil.PrivateMemoryMB() 对齐"""
     process = psutil.Process(os.getpid())
-    return process.memory_info().rss / 1024 / 1024
+    return process.memory_info().private / 1024 / 1024
 
 def create_session(model_path: str, intra_op_threads: int = 1) -> ort.InferenceSession:
     """创建 ONNX Runtime Session"""
@@ -91,8 +106,8 @@ def test_shared_session(
     concurrency: int,
     num_requests: int
 ) -> TestResult:
-    """测试 Shared Session 架构：多线程共享单一 Session"""
-    print(f"测试 Shared Session: {concurrency} 并发，{num_requests} 请求")
+    """Test Shared Session architecture: multiple threads share a single Session"""
+    print(f"Testing Shared Session: {concurrency} concurrency, {num_requests} requests")
 
     start_rss = get_process_rss()
     peak_rss = start_rss
@@ -129,9 +144,13 @@ def test_shared_session(
 
     start_time = time.perf_counter()
     batch_size = num_requests // concurrency
+    remainder = num_requests % concurrency
 
     with ThreadPoolExecutor(max_workers=concurrency) as executor:
-        futures = [executor.submit(worker, i, batch_size) for i in range(concurrency)]
+        futures = []
+        for i in range(concurrency):
+            extra = 1 if i < remainder else 0
+            futures.append(executor.submit(worker, i, batch_size + extra))
 
         for future in as_completed(futures):
             latencies, errors = future.result()
@@ -169,8 +188,8 @@ def test_mutex_protected(
     concurrency: int,
     num_requests: int
 ) -> TestResult:
-    """测试 Mutex Protected 架构：串行访问 Session"""
-    print(f"测试 Mutex Protected: {concurrency} 并发，{num_requests} 请求")
+    """Test Mutex Protected architecture: serialized Session access"""
+    print(f"Testing Mutex Protected: {concurrency} concurrency, {num_requests} requests")
 
     start_rss = get_process_rss()
     peak_rss = start_rss
@@ -209,9 +228,13 @@ def test_mutex_protected(
 
     start_time = time.perf_counter()
     batch_size = num_requests // concurrency
+    remainder = num_requests % concurrency
 
     with ThreadPoolExecutor(max_workers=concurrency) as executor:
-        futures = [executor.submit(worker, i, batch_size) for i in range(concurrency)]
+        futures = []
+        for i in range(concurrency):
+            extra = 1 if i < remainder else 0
+            futures.append(executor.submit(worker, i, batch_size + extra))
 
         for future in as_completed(futures):
             latencies, errors = future.result()
@@ -249,8 +272,8 @@ def test_session_pool(
     pool_size: int,
     num_requests: int
 ) -> TestResult:
-    """测试 Session Pool 架构：多 Session 池化"""
-    print(f"测试 Session Pool: pool_size={pool_size}, {num_requests} 请求")
+    """Test Session Pool architecture: multi-Session pooling"""
+    print(f"Testing Session Pool: pool_size={pool_size}, {num_requests} requests")
 
     start_rss = get_process_rss()
     peak_rss = start_rss
@@ -300,9 +323,13 @@ def test_session_pool(
 
     start_time = time.perf_counter()
     batch_size = num_requests // pool_size
+    remainder = num_requests % pool_size
 
     with ThreadPoolExecutor(max_workers=pool_size) as executor:
-        futures = [executor.submit(worker, i, batch_size) for i in range(pool_size)]
+        futures = []
+        for i in range(pool_size):
+            extra = 1 if i < remainder else 0
+            futures.append(executor.submit(worker, i, batch_size + extra))
 
         for future in as_completed(futures):
             latencies, errors = future.result()
@@ -335,7 +362,7 @@ def test_session_pool(
     )
 
 def main():
-    print("===== Python 推理架构性能对比实验（论文级）=====")
+    print("===== Python Inference Architecture Performance Comparison (Paper Level) =====")
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
     base_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
@@ -347,45 +374,45 @@ def main():
 
     all_results = []
 
-    print("\n===== 实验 1: Shared Session 扩展性测试 =====")
+    print("\n===== Experiment 1: Shared Session Scalability Test =====")
     for concurrency in [1, 2, 4, 8, 12]:
         result = test_shared_session(model_path, input_data, concurrency, 500)
         all_results.append(result)
-        # 控制台输出保留2位小数（便于阅读），文件保存保留5位小数
-        print(f"并发={concurrency}, 吞吐量={result.throughput:.2f} REQ/s, 平均延迟={result.avg_latency:.2f} ms")
+        # Console output keeps 2 decimal places (for readability), file saves keep 5 decimal places
+        print(f"concurrency={concurrency}, throughput={result.throughput:.2f} REQ/s, avg_latency={result.avg_latency:.2f} ms")
 
-    print("\n===== 实验 2: Mutex Protected 串行化测试 =====")
+    print("\n===== Experiment 2: Mutex Protected Serialization Test =====")
     for concurrency in [1, 2, 4, 8, 12]:
         result = test_mutex_protected(model_path, input_data, concurrency, 500)
         all_results.append(result)
-        # 控制台输出保留2位小数（便于阅读），文件保存保留5位小数
-        print(f"并发={concurrency}, 吞吐量={result.throughput:.2f} REQ/s, 平均延迟={result.avg_latency:.2f} ms")
+        # Console output keeps 2 decimal places (for readability), file saves keep 5 decimal places
+        print(f"concurrency={concurrency}, throughput={result.throughput:.2f} REQ/s, avg_latency={result.avg_latency:.2f} ms")
 
-    print("\n===== 实验 3: Session Pool 池大小优化测试 =====")
+    print("\n===== Experiment 3: Session Pool Size Optimization Test =====")
     for pool_size in [1, 2, 4, 6, 8, 12]:
         result = test_session_pool(model_path, input_data, pool_size, 500)
         all_results.append(result)
-        # 控制台输出保留2位小数（便于阅读），文件保存保留5位小数
-        print(f"池大小={pool_size}, 吞吐量={result.throughput:.2f} REQ/s, 平均延迟={result.avg_latency:.2f} ms")
+        # Console output keeps 2 decimal places (for readability), file saves keep 5 decimal places
+        print(f"pool_size={pool_size}, throughput={result.throughput:.2f} REQ/s, avg_latency={result.avg_latency:.2f} ms")
 
     result_path = os.path.join(base_path, "results", "python_architecture_comparison.txt")
     os.makedirs(os.path.dirname(result_path), exist_ok=True)
 
-    # 中间数据保留5位小数，符合核心期刊规范
-    content = "===== Python 推理架构性能对比实验结果 =====\n\n"
+    # Intermediate data keeps 5 decimal places, conforming to core journal standards
+    content = "===== Python Inference Architecture Performance Comparison Results =====\n\n"
     for r in all_results:
-        config = f"并发={r.concurrency}" if r.architecture != Architecture.SESSION_POOL else f"池大小={r.pool_size}"
-        content += f"架构={r.architecture.value}, {config}, "
-        content += f"吞吐量={r.throughput:.5f} REQ/s, 平均延迟={r.avg_latency:.5f} ms, "
+        config = f"concurrency={r.concurrency}" if r.architecture != Architecture.SESSION_POOL else f"pool_size={r.pool_size}"
+        content += f"architecture={r.architecture.value}, {config}, "
+        content += f"throughput={r.throughput:.5f} REQ/s, avg_latency={r.avg_latency:.5f} ms, "
         content += f"P50={r.p50_latency:.5f} ms, P90={r.p90_latency:.5f} ms, P99={r.p99_latency:.5f} ms, "
-        content += f"最小延迟={r.min_latency:.5f} ms, 最大延迟={r.max_latency:.5f} ms, "
-        content += f"峰值RSS={r.peak_rss:.5f} MB, RSS漂移={r.rss_drift:.5f} MB\n"
+        content += f"min_latency={r.min_latency:.5f} ms, max_latency={r.max_latency:.5f} ms, "
+        content += f"peak_rss={r.peak_rss:.5f} MB, rss_drift={r.rss_drift:.5f} MB\n"
 
     with open(result_path, 'w', encoding='utf-8') as f:
         f.write(content)
 
-    print(f"\n结果已保存到：{result_path}")
-    print("\n===== 实验完成 =====")
+    print(f"\nResults saved to: {result_path}")
+    print("\n===== Experiment Completed =====")
 
 if __name__ == "__main__":
     main()

@@ -1,131 +1,131 @@
-===== 第 1 次测试 =====
-平均延迟: 707.14649 ms
-P50延迟: 691.10900 ms
-P90延迟: 732.02072 ms
-P99延迟: 983.21780 ms
-最小延迟: 668.47230 ms
-最大延迟: 1162.18330 ms
-Start RSS: 293.94531 MB
-Peak RSS: 555.93359 MB
-Stable RSS: 555.93359 MB
-RSS Drift: 261.98828 MB
+===== 绗?1 娆℃祴璇?=====
+avg_latency: 586.35975 ms
+P50寤惰繜: 585.66080 ms
+P90寤惰繜: 594.76487 ms
+P99寤惰繜: 605.97496 ms
+min_latency: 574.90010 ms
+max_latency: 644.42910 ms
+Start RSS: 701.00000 MB
+Peak RSS: 966.50391 MB
+Stable RSS: 966.37500 MB
+RSS Drift: 265.37500 MB
 
-===== 第 2 次测试 =====
-平均延迟: 726.31215 ms
-P50延迟: 692.49805 ms
-P90延迟: 832.40406 ms
-P99延迟: 1169.08485 ms
-最小延迟: 675.02420 ms
-最大延迟: 1306.53190 ms
-Start RSS: 296.31250 MB
-Peak RSS: 548.45312 MB
-Stable RSS: 548.45312 MB
-RSS Drift: 252.14062 MB
+===== 绗?2 娆℃祴璇?=====
+avg_latency: 599.01296 ms
+P50寤惰繜: 586.51540 ms
+P90寤惰繜: 602.79763 ms
+P99寤惰繜: 930.19218 ms
+min_latency: 573.12060 ms
+max_latency: 1322.38050 ms
+Start RSS: 699.89453 MB
+Peak RSS: 965.86719 MB
+Stable RSS: 965.86719 MB
+RSS Drift: 265.97266 MB
 
-===== 第 3 次测试 =====
-平均延迟: 788.69423 ms
-P50延迟: 760.78555 ms
-P90延迟: 927.10363 ms
-P99延迟: 1131.09639 ms
-最小延迟: 674.99700 ms
-最大延迟: 1257.03920 ms
-Start RSS: 297.88281 MB
-Peak RSS: 545.30078 MB
-Stable RSS: 545.28125 MB
-RSS Drift: 247.39844 MB
+===== 绗?3 娆℃祴璇?=====
+avg_latency: 585.84516 ms
+P50寤惰繜: 584.77765 ms
+P90寤惰繜: 594.84480 ms
+P99寤惰繜: 603.84886 ms
+min_latency: 575.52470 ms
+max_latency: 620.10630 ms
+Start RSS: 700.41016 MB
+Peak RSS: 966.06250 MB
+Stable RSS: 966.06250 MB
+RSS Drift: 265.65234 MB
 
-===== 第 4 次测试 =====
-平均延迟: 735.09623 ms
-P50延迟: 704.47040 ms
-P90延迟: 817.68629 ms
-P99延迟: 968.08259 ms
-最小延迟: 674.21990 ms
-最大延迟: 1292.84000 ms
-Start RSS: 296.76172 MB
-Peak RSS: 548.93359 MB
-Stable RSS: 548.93359 MB
-RSS Drift: 252.17188 MB
+===== 绗?4 娆℃祴璇?=====
+avg_latency: 584.88256 ms
+P50寤惰繜: 583.46660 ms
+P90寤惰繜: 593.85733 ms
+P99寤惰繜: 602.34273 ms
+min_latency: 574.43820 ms
+max_latency: 603.33590 ms
+Start RSS: 698.51562 MB
+Peak RSS: 964.74219 MB
+Stable RSS: 964.74219 MB
+RSS Drift: 266.22656 MB
 
-===== 第 5 次测试 =====
-平均延迟: 751.90950 ms
-P50延迟: 693.23095 ms
-P90延迟: 899.81150 ms
-P99延迟: 1411.53444 ms
-最小延迟: 672.97660 ms
-最大延迟: 1522.94080 ms
-Start RSS: 297.50391 MB
-Peak RSS: 544.86719 MB
-Stable RSS: 544.86719 MB
-RSS Drift: 247.36328 MB
+===== 绗?5 娆℃祴璇?=====
+avg_latency: 585.02072 ms
+P50寤惰繜: 584.11735 ms
+P90寤惰繜: 591.66708 ms
+P99寤惰繜: 608.08694 ms
+min_latency: 573.51950 ms
+max_latency: 624.16520 ms
+Start RSS: 700.11719 MB
+Peak RSS: 965.72656 MB
+Stable RSS: 965.72656 MB
+RSS Drift: 265.60938 MB
 
-===== 第 6 次测试 =====
-平均延迟: 705.26548 ms
-P50延迟: 689.83245 ms
-P90延迟: 723.88934 ms
-P99延迟: 1002.18437 ms
-最小延迟: 674.39580 ms
-最大延迟: 1293.61190 ms
-Start RSS: 297.29688 MB
-Peak RSS: 554.41406 MB
-Stable RSS: 554.41406 MB
-RSS Drift: 257.11719 MB
+===== 绗?6 娆℃祴璇?=====
+avg_latency: 593.68626 ms
+P50寤惰繜: 584.07000 ms
+P90寤惰繜: 598.83920 ms
+P99寤惰繜: 815.94875 ms
+min_latency: 573.45870 ms
+max_latency: 889.74270 ms
+Start RSS: 700.83984 MB
+Peak RSS: 966.26953 MB
+Stable RSS: 966.23047 MB
+RSS Drift: 265.39062 MB
 
-===== 第 7 次测试 =====
-平均延迟: 702.51516 ms
-P50延迟: 688.40980 ms
-P90延迟: 721.41459 ms
-P99延迟: 991.09239 ms
-最小延迟: 675.01210 ms
-最大延迟: 1053.53420 ms
-Start RSS: 296.29297 MB
-Peak RSS: 543.70312 MB
-Stable RSS: 543.70312 MB
-RSS Drift: 247.41016 MB
+===== 绗?7 娆℃祴璇?=====
+avg_latency: 588.35974 ms
+P50寤惰繜: 584.87150 ms
+P90寤惰繜: 597.03364 ms
+P99寤惰繜: 694.52822 ms
+min_latency: 572.71700 ms
+max_latency: 717.93970 ms
+Start RSS: 702.75391 MB
+Peak RSS: 968.19141 MB
+Stable RSS: 968.19141 MB
+RSS Drift: 265.43750 MB
 
-===== 第 8 次测试 =====
-平均延迟: 693.99525 ms
-P50延迟: 687.30885 ms
-P90延迟: 706.86572 ms
-P99延迟: 779.24743 ms
-最小延迟: 673.81450 ms
-最大延迟: 1026.81450 ms
-Start RSS: 296.98828 MB
-Peak RSS: 553.75781 MB
-Stable RSS: 553.75781 MB
-RSS Drift: 256.76953 MB
+===== 绗?8 娆℃祴璇?=====
+avg_latency: 587.71495 ms
+P50寤惰繜: 586.33745 ms
+P90寤惰繜: 595.11822 ms
+P99寤惰繜: 624.83298 ms
+min_latency: 575.74920 ms
+max_latency: 628.55150 ms
+Start RSS: 707.08984 MB
+Peak RSS: 972.53906 MB
+Stable RSS: 972.53906 MB
+RSS Drift: 265.44922 MB
 
-===== 第 9 次测试 =====
-平均延迟: 695.26821 ms
-P50延迟: 687.88920 ms
-P90延迟: 702.69548 ms
-P99延迟: 795.19870 ms
-最小延迟: 674.93360 ms
-最大延迟: 1241.55690 ms
-Start RSS: 297.32422 MB
-Peak RSS: 554.12891 MB
-Stable RSS: 554.12891 MB
-RSS Drift: 256.80469 MB
+===== 绗?9 娆℃祴璇?=====
+avg_latency: 585.53738 ms
+P50寤惰繜: 583.76275 ms
+P90寤惰繜: 593.24514 ms
+P99寤惰繜: 605.05771 ms
+min_latency: 574.86820 ms
+max_latency: 694.43830 ms
+Start RSS: 701.03516 MB
+Peak RSS: 966.45312 MB
+Stable RSS: 966.45312 MB
+RSS Drift: 265.41797 MB
 
-===== 第 10 次测试 =====
-平均延迟: 692.07727 ms
-P50延迟: 683.34490 ms
-P90延迟: 706.82808 ms
-P99延迟: 838.63251 ms
-最小延迟: 671.48210 ms
-最大延迟: 956.96930 ms
-Start RSS: 296.71484 MB
-Peak RSS: 553.48828 MB
-Stable RSS: 553.48828 MB
-RSS Drift: 256.77344 MB
+===== 绗?10 娆℃祴璇?=====
+avg_latency: 584.81262 ms
+P50寤惰繜: 584.93865 ms
+P90寤惰繜: 591.41136 ms
+P99寤惰繜: 598.47952 ms
+min_latency: 573.41980 ms
+max_latency: 602.31290 ms
+Start RSS: 703.32812 MB
+Peak RSS: 968.75781 MB
+Stable RSS: 968.75781 MB
+RSS Drift: 265.42969 MB
 
-===== 10次测试平均值 =====
-平均延迟: 719.82800 ms
-P50延迟: 697.88792 ms
-P90延迟: 777.07194 ms
-P99延迟: 1006.93715 ms
-最小延迟: 673.53281 ms
-最大延迟: 1211.40220 ms
-Start RSS: 296.70234 MB
-Peak RSS: 550.29805 MB
-Stable RSS: 550.29609 MB
-RSS Drift: 253.59375 MB
+===== Average of 10 runs =====
+avg_latency: 588.12321 ms
+P50寤惰繜: 584.85182 ms
+P90寤惰繜: 595.35793 ms
+P99寤惰繜: 668.92929 ms
+min_latency: 574.17160 ms
+max_latency: 734.74021 ms
+Start RSS: 701.49844 MB
+Peak RSS: 967.11133 MB
+Stable RSS: 967.09453 MB
+RSS Drift: 265.59609 MB

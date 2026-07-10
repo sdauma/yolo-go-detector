@@ -1,10 +1,14 @@
 // go_output_consistency.go
 // Go 输出一致性验证
 //
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts（未设置线程参数）
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+//
 // 测试目的：
-// - 处理bus.jpg图像并进行推理
-// - 提取bounding boxes
-// - 保存结果用于与Python版本比较
+// - 处理 bus.jpg 图像并进行推理
+// - 提取 bounding boxes
+// - 保存结果用于与 Python 版本比较
 // - 确保输出一致性
 
 package main

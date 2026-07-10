@@ -1,339 +1,339 @@
-===== Python 冷启动分解测试结果 =====
+===== Python Cold Start Decomposition Test Results =====
 
-===== 大模型 (YOLO11x) =====
-===== 第 1 次测试 =====
-会话创建时间: 988.78530 ms
-模型加载时间: 988.78530 ms
-首次推理时间: 8190.10410 ms
-总冷启动时间: 9178.88940 ms
-Start RSS: 48.30469 MB
-Peak RSS: 522.78516 MB
+===== Large Model (YOLO11x) =====
+===== Run #1 =====
+Session Creation Time: 749.96530 ms
+Model Loading Time: 749.96530 ms
+First Inference Time: 4766.13240 ms
+Total Cold Start Time: 5516.09770 ms
+Start RSS: 415.93750 MB
+Peak RSS: 961.16016 MB
 
-===== 第 2 次测试 =====
-会话创建时间: 966.76240 ms
-模型加载时间: 966.76240 ms
-首次推理时间: 7418.94870 ms
-总冷启动时间: 8385.71110 ms
-Start RSS: 57.16406 MB
-Peak RSS: 522.66016 MB
+===== Run #2 =====
+Session Creation Time: 665.77790 ms
+Model Loading Time: 665.77790 ms
+First Inference Time: 6023.49710 ms
+Total Cold Start Time: 6689.27500 ms
+Start RSS: 421.71484 MB
+Peak RSS: 962.92188 MB
 
-===== 第 3 次测试 =====
-会话创建时间: 981.79220 ms
-模型加载时间: 981.79220 ms
-首次推理时间: 7464.53510 ms
-总冷启动时间: 8446.32730 ms
-Start RSS: 57.46875 MB
-Peak RSS: 528.54297 MB
+===== Run #3 =====
+Session Creation Time: 665.59520 ms
+Model Loading Time: 665.59520 ms
+First Inference Time: 5977.53490 ms
+Total Cold Start Time: 6643.13010 ms
+Start RSS: 421.54688 MB
+Peak RSS: 963.08984 MB
 
-===== 第 4 次测试 =====
-会话创建时间: 973.15840 ms
-模型加载时间: 973.15840 ms
-首次推理时间: 9374.04260 ms
-总冷启动时间: 10347.20100 ms
-Start RSS: 58.09375 MB
-Peak RSS: 523.69922 MB
+===== Run #4 =====
+Session Creation Time: 710.35840 ms
+Model Loading Time: 710.35840 ms
+First Inference Time: 5948.11270 ms
+Total Cold Start Time: 6658.47110 ms
+Start RSS: 422.11719 MB
+Peak RSS: 969.89844 MB
 
-===== 第 5 次测试 =====
-会话创建时间: 989.67800 ms
-模型加载时间: 989.67800 ms
-首次推理时间: 6822.27290 ms
-总冷启动时间: 7811.95090 ms
-Start RSS: 58.10938 MB
-Peak RSS: 527.83594 MB
+===== Run #5 =====
+Session Creation Time: 646.90190 ms
+Model Loading Time: 646.90190 ms
+First Inference Time: 6033.67700 ms
+Total Cold Start Time: 6680.57890 ms
+Start RSS: 422.24219 MB
+Peak RSS: 962.56250 MB
 
-===== 第 6 次测试 =====
-会话创建时间: 987.49860 ms
-模型加载时间: 987.49860 ms
-首次推理时间: 7415.95930 ms
-总冷启动时间: 8403.45790 ms
-Start RSS: 57.18750 MB
-Peak RSS: 524.56641 MB
+===== Run #6 =====
+Session Creation Time: 666.07480 ms
+Model Loading Time: 666.07480 ms
+First Inference Time: 6284.54820 ms
+Total Cold Start Time: 6950.62300 ms
+Start RSS: 427.48047 MB
+Peak RSS: 964.86328 MB
 
-===== 第 7 次测试 =====
-会话创建时间: 960.93730 ms
-模型加载时间: 960.93730 ms
-首次推理时间: 8432.73520 ms
-总冷启动时间: 9393.67250 ms
-Start RSS: 57.33203 MB
-Peak RSS: 523.33594 MB
+===== Run #7 =====
+Session Creation Time: 648.67070 ms
+Model Loading Time: 648.67070 ms
+First Inference Time: 6069.58270 ms
+Total Cold Start Time: 6718.25340 ms
+Start RSS: 422.69922 MB
+Peak RSS: 966.28906 MB
 
-===== 第 8 次测试 =====
-会话创建时间: 979.31760 ms
-模型加载时间: 979.31760 ms
-首次推理时间: 7724.55600 ms
-总冷启动时间: 8703.87360 ms
-Start RSS: 57.79688 MB
-Peak RSS: 525.35547 MB
+===== Run #8 =====
+Session Creation Time: 655.37180 ms
+Model Loading Time: 655.37180 ms
+First Inference Time: 5643.00760 ms
+Total Cold Start Time: 6298.37940 ms
+Start RSS: 423.29297 MB
+Peak RSS: 962.07031 MB
 
-===== 第 9 次测试 =====
-会话创建时间: 977.82260 ms
-模型加载时间: 977.82260 ms
-首次推理时间: 7814.68890 ms
-总冷启动时间: 8792.51150 ms
-Start RSS: 57.37891 MB
-Peak RSS: 525.31250 MB
+===== Run #9 =====
+Session Creation Time: 670.59330 ms
+Model Loading Time: 670.59330 ms
+First Inference Time: 6352.27140 ms
+Total Cold Start Time: 7022.86470 ms
+Start RSS: 423.69141 MB
+Peak RSS: 967.48438 MB
 
-===== 第 10 次测试 =====
-会话创建时间: 996.85010 ms
-模型加载时间: 996.85010 ms
-首次推理时间: 7196.80000 ms
-总冷启动时间: 8193.65010 ms
-Start RSS: 57.63281 MB
-Peak RSS: 527.41016 MB
+===== Run #10 =====
+Session Creation Time: 650.17640 ms
+Model Loading Time: 650.17640 ms
+First Inference Time: 5484.96630 ms
+Total Cold Start Time: 6135.14270 ms
+Start RSS: 425.58594 MB
+Peak RSS: 966.28125 MB
 
-===== 第 11 次测试 =====
-会话创建时间: 985.87190 ms
-模型加载时间: 985.87190 ms
-首次推理时间: 8171.77080 ms
-总冷启动时间: 9157.64270 ms
-Start RSS: 58.00781 MB
-Peak RSS: 528.58203 MB
+===== Run #11 =====
+Session Creation Time: 715.57640 ms
+Model Loading Time: 715.57640 ms
+First Inference Time: 6063.74970 ms
+Total Cold Start Time: 6779.32610 ms
+Start RSS: 425.56250 MB
+Peak RSS: 964.78516 MB
 
-===== 第 12 次测试 =====
-会话创建时间: 949.71870 ms
-模型加载时间: 949.71870 ms
-首次推理时间: 8349.45270 ms
-总冷启动时间: 9299.17140 ms
-Start RSS: 58.89453 MB
-Peak RSS: 524.18750 MB
+===== Run #12 =====
+Session Creation Time: 753.42330 ms
+Model Loading Time: 753.42330 ms
+First Inference Time: 5056.52990 ms
+Total Cold Start Time: 5809.95320 ms
+Start RSS: 428.12109 MB
+Peak RSS: 964.05859 MB
 
-===== 第 13 次测试 =====
-会话创建时间: 959.04250 ms
-模型加载时间: 959.04250 ms
-首次推理时间: 6815.70610 ms
-总冷启动时间: 7774.74860 ms
-Start RSS: 58.99219 MB
-Peak RSS: 529.50000 MB
+===== Run #13 =====
+Session Creation Time: 656.74240 ms
+Model Loading Time: 656.74240 ms
+First Inference Time: 5747.89770 ms
+Total Cold Start Time: 6404.64010 ms
+Start RSS: 422.35156 MB
+Peak RSS: 967.25781 MB
 
-===== 第 14 次测试 =====
-会话创建时间: 990.80650 ms
-模型加载时间: 990.80650 ms
-首次推理时间: 7037.38790 ms
-总冷启动时间: 8028.19440 ms
-Start RSS: 58.62500 MB
-Peak RSS: 529.55469 MB
+===== Run #14 =====
+Session Creation Time: 706.60060 ms
+Model Loading Time: 706.60060 ms
+First Inference Time: 6039.33130 ms
+Total Cold Start Time: 6745.93190 ms
+Start RSS: 429.89062 MB
+Peak RSS: 970.03516 MB
 
-===== 第 15 次测试 =====
-会话创建时间: 981.77140 ms
-模型加载时间: 981.77140 ms
-首次推理时间: 6899.55220 ms
-总冷启动时间: 7881.32360 ms
-Start RSS: 59.05859 MB
-Peak RSS: 529.40625 MB
+===== Run #15 =====
+Session Creation Time: 701.96490 ms
+Model Loading Time: 701.96490 ms
+First Inference Time: 6135.37000 ms
+Total Cold Start Time: 6837.33490 ms
+Start RSS: 422.53125 MB
+Peak RSS: 973.81641 MB
 
-===== 第 16 次测试 =====
-会话创建时间: 1002.01070 ms
-模型加载时间: 1002.01070 ms
-首次推理时间: 7359.70870 ms
-总冷启动时间: 8361.71940 ms
-Start RSS: 59.56250 MB
-Peak RSS: 528.03516 MB
+===== Run #16 =====
+Session Creation Time: 705.03800 ms
+Model Loading Time: 705.03800 ms
+First Inference Time: 5957.90090 ms
+Total Cold Start Time: 6662.93890 ms
+Start RSS: 426.13672 MB
+Peak RSS: 965.48438 MB
 
-===== 第 17 次测试 =====
-会话创建时间: 975.51120 ms
-模型加载时间: 975.51120 ms
-首次推理时间: 7382.84430 ms
-总冷启动时间: 8358.35550 ms
-Start RSS: 58.94531 MB
-Peak RSS: 523.55078 MB
+===== Run #17 =====
+Session Creation Time: 667.20280 ms
+Model Loading Time: 667.20280 ms
+First Inference Time: 5880.74020 ms
+Total Cold Start Time: 6547.94300 ms
+Start RSS: 427.81250 MB
+Peak RSS: 966.37500 MB
 
-===== 第 18 次测试 =====
-会话创建时间: 991.21640 ms
-模型加载时间: 991.21640 ms
-首次推理时间: 7582.10460 ms
-总冷启动时间: 8573.32100 ms
-Start RSS: 58.84766 MB
-Peak RSS: 523.34375 MB
+===== Run #18 =====
+Session Creation Time: 675.52060 ms
+Model Loading Time: 675.52060 ms
+First Inference Time: 5662.87190 ms
+Total Cold Start Time: 6338.39250 ms
+Start RSS: 423.58594 MB
+Peak RSS: 966.50391 MB
 
-===== 第 19 次测试 =====
-会话创建时间: 956.05270 ms
-模型加载时间: 956.05270 ms
-首次推理时间: 8885.74890 ms
-总冷启动时间: 9841.80160 ms
-Start RSS: 59.34766 MB
-Peak RSS: 569.79297 MB
+===== Run #19 =====
+Session Creation Time: 654.92350 ms
+Model Loading Time: 654.92350 ms
+First Inference Time: 5938.59810 ms
+Total Cold Start Time: 6593.52160 ms
+Start RSS: 424.03125 MB
+Peak RSS: 962.51172 MB
 
-===== 第 20 次测试 =====
-会话创建时间: 939.85210 ms
-模型加载时间: 939.85210 ms
-首次推理时间: 8470.80860 ms
-总冷启动时间: 9410.66070 ms
-Start RSS: 104.75391 MB
-Peak RSS: 524.05469 MB
+===== Run #20 =====
+Session Creation Time: 677.32140 ms
+Model Loading Time: 677.32140 ms
+First Inference Time: 6013.92630 ms
+Total Cold Start Time: 6691.24770 ms
+Start RSS: 421.97656 MB
+Peak RSS: 1017.88672 MB
 
-===== 大模型 (YOLO11x) 20次测试平均值 =====
-会话创建时间: 976.72283 ms
-模型加载时间: 976.72283 ms
-首次推理时间: 7740.48638 ms
-总冷启动时间: 8717.20921 ms
-Start RSS: 60.07520 MB
-Peak RSS: 528.07559 MB
+===== Large Model (YOLO11x) 20-Run Average =====
+Session Creation Time: 682.18998 ms
+Model Loading Time: 682.18998 ms
+First Inference Time: 5854.01232 ms
+Total Cold Start Time: 6536.20230 ms
+Start RSS: 423.91543 MB
+Peak RSS: 968.26680 MB
 
-===== 轻模型 (YOLO11n) =====
-===== 第 1 次测试 =====
-会话创建时间: 249.68700 ms
-模型加载时间: 249.68700 ms
-首次推理时间: 510.33290 ms
-总冷启动时间: 760.01990 ms
-Start RSS: 59.24219 MB
-Peak RSS: 131.49609 MB
+===== Small Model (YOLO11n) =====
+===== Run #1 =====
+Session Creation Time: 184.06050 ms
+Model Loading Time: 184.06050 ms
+First Inference Time: 474.91000 ms
+Total Cold Start Time: 658.97050 ms
+Start RSS: 464.05469 MB
+Peak RSS: 533.26953 MB
 
-===== 第 2 次测试 =====
-会话创建时间: 236.03040 ms
-模型加载时间: 236.03040 ms
-首次推理时间: 584.13110 ms
-总冷启动时间: 820.16150 ms
-Start RSS: 80.79688 MB
-Peak RSS: 130.29688 MB
+===== Run #2 =====
+Session Creation Time: 167.21470 ms
+Model Loading Time: 167.21470 ms
+First Inference Time: 593.63780 ms
+Total Cold Start Time: 760.85250 ms
+Start RSS: 423.04688 MB
+Peak RSS: 515.12109 MB
 
-===== 第 3 次测试 =====
-会话创建时间: 251.40220 ms
-模型加载时间: 251.40220 ms
-首次推理时间: 822.89210 ms
-总冷启动时间: 1074.29430 ms
-Start RSS: 80.49219 MB
-Peak RSS: 131.72656 MB
+===== Run #3 =====
+Session Creation Time: 176.72190 ms
+Model Loading Time: 176.72190 ms
+First Inference Time: 315.56490 ms
+Total Cold Start Time: 492.28680 ms
+Start RSS: 445.87891 MB
+Peak RSS: 515.07422 MB
 
-===== 第 4 次测试 =====
-会话创建时间: 255.68810 ms
-模型加载时间: 255.68810 ms
-首次推理时间: 533.40620 ms
-总冷启动时间: 789.09430 ms
-Start RSS: 82.07031 MB
-Peak RSS: 132.35156 MB
+===== Run #4 =====
+Session Creation Time: 170.46840 ms
+Model Loading Time: 170.46840 ms
+First Inference Time: 620.65530 ms
+Total Cold Start Time: 791.12370 ms
+Start RSS: 445.88672 MB
+Peak RSS: 516.36328 MB
 
-===== 第 5 次测试 =====
-会话创建时间: 230.44770 ms
-模型加载时间: 230.44770 ms
-首次推理时间: 601.85530 ms
-总冷启动时间: 832.30300 ms
-Start RSS: 82.94922 MB
-Peak RSS: 133.80078 MB
+===== Run #5 =====
+Session Creation Time: 186.08720 ms
+Model Loading Time: 186.08720 ms
+First Inference Time: 355.18260 ms
+Total Cold Start Time: 541.26980 ms
+Start RSS: 446.70312 MB
+Peak RSS: 515.88672 MB
 
-===== 第 6 次测试 =====
-会话创建时间: 251.89610 ms
-模型加载时间: 251.89610 ms
-首次推理时间: 596.47960 ms
-总冷启动时间: 848.37570 ms
-Start RSS: 82.96484 MB
-Peak RSS: 132.35547 MB
+===== Run #6 =====
+Session Creation Time: 181.60260 ms
+Model Loading Time: 181.60260 ms
+First Inference Time: 377.68570 ms
+Total Cold Start Time: 559.28830 ms
+Start RSS: 446.70312 MB
+Peak RSS: 496.64844 MB
 
-===== 第 7 次测试 =====
-会话创建时间: 241.71230 ms
-模型加载时间: 241.71230 ms
-首次推理时间: 515.59210 ms
-总冷启动时间: 757.30440 ms
-Start RSS: 82.98438 MB
-Peak RSS: 132.35547 MB
+===== Run #7 =====
+Session Creation Time: 183.32370 ms
+Model Loading Time: 183.32370 ms
+First Inference Time: 470.32290 ms
+Total Cold Start Time: 653.64660 ms
+Start RSS: 427.80859 MB
+Peak RSS: 515.00781 MB
 
-===== 第 8 次测试 =====
-会话创建时间: 241.86890 ms
-模型加载时间: 241.86890 ms
-首次推理时间: 582.48470 ms
-总冷启动时间: 824.35360 ms
-Start RSS: 82.98828 MB
-Peak RSS: 133.44531 MB
+===== Run #8 =====
+Session Creation Time: 182.30940 ms
+Model Loading Time: 182.30940 ms
+First Inference Time: 407.26320 ms
+Total Cold Start Time: 589.57260 ms
+Start RSS: 421.82031 MB
+Peak RSS: 513.22266 MB
 
-===== 第 9 次测试 =====
-会话创建时间: 237.70470 ms
-模型加载时间: 237.70470 ms
-首次推理时间: 518.29410 ms
-总冷启动时间: 755.99880 ms
-Start RSS: 83.82422 MB
-Peak RSS: 134.41797 MB
+===== Run #9 =====
+Session Creation Time: 171.10800 ms
+Model Loading Time: 171.10800 ms
+First Inference Time: 434.04330 ms
+Total Cold Start Time: 605.15130 ms
+Start RSS: 444.03516 MB
+Peak RSS: 513.25781 MB
 
-===== 第 10 次测试 =====
-会话创建时间: 242.65880 ms
-模型加载时间: 242.65880 ms
-首次推理时间: 523.91180 ms
-总冷启动时间: 766.57060 ms
-Start RSS: 83.84375 MB
-Peak RSS: 113.71484 MB
+===== Run #10 =====
+Session Creation Time: 169.47910 ms
+Model Loading Time: 169.47910 ms
+First Inference Time: 540.79370 ms
+Total Cold Start Time: 710.27280 ms
+Start RSS: 444.07422 MB
+Peak RSS: 514.96484 MB
 
-===== 第 11 次测试 =====
-会话创建时间: 267.51140 ms
-模型加载时间: 267.51140 ms
-首次推理时间: 496.55500 ms
-总冷启动时间: 764.06640 ms
-Start RSS: 58.62500 MB
-Peak RSS: 130.64062 MB
+===== Run #11 =====
+Session Creation Time: 168.23220 ms
+Model Loading Time: 168.23220 ms
+First Inference Time: 394.66740 ms
+Total Cold Start Time: 562.89960 ms
+Start RSS: 445.77344 MB
+Peak RSS: 515.30078 MB
 
-===== 第 12 次测试 =====
-会话创建时间: 237.87150 ms
-模型加载时间: 237.87150 ms
-首次推理时间: 513.40620 ms
-总冷启动时间: 751.27770 ms
-Start RSS: 81.28516 MB
-Peak RSS: 130.78516 MB
+===== Run #12 =====
+Session Creation Time: 168.63670 ms
+Model Loading Time: 168.63670 ms
+First Inference Time: 581.14710 ms
+Total Cold Start Time: 749.78380 ms
+Start RSS: 445.77344 MB
+Peak RSS: 515.23438 MB
 
-===== 第 13 次测试 =====
-会话创建时间: 237.26590 ms
-模型加载时间: 237.26590 ms
-首次推理时间: 524.77520 ms
-总冷启动时间: 762.04110 ms
-Start RSS: 81.39844 MB
-Peak RSS: 132.36328 MB
+===== Run #13 =====
+Session Creation Time: 162.88320 ms
+Model Loading Time: 162.88320 ms
+First Inference Time: 477.61010 ms
+Total Cold Start Time: 640.49330 ms
+Start RSS: 445.77344 MB
+Peak RSS: 514.96094 MB
 
-===== 第 14 次测试 =====
-会话创建时间: 249.54210 ms
-模型加载时间: 249.54210 ms
-首次推理时间: 860.92760 ms
-总冷启动时间: 1110.46970 ms
-Start RSS: 81.63672 MB
-Peak RSS: 131.21875 MB
+===== Run #14 =====
+Session Creation Time: 172.65730 ms
+Model Loading Time: 172.65730 ms
+First Inference Time: 757.00350 ms
+Total Cold Start Time: 929.66080 ms
+Start RSS: 445.77344 MB
+Peak RSS: 515.50000 MB
 
-===== 第 15 次测试 =====
-会话创建时间: 243.78970 ms
-模型加载时间: 243.78970 ms
-首次推理时间: 913.94400 ms
-总冷启动时间: 1157.73370 ms
-Start RSS: 81.15625 MB
-Peak RSS: 131.46484 MB
+===== Run #15 =====
+Session Creation Time: 166.62190 ms
+Model Loading Time: 166.62190 ms
+First Inference Time: 426.76860 ms
+Total Cold Start Time: 593.39050 ms
+Start RSS: 445.77344 MB
+Peak RSS: 515.29688 MB
 
-===== 第 16 次测试 =====
-会话创建时间: 258.02500 ms
-模型加载时间: 258.02500 ms
-首次推理时间: 592.26250 ms
-总冷启动时间: 850.28750 ms
-Start RSS: 82.01172 MB
-Peak RSS: 131.35938 MB
+===== Run #16 =====
+Session Creation Time: 165.88570 ms
+Model Loading Time: 165.88570 ms
+First Inference Time: 558.71300 ms
+Total Cold Start Time: 724.59870 ms
+Start RSS: 445.77344 MB
+Peak RSS: 514.96094 MB
 
-===== 第 17 次测试 =====
-会话创建时间: 247.73460 ms
-模型加载时间: 247.73460 ms
-首次推理时间: 640.36470 ms
-总冷启动时间: 888.09930 ms
-Start RSS: 82.04297 MB
-Peak RSS: 132.88672 MB
+===== Run #17 =====
+Session Creation Time: 162.70230 ms
+Model Loading Time: 162.70230 ms
+First Inference Time: 457.20370 ms
+Total Cold Start Time: 619.90600 ms
+Start RSS: 445.77734 MB
+Peak RSS: 497.91016 MB
 
-===== 第 18 次测试 =====
-会话创建时间: 247.44240 ms
-模型加载时间: 247.44240 ms
-首次推理时间: 597.35690 ms
-总冷启动时间: 844.79930 ms
-Start RSS: 82.16406 MB
-Peak RSS: 132.39453 MB
+===== Run #18 =====
+Session Creation Time: 160.25810 ms
+Model Loading Time: 160.25810 ms
+First Inference Time: 846.18410 ms
+Total Cold Start Time: 1006.44220 ms
+Start RSS: 423.60547 MB
+Peak RSS: 515.28906 MB
 
-===== 第 19 次测试 =====
-会话创建时间: 249.47470 ms
-模型加载时间: 249.47470 ms
-首次推理时间: 503.06010 ms
-总冷启动时间: 752.53480 ms
-Start RSS: 82.97266 MB
-Peak RSS: 133.15234 MB
+===== Run #19 =====
+Session Creation Time: 174.17810 ms
+Model Loading Time: 174.17810 ms
+First Inference Time: 385.25020 ms
+Total Cold Start Time: 559.42830 ms
+Start RSS: 445.76562 MB
+Peak RSS: 514.96484 MB
 
-===== 第 20 次测试 =====
-会话创建时间: 216.37740 ms
-模型加载时间: 216.37740 ms
-首次推理时间: 500.00130 ms
-总冷启动时间: 716.37870 ms
-Start RSS: 83.84766 MB
-Peak RSS: 133.17188 MB
+===== Run #20 =====
+Session Creation Time: 177.79750 ms
+Model Loading Time: 177.79750 ms
+First Inference Time: 394.33760 ms
+Total Cold Start Time: 572.13510 ms
+Start RSS: 445.77344 MB
+Peak RSS: 514.96875 MB
 
-===== 轻模型 (YOLO11n) 20次测试平均值 =====
-会话创建时间: 244.70655 ms
-模型加载时间: 244.70655 ms
-首次推理时间: 596.60167 ms
-总冷启动时间: 841.30821 ms
-Start RSS: 79.96484 MB
-Peak RSS: 131.26992 MB
+===== Small Model (YOLO11n) 20-Run Average =====
+Session Creation Time: 172.61142 ms
+Model Loading Time: 172.61142 ms
+First Inference Time: 493.44723 ms
+Total Cold Start Time: 666.05866 ms
+Start RSS: 442.27871 MB
+Peak RSS: 514.16016 MB

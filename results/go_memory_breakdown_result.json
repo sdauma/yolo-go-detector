@@ -3,25 +3,25 @@
   "language": "Go",
   "yolo11x": {
     "model": "YOLO11x",
-    "runtime_base_mb": 4.886749267578125,
-    "model_weights_mb": 7.381095886230469,
-    "input_tensor_mb": 4.6875,
-    "output_tensor_mb": 2.691650390625,
-    "intermediate_mb": 0.00298309326171875,
-    "session_overhead_mb": 0,
-    "total_mb": 19.649978637695312,
-    "peak_rss_mb": 12.272697448730469
-  },
-  "yolo11n": {
-    "model": "YOLO11n",
-    "runtime_base_mb": 4.896636962890625,
-    "model_weights_mb": 2.6905441284179688,
+    "runtime_base_mb": 4.891899108886719,
+    "model_weights_mb": 7.381004333496094,
     "input_tensor_mb": 4.6875,
     "output_tensor_mb": 2.691650390625,
     "intermediate_mb": -0.00202178955078125,
     "session_overhead_mb": 0,
-    "total_mb": 14.964309692382812,
-    "peak_rss_mb": 7.587165832519531
+    "total_mb": 19.65003204345703,
+    "peak_rss_mb": 12.272903442382812
+  },
+  "yolo11n": {
+    "model": "YOLO11n",
+    "runtime_base_mb": 4.891929626464844,
+    "model_weights_mb": 2.6904983520507812,
+    "input_tensor_mb": 4.6875,
+    "output_tensor_mb": 2.691650390625,
+    "intermediate_mb": -0.00202178955078125,
+    "session_overhead_mb": 0,
+    "total_mb": 14.959556579589844,
+    "peak_rss_mb": 7.5872802734375
   },
   "timestamp": ""
 }

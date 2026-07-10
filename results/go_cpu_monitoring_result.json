@@ -4,47 +4,47 @@
     "model": "None",
     "language": "Go",
     "scenario": "Idle",
-    "avg_cpu_percent": 0.3377926265078492,
-    "peak_cpu_percent": 1.3809150557390342,
-    "std_cpu_percent": 0.32642004370048944,
-    "avg_rss_mb": 21.836848958333334,
-    "peak_rss_mb": 21.89453125,
-    "timestamp": "2026-03-10 09:49:14"
+    "avg_cpu_percent": 0.7478019695554914,
+    "peak_cpu_percent": 3.8995719829791478,
+    "std_cpu_percent": 0.831093448717746,
+    "avg_rss_mb": 21.780845905172413,
+    "peak_rss_mb": 21.796875,
+    "timestamp": "2026-06-26 06:05:06"
   },
   {
     "test_name": "CPU_Monitoring_Single_Inference",
     "model": "YOLO11x",
     "language": "Go",
     "scenario": "Single_Inference",
-    "avg_cpu_percent": 17.813003750084768,
-    "peak_cpu_percent": 22.3994686248723,
-    "std_cpu_percent": 5.73056091755524,
-    "avg_rss_mb": 468.40342881944446,
-    "peak_rss_mb": 503.796875,
-    "timestamp": "2026-03-10 09:49:16"
+    "avg_cpu_percent": 16.225396654004435,
+    "peak_cpu_percent": 19.607231665103622,
+    "std_cpu_percent": 4.623679699007266,
+    "avg_rss_mb": 474.11925551470586,
+    "peak_rss_mb": 503.296875,
+    "timestamp": "2026-06-26 06:05:08"
   },
   {
     "test_name": "CPU_Monitoring_Continuous",
     "model": "YOLO11x",
     "language": "Go",
     "scenario": "Continuous_100_Inferences",
-    "avg_cpu_percent": 352.60683263061156,
-    "peak_cpu_percent": 491.3842676933094,
-    "std_cpu_percent": 119.29850196175023,
-    "avg_rss_mb": 532.8636029411765,
-    "peak_rss_mb": 533.109375,
-    "timestamp": "2026-03-10 09:50:42"
+    "avg_cpu_percent": 334.9974499279642,
+    "peak_cpu_percent": 477.1166057956577,
+    "std_cpu_percent": 118.37554100997242,
+    "avg_rss_mb": 537.757472826087,
+    "peak_rss_mb": 538.19140625,
+    "timestamp": "2026-06-26 06:06:19"
   },
   {
     "test_name": "CPU_Monitoring_Concurrent",
     "model": "YOLO11x",
     "language": "Go",
     "scenario": "Concurrent_10x50",
-    "avg_cpu_percent": 672.7053559328999,
-    "peak_cpu_percent": 800.6516527466955,
-    "std_cpu_percent": 89.95001516037165,
-    "avg_rss_mb": 3639.679451947236,
-    "peak_rss_mb": 4589.7265625,
-    "timestamp": "2026-03-10 09:52:22"
+    "avg_cpu_percent": 640.9350273465767,
+    "peak_cpu_percent": 764.237878646518,
+    "std_cpu_percent": 84.2448338597471,
+    "avg_rss_mb": 3523.675079528443,
+    "peak_rss_mb": 4794.80078125,
+    "timestamp": "2026-06-26 06:07:43"
   }
 ]

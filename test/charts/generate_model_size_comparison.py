@@ -15,7 +15,7 @@ def read_latency(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             for line in f:
-                if '平均延迟:' in line or '平均延迟：' in line:
+                if '平均延迟:' in line or '平均延迟：' in line or 'Avg latency:' in line:
                     for sep in [':', '：']:
                         if sep in line:
                             latency_str = line.split(sep)[1].strip().split(' ')[0]
@@ -84,4 +84,3 @@ for rects in [rects1, rects2]:
 
 # 保存图片
 plt.savefig("model_size_latency.png", dpi=600, bbox_inches='tight', format='png')
-plt.show()

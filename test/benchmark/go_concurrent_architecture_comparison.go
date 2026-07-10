@@ -1,3 +1,16 @@
+// go_concurrent_architecture_comparison.go
+// Go 并发架构对比测试（学术版：Shared / Mutex / Session Pool）
+//
+// 技术说明：
+// - 使用 Go AdvancedSession 接口（NewAdvancedSession），传入 opts 配置 intraOp=1, interOp=1
+// - 通过传入输入/输出 Tensor 自动启用 I/O Binding
+// - 测试并发度 1/2/4/6/8/12，每并发度 500 次请求
+// - Shared Session 中每个 goroutine 创建独立 Tensor；Session Pool 中每个 goroutine 创建独立 Session
+//
+// 测试目的：
+// - 在更大并发范围内对比三种架构的吞吐量、延迟、内存表现
+// - 为论文提供详尽的架构对比数据
+
 package main
 
 import (
@@ -5,16 +18,14 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
 	ort "github.com/yalue/onnxruntime_go"
+	"yolo-go-detector/test/benchmark/memutil"
 )
 
 type ArchitectureTestResult struct {
@@ -37,20 +48,8 @@ type ArchitectureTestResult struct {
 	RSSDrift           float64
 }
 
-func getProcessRSS() float64 {
-	cmd := exec.Command("powershell", "-Command", "(Get-Process -Id $PID).WorkingSet64 / 1MB")
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PID=%d", os.Getpid()))
-	output, err := cmd.Output()
-	if err != nil {
-		return 0
-	}
-	rssStr := strings.TrimSpace(string(output))
-	rss, err := strconv.ParseFloat(rssStr, 64)
-	if err != nil {
-		return 0
-	}
-	return rss
-}
+// getProcessRSS returns PrivateMemorySize64 (MB) via direct Windows API (no PowerShell overhead).
+func getProcessRSS() float64 { return memutil.PrivateMemoryMB() }
 
 func calculatePercentile(sorted []float64, percentile float64) float64 {
 	if len(sorted) == 0 {
@@ -65,6 +64,10 @@ func calculatePercentile(sorted []float64, percentile float64) float64 {
 
 // ========================================
 // 架构1: Shared Session - 多线程共享同一个 Session
+//
+// 注意：本测试有意让多个 goroutine 共享同一个 Session 并行调用 Run()，
+// 目的是观察 ONNX Runtime 内部资源竞争对吞吐量和延迟的影响。
+// peakRSS 的并发读取（无锁）是已知的低影响数据竞争，仅用于记录内存峰值趋势。
 // ========================================
 func runSharedSessionTest(
 	modelPath string,
@@ -177,11 +180,11 @@ func runSharedSessionTest(
 
 	if len(latencyList) == 0 {
 		return &ArchitectureTestResult{
-			Architecture:  "Shared Session",
-			Concurrency:   concurrency,
-			TotalRequests: numRequests,
+			Architecture:   "Shared Session",
+			Concurrency:    concurrency,
+			TotalRequests:  numRequests,
 			FailedRequests: numRequests,
-			TotalTime:     totalTime,
+			TotalTime:      totalTime,
 		}
 	}
 
@@ -331,11 +334,11 @@ func runMutexTest(
 
 	if len(latencyList) == 0 {
 		return &ArchitectureTestResult{
-			Architecture:  "Mutex",
-			Concurrency:   concurrency,
-			TotalRequests: numRequests,
+			Architecture:   "Mutex",
+			Concurrency:    concurrency,
+			TotalRequests:  numRequests,
 			FailedRequests: numRequests,
-			TotalTime:     totalTime,
+			TotalTime:      totalTime,
 		}
 	}
 
@@ -481,11 +484,11 @@ func runSessionPoolTest(
 
 	if len(latencyList) == 0 {
 		return &ArchitectureTestResult{
-			Architecture:  "Session Pool",
-			Concurrency:   concurrency,
-			TotalRequests: numRequests,
+			Architecture:   "Session Pool",
+			Concurrency:    concurrency,
+			TotalRequests:  numRequests,
 			FailedRequests: numRequests,
-			TotalTime:     totalTime,
+			TotalTime:      totalTime,
 		}
 	}
 
