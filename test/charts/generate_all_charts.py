@@ -66,7 +66,7 @@ def read_architecture_throughput():
                     next_line = lines[j].strip()
                     if '吞吐量:' in next_line:
                         throughput = float(next_line.split(':')[1].split()[0].strip())
-                        throughput_data[current_arch] = round(throughput, 2)
+                        throughput_data[current_arch] = round(throughput, 3)
                         break
         
         if throughput_data['Unsafe Shared'] == 0 or throughput_data['Mutex Shared'] == 0 or throughput_data['Session Pool'] == 0:
@@ -95,7 +95,7 @@ def plot_throughput_comparison():
     for bar in bars:
         height = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2., height,
-                f'{height:.2f}',
+                f'{height:.3f}',
                 ha='center', va='bottom', fontsize=9, fontweight='bold')
 
     plt.tight_layout()
@@ -111,142 +111,117 @@ plot_throughput_comparison()
 # 图 3: 内存占用随并发数变化 (对应第 5 章)
 # ============================================
 def read_memory_data():
-    """从文件读取内存占用数据（Python Shared、Python SessionPool、Go Session Pool）"""
+    """从 go_architecture_comparison.txt 读取 Go Unsafe Shared 与 Go Session Pool 的 PM 漂移数据。
+    注意：fig3 采用 PM 漂移（释放量）口径，而非峰值 PM。原因：两种架构的峰值 PM 均随并发暴涨
+    （Unsafe Shared 584→4433 MB，Session Pool 592→6684 MB），画峰值 PM 反而会让 Session Pool
+    显得更差；而漂移（Unsafe Shared 557→4279 MB vs Session Pool ~1→-42 MB）才是 §4.1
+    “池化方案内存可控”论点的真正可视化依据。"""
     try:
-        python_shared_memory = []
-        python_pool_memory = []
-        with open(os.path.join(results_dir, 'python_architecture_comparison.txt'), 'r', encoding='utf-8') as f:
+        go_us = []  # (并发度, 峰值PM, PM漂移)
+        go_sp = []  # (池大小, 峰值PM, PM漂移)
+        with open(os.path.join(results_dir, 'go_architecture_comparison.txt'), 'r', encoding='utf-8') as f:
+            section = None
+            cur_c = None
+            cur_peak = None
+            cur_drift = None
             for line in f:
                 line = line.strip()
-                if not (line.startswith('架构=') or line.startswith('architecture=')):
+                if line.startswith('===== Unsafe Shared ====='):
+                    section = 'US'
+                    cur_c, cur_peak, cur_drift = None, None, None
                     continue
-                parts = line.split(',')
-                first_key = parts[0].split('=')[0].strip()
-                arch_part = parts[0].split('=')[1].strip()
-                if first_key == '架构':
-                    concurrency = int(parts[1].split('=')[1].strip())
-                    memory_str = parts[-2].split('=')[1].strip()
-                else:
-                    concurrency = None
-                    memory_str = None
-                    for part in parts:
-                        part = part.strip()
-                        if part.startswith('concurrency=') or part.startswith('pool_size='):
-                            concurrency = int(part.split('=')[1].strip())
-                        if part.startswith('peak_rss=') or part.startswith('峰值RSS='):
-                            memory_str = part.split('=', 1)[1].strip()
-                    if concurrency is None or memory_str is None:
-                        continue
-                memory = float(memory_str.split()[0])
-                if arch_part == 'Shared':
-                    python_shared_memory.append((concurrency, memory))
-                elif arch_part == 'SessionPool':
-                    python_pool_memory.append((concurrency, memory))
+                elif line.startswith('===== Session Pool ====='):
+                    section = 'SP'
+                    cur_c, cur_peak, cur_drift = None, None, None
+                    continue
+                elif line.startswith('====='):
+                    section = None
+                    continue
+                if section == 'US' and line.startswith('并发度:'):
+                    try:
+                        cur_c = int(line.split(':')[1].strip())
+                    except ValueError:
+                        cur_c = None
+                elif section == 'SP' and line.startswith('池大小:'):
+                    try:
+                        cur_c = int(line.split(':')[1].strip())
+                    except ValueError:
+                        cur_c = None
+                elif '峰值PM:' in line or '峰值RSS:' in line:
+                    try:
+                        cur_peak = float(line.split(':')[1].strip().split()[0])
+                    except ValueError:
+                        cur_peak = None
+                elif 'PM漂移:' in line or 'RSS漂移:' in line:
+                    try:
+                        cur_drift = float(line.split(':')[1].strip().split()[0])
+                    except ValueError:
+                        cur_drift = None
+                if cur_c is not None and cur_peak is not None and cur_drift is not None:
+                    if section == 'US':
+                        go_us.append((cur_c, cur_peak, cur_drift))
+                    elif section == 'SP':
+                        go_sp.append((cur_c, cur_peak, cur_drift))
+                    cur_c, cur_peak, cur_drift = None, None, None
 
-        # 读取 Go Session Pool 数据
-        go_memory = []
-        with open(os.path.join(results_dir, 'go_architecture_comparison.txt'), 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-            in_session_pool = False
-            current_pool_size = None
-            
-            for line in lines:
-                line = line.strip()
-                
-                if '===== Session Pool =====' in line:
-                    in_session_pool = True
-                elif in_session_pool and '池大小:' in line:
-                    pool_size_str = line.split(':')[1].strip()
-                    try:
-                        current_pool_size = int(pool_size_str)
-                    except ValueError:
-                        current_pool_size = None
-                elif in_session_pool and ('峰值RSS:' in line or '峰值PM:' in line) and current_pool_size is not None:
-                    memory_str = line.split(':')[1].strip()
-                    try:
-                        memory = float(memory_str.split()[0])
-                        go_memory.append((current_pool_size, memory))
-                    except ValueError:
-                        pass
-                elif line.startswith('=====') and 'Session Pool' not in line:
-                    in_session_pool = False
-        
-        # 提取共同的并发数
-        python_shared_concurrencies = set([item[0] for item in python_shared_memory])
-        python_pool_concurrencies = set([item[0] for item in python_pool_memory])
-        go_concurrencies = set([item[0] for item in go_memory])
-        common_concurrencies = sorted(list(
-            python_shared_concurrencies & python_pool_concurrencies & go_concurrencies
-        ))
-        
-        if not common_concurrencies:
+        us_c_set = sorted([x[0] for x in go_us])
+        sp_c_set = sorted([x[0] for x in go_sp])
+        common = sorted(set(us_c_set) & set(sp_c_set))
+        if not common:
             raise ValueError("没有找到共同的并发数数据")
-        
-        # 提取数据
-        python_shared_values = []
-        python_pool_values = []
-        go_values = []
-        
-        for c in common_concurrencies:
-            for item in python_shared_memory:
-                if item[0] == c:
-                    python_shared_values.append(item[1])
-                    break
-            for item in python_pool_memory:
-                if item[0] == c:
-                    python_pool_values.append(item[1])
-                    break
-            for item in go_memory:
-                if item[0] == c:
-                    go_values.append(item[1])
-                    break
-        
-        return common_concurrencies, python_shared_values, python_pool_values, go_values
+
+        def pick(data, c):
+            for x in data:
+                if x[0] == c:
+                    return x[1], x[2]
+            return None, None
+
+        us_peak, us_drift, sp_peak, sp_drift = [], [], [], []
+        for c in common:
+            p1, d1 = pick(go_us, c)
+            us_peak.append(p1)
+            us_drift.append(d1)
+            p2, d2 = pick(go_sp, c)
+            sp_peak.append(p2)
+            sp_drift.append(d2)
+        return common, us_peak, us_drift, sp_peak, sp_drift
     except Exception as e:
         print(f"读取内存数据失败: {e}")
         raise
 
 def plot_memory_comparison():
-    concurrency, python_shared_values, python_pool_values, go_values = read_memory_data()
-    
+    concurrency, us_peak, us_drift, sp_peak, sp_drift = read_memory_data()
+
     fig, ax = plt.subplots(figsize=(8, 5))
-    
-    # Python Shared 架构（虚线，线性增长）
-    ax.plot(concurrency, python_shared_values, 'o-', label='Python 共享Session',
-            color='#999999', linewidth=2.5, markersize=8, markeredgewidth=1.5)
-    # Python Session Pool 架构（虚线，更高内存）
-    ax.plot(concurrency, python_pool_values, '^--', label='Python Session Pool',
-            color='#555555', linewidth=2.5, markersize=8, markeredgewidth=1.5)
-    # Go Session Pool 架构（实线，几乎恒定）
-    ax.plot(concurrency, go_values, 's-', label='Go Session Pool',
+
+    # Go Unsafe Shared 漂移（随并发激增）
+    ax.plot(concurrency, us_drift, 'o-', label='Go Unsafe Shared（内存漂移）',
+            color='#888888', linewidth=2.5, markersize=8, markeredgewidth=1.5)
+    # Go 临时会话（Per-Request Session）漂移（几乎恒定，12 并发净释放）
+    # 注：数据文件 go_architecture_comparison.txt 中该段旧标为 "Session Pool"，
+    # 实为 §4.1 的"临时会话（每 goroutine 独立临时会话、使用后即销毁）"架构，
+    # 与论文表4/公平性表/图caption 术语统一，此处图例改回"临时会话"。
+    ax.plot(concurrency, sp_drift, 's-', label='Go 临时会话（内存漂移）',
             color='#000000', linewidth=2.5, markersize=8, markeredgewidth=1.5)
-    
-    ax.set_xlabel('并发数', fontsize=8, fontweight='bold')
-    ax.set_ylabel('内存占用 (MB)', fontsize=8, fontweight='bold')
-    # ax.set_title('不同并发数下的内存占用对比（含 Python Session Pool）', fontsize=9, fontweight='bold', pad=10)  # 图注由论文caption提供
+
+    ax.set_xlabel('并发数 / 池大小', fontsize=8, fontweight='bold')
+    ax.set_ylabel('内存漂移 (MB, PM 口径)', fontsize=8, fontweight='bold')
     ax.legend(fontsize=8, loc='upper left', framealpha=0.9)
     ax.grid(True, linestyle='--', alpha=0.5)
     ax.set_axisbelow(True)
-    
-    # 标注 Python Shared 线性增长
-    idx_8 = concurrency.index(8) if 8 in concurrency else 3
-    ax.annotate('线性增长', xy=(8, python_shared_values[idx_8]),
-                xytext=(5, python_shared_values[idx_8] + 400),
-                arrowprops=dict(arrowstyle='->', color='#999999', lw=2, shrinkB=8),
-                fontsize=8, color='#999999', fontweight='bold')
-    # 标注 Python Pool 更高内存（上移避免括号文字与Go线重合）
-    ax.annotate(f'{python_pool_values[-1]:.0f} MB\n(12个Session各加载完整模型)',
-                xy=(12, python_pool_values[-1]),
-                xytext=(7, python_pool_values[-1] - 500),
-                arrowprops=dict(arrowstyle='->', color='#555555', lw=2, shrinkB=8),
-                fontsize=7, color='#555555', fontweight='bold')
-    # 标注 Go 内存扩展性（放在下方，与Pool标注错开）
-    ax.annotate(f'{go_values[-1]:.0f} MB\n(12个独立Session)',
-                xy=(12, go_values[-1]),
-                xytext=(5, go_values[-1] - 1000),
+
+    # 标注 Unsafe Shared 漂移激增（文字置于峰值左侧、略低于峰值，使箭头基本水平、稍微上扬，且不出框）
+    ax.annotate(f'{us_drift[-1]:.0f} MB\n(12并发净增)', xy=(concurrency[-1], us_drift[-1]),
+                xytext=(max(concurrency) - 6, us_drift[-1] - 120),
+                ha='left', va='center',
+                arrowprops=dict(arrowstyle='->', color='#888888', lw=2, shrinkB=8),
+                fontsize=7, color='#888888', fontweight='bold')
+    # 标注 Session Pool 漂移可控（净释放）
+    ax.annotate(f'{sp_drift[-1]:.0f} MB\n(净释放)', xy=(concurrency[-1], sp_drift[-1]),
+                xytext=(max(concurrency) - 6, 600),
                 arrowprops=dict(arrowstyle='->', color='#000000', lw=2, shrinkB=8),
                 fontsize=7, color='#000000', fontweight='bold')
-    
+
     plt.tight_layout()
     plt.savefig(f'{output_dir}/fig3_memory_comparison.png', dpi=600, bbox_inches='tight')
     plt.savefig(f'{output_dir}/fig3_memory_comparison.pdf', bbox_inches='tight')
@@ -257,7 +232,7 @@ def plot_memory_comparison():
 plot_memory_comparison()
 
 # ============================================
-# 图 4: CPU 推理批处理效应 (对应第 5 章)
+# 图 4: 顺序单图推理调用开销 (对应 §4.2)
 # ============================================
 def read_batch_data():
     """从 go_batch_inference_result.json 读取批处理测试数据"""
@@ -289,7 +264,9 @@ def plot_batch_effect():
     
     # 左轴 - 延迟
     color = '#000000'
-    ax1.set_xlabel('批处理大小', fontsize=8, fontweight='bold')
+    # 注：go_batch_inference_result.json 的 batch_size 字段实为"顺序单图推理连续调用次数"
+    # （batch 恒为1，循环调用 N 次），与论文 §4.2 对齐；非批维度扩展。
+    ax1.set_xlabel('连续推理次数（batch=1 顺序调用）', fontsize=8, fontweight='bold')
     ax1.set_ylabel('单图延迟 (ms)', color=color, fontsize=8, fontweight='bold')
     line1 = ax1.plot(batch_sizes, batch_latency, 'o-', color=color, linewidth=2.5,
                      markersize=8, label='延迟 (左轴)')
@@ -317,8 +294,8 @@ def plot_batch_effect():
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=8, framealpha=0.9)
     
-    # 添加结论文字
-    fig.text(0.5, 0.02, '结论：CPU 场景下 Batch Size 对性能无显著影响',
+    # 添加结论文字（与论文 §4.2 图\ref{fig:batch_effect} caption 口径一致）
+    fig.text(0.5, 0.02, '结论：顺序单图推理连续调用下，吞吐随推理次数增加缓慢下降\n（1→32次约-8%），反映调用开销累积而非批维度收益',
              fontsize=8, ha='center', fontweight='bold',
              bbox=dict(boxstyle='round', facecolor='white', alpha=0.8, edgecolor='black'))
     
@@ -339,6 +316,7 @@ def read_model_latency_data():
     try:
         # 读取 Python 强化测试数据 (YOLO11x)
         python_latency_11x = 0
+        python_std_11x = 0.0
         with open(os.path.join(results_dir, 'python_reinforced_result.txt'), 'r', encoding='utf-8') as f:
             for line in f:
                 if '平均延迟：' in line or '平均延迟:' in line or 'Avg latency:' in line:
@@ -347,10 +325,12 @@ def read_model_latency_data():
                     else:
                         latency_str = line.split('：')[1].strip() if '：' in line else line.split(':')[1].strip()
                     python_latency_11x = float(latency_str.split(' ')[0])
-                    break
+                if 'Std dev:' in line:
+                    python_std_11x = float(line.split('Std dev:')[1].strip().split(' ')[0])
         
         # 读取 Go 强化测试数据 (YOLO11x)
         go_latency_11x = 0
+        go_std_11x = 0.0
         with open(os.path.join(results_dir, 'go_reinforced_result.txt'), 'r', encoding='utf-8') as f:
             for line in f:
                 line_strip = line.strip()
@@ -358,10 +338,12 @@ def read_model_latency_data():
                 if line_strip.startswith('平均延迟：') or line_strip.startswith('平均延迟:'):
                     latency_str = line_strip.split('：')[1].strip() if '：' in line_strip else line_strip.split(':')[1].strip()
                     go_latency_11x = float(latency_str.split(' ')[0])
-                    break
+                if line_strip.startswith('标准差:'):
+                    go_std_11x = float(line_strip.split('标准差:')[1].strip().split(' ')[0])
         
         # 读取 Python YOLO11n 强化测试数据
         python_latency_11n = 0
+        python_std_11n = 0.0
         with open(os.path.join(results_dir, 'python_yolo11n_reinforced_result.txt'), 'r', encoding='utf-8') as f:
             lines = f.readlines()
             in_summary = False
@@ -379,11 +361,16 @@ def read_model_latency_data():
                                         break
                                 except ValueError:
                                     pass
-                    if python_latency_11n > 0:
+                    if 'Std dev:' in line:
+                        try:
+                            python_std_11n = float(line.split('Std dev:')[1].strip().split(' ')[0])
+                        except ValueError:
+                            pass
+                    if python_latency_11n > 0 and python_std_11n > 0:
                         break
-        
         # 读取 Go YOLO11n 强化测试数据
         go_latency_11n = 0
+        go_std_11n = 0.0
         with open(os.path.join(results_dir, 'go_yolo11n_reinforced_result.txt'), 'r', encoding='utf-8') as f:
             lines = f.readlines()
             in_summary = False
@@ -401,7 +388,12 @@ def read_model_latency_data():
                                         break
                                 except ValueError:
                                     pass
-                    if go_latency_11n > 0:
+                    if line.strip().startswith('标准差:'):
+                        try:
+                            go_std_11n = float(line.strip().split('标准差:')[1].strip().split(' ')[0])
+                        except ValueError:
+                            pass
+                    if go_latency_11n > 0 and go_std_11n > 0:
                         break
         
         # 检查是否读取到所有数据
@@ -417,14 +409,15 @@ def read_model_latency_data():
         if go_latency_11n == 0:
             raise ValueError("无法读取 Go YOLO11n 模型延迟数据")
         
-        return [python_latency_11n, python_latency_11x], [go_latency_11n, go_latency_11x]
+        return ([python_latency_11n, python_latency_11x], [go_latency_11n, go_latency_11x],
+                [python_std_11n, python_std_11x], [go_std_11n, go_std_11x])
     except Exception as e:
         print(f"读取模型延迟数据失败: {e}")
         raise
 
 def plot_model_size_comparison():
     models = ['YOLO11n\n(轻量)', 'YOLO11x\n(大模型)']
-    python_latency_values, go_latency_values = read_model_latency_data()
+    python_latency_values, go_latency_values, python_std_values, go_std_values = read_model_latency_data()
     
     x = np.arange(len(models))
     width = 0.35
@@ -432,9 +425,11 @@ def plot_model_size_comparison():
     fig, ax = plt.subplots(figsize=(8, 5))
     
     bars1 = ax.bar(x - width/2, python_latency_values, width, label='Python',
-                   color='#666666', edgecolor='black', linewidth=1.5)
+                   color='#666666', edgecolor='black', linewidth=1.5,
+                   yerr=python_std_values, capsize=4, ecolor='#333333')
     bars2 = ax.bar(x + width/2, go_latency_values, width, label='Go',
-                   color='#000000', edgecolor='black', linewidth=1.5)
+                   color='#000000', edgecolor='black', linewidth=1.5,
+                   yerr=go_std_values, capsize=4, ecolor='#333333')
     
     ax.set_ylabel('推理延迟 (ms)', fontsize=8, fontweight='bold')
     # ax.set_title('不同模型规模下的推理延迟对比', fontsize=9, fontweight='bold', pad=10)  # 图注由论文caption提供
@@ -456,9 +451,9 @@ def plot_model_size_comparison():
                     f'{height:.1f}',
                     ha='center', va='bottom', fontsize=8, fontweight='bold')
     
-    # 添加性能差异标注（统一以Go为分母，正数=Go更优，负数=Python更优）
-    diff_percent = [(python_latency_values[0]-go_latency_values[0])/go_latency_values[0]*100,
-                    (python_latency_values[1]-go_latency_values[1])/go_latency_values[1]*100]
+    # 性能差异标注与论文表\ref{tab:model_size}一致：差异=(Go-Python)/Python×100%，正值表示Go延迟较高
+    diff_percent = [(go_latency_values[i]-python_latency_values[i])/python_latency_values[i]*100
+                    for i in range(len(go_latency_values))]
     for i, diff in enumerate(diff_percent):
         # 使用绝对坐标放置差异标注，避免在对数轴下触碰顶框
         bar_top = max(python_latency_values[i], go_latency_values[i])
@@ -558,8 +553,8 @@ def read_stability_data():
     try:
         # 读取 Python 稳定性数据 - 优先 JSON 格式（有完整采样点）
         python_duration_hours = 1.0
-        python_initial_rss = 0
-        python_final_rss = 0
+        python_initial_pm = 0
+        python_final_pm = 0
         python_samples = []
         # 优先级: 72h JSON > 1h JSON > 72h TXT > 1h TXT > 旧的 long_stability
         python_stability_candidates = [
@@ -585,22 +580,25 @@ def read_stability_data():
                 data = json.load(f)
             python_duration_hours = data.get('results', {}).get('actual_duration_hours',
                 data.get('config', {}).get('test_duration_hours', 1.0))
-            python_initial_rss = data.get('results', {}).get('start_rss_mb', 0)
-            python_final_rss = data.get('results', {}).get('end_rss_mb', 0)
-            rss_samples = data.get('rss_samples', [])
-            for s in rss_samples:
-                python_samples.append((s.get('hour', 0), s.get('rss_mb', 0)))
+            # 实测为 PM（Private Bytes），字段名 rss_* 为旧命名；优先读取 pm_* 新命名并兼容旧命名
+            python_initial_pm = data.get('results', {}).get('start_pm_mb',
+                data.get('results', {}).get('start_rss_mb', 0))
+            python_final_pm = data.get('results', {}).get('end_pm_mb',
+                data.get('results', {}).get('end_rss_mb', 0))
+            pm_samples = data.get('pm_samples', data.get('rss_samples', []))
+            for s in pm_samples:
+                python_samples.append((s.get('hour', 0), s.get('pm_mb', s.get('rss_mb', 0))))
         else:
             with open(python_stability_file, 'r', encoding='utf-8') as f:
                 for line in f:
-                    if 'Start RSS:' in line:
+                    if 'Start RSS:' in line or 'Start PM:' in line:
                         try:
-                            python_initial_rss = float(line.split(':')[1].strip().split(' ')[0])
+                            python_initial_pm = float(line.split(':')[1].strip().split(' ')[0])
                         except ValueError:
                             pass
-                    elif 'End RSS:' in line:
+                    elif 'End RSS:' in line or 'End PM:' in line:
                         try:
-                            python_final_rss = float(line.split(':')[1].strip().split(' ')[0])
+                            python_final_pm = float(line.split(':')[1].strip().split(' ')[0])
                         except ValueError:
                             pass
                     elif 'Duration:' in line or 'duration_hours:' in line:
@@ -639,20 +637,20 @@ def read_stability_data():
                     go_hours.append(snapshots[-1].get('hour', 0))
                     go_rss_values.append(snapshots[-1].get('pm_mb', snapshots[-1].get('rss_mb', 0)))
 
-        if python_initial_rss == 0 or python_final_rss == 0:
+        if python_initial_pm == 0 or python_final_pm == 0:
             raise ValueError("无法读取 Python 稳定性数据")
 
         if not go_hours:
             raise ValueError("无法读取 Go 稳定性快照数据")
 
-        return (python_initial_rss, python_final_rss, python_duration_hours, python_samples,
+        return (python_initial_pm, python_final_pm, python_duration_hours, python_samples,
                 go_hours, go_rss_values, go_duration_hours)
     except Exception as e:
         print(f"读取稳定性数据失败：{e}")
         raise
 
 def plot_stability():
-    (python_initial_rss, python_final_rss, python_duration_hours, python_samples,
+    (python_initial_pm, python_final_pm, python_duration_hours, python_samples,
      go_hours, go_rss_values, go_duration_hours) = read_stability_data()
 
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -669,7 +667,7 @@ def plot_stability():
                 color='#555555', linewidth=2.5, alpha=1.0)
     else:
         python_hours = [0, python_duration_hours]
-        python_rss = [python_initial_rss, python_final_rss]
+        python_rss = [python_initial_pm, python_final_pm]
         ax.plot(python_hours, python_rss, '^--', label='Python (仅起点/终点)',
                 color='#999999', linewidth=2, markersize=10, markeredgewidth=1.5,
                 alpha=0.7)
@@ -679,18 +677,18 @@ def plot_stability():
             color='#000000', linewidth=1.5, markersize=5, alpha=0.8)
 
     ax.set_xlabel('运行时间 (小时)', fontsize=9, fontweight='bold')
-    ax.set_ylabel('内存占用 (MB)', fontsize=9, fontweight='bold')
+    ax.set_ylabel('进程私有内存 PM (MB)', fontsize=9, fontweight='bold')
     # ax.set_title(f'{duration_label}内存稳定性测试', fontsize=10, fontweight='bold', pad=12)  # 图注由论文caption提供
     ax.legend(fontsize=9, loc='upper left', bbox_to_anchor=(0.01, 0.88), framealpha=0.9)
     ax.grid(True, linestyle='--', alpha=0.4)
     ax.set_axisbelow(True)
 
     # 标注 Python 漂移（颜色与Python线一致）
-    python_drift = python_final_rss - python_initial_rss
+    python_drift = python_final_pm - python_initial_pm
     drift_rate = python_drift / python_duration_hours if python_duration_hours > 0 else 0
     ax.annotate(f'Python 漂移: +{python_drift:.2f} MB\n({drift_rate:.3f} MB/h)',
-                xy=(python_duration_hours, python_final_rss),
-                xytext=(python_duration_hours * 0.4, python_final_rss - 50),
+                xy=(python_duration_hours, python_final_pm),
+                xytext=(python_duration_hours * 0.4, python_final_pm - 50),
                 arrowprops=dict(arrowstyle='->', color='#555555', lw=2, shrinkB=50, mutation_scale=15),
                 fontsize=8, color='#555555', fontweight='bold',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.8, edgecolor='#555555'))
@@ -727,8 +725,8 @@ print("=" * 60)
 print(f"\n图表保存位置：{os.path.abspath(output_dir)}")
 print("\n生成的图表列表:")
 print("  图 2. fig2_throughput_comparison.png   - 三种并发架构的吞吐量对比")
-print("  图 3. fig3_memory_comparison.png       - 不同并发数下的内存占用对比")
-print("  图 4. fig4_batch_effect.png            - CPU 推理场景下批处理对吞吐量的影响")
+print("  图 3. fig3_memory_comparison.png       - Go 双架构内存漂移对比（PM 漂移口径）")
+print("  图 4. fig4_batch_effect.png            - 顺序单图推理调用开销（连续推理1→32次）")
 print("  图 5. fig5_model_size_comparison.png   - 不同模型规模下的推理延迟对比")
 print("  图 6. fig6_cpu_utilization.png         - Go Session Pool 不同负载场景的 CPU 利用率梯度")
 print("  图 7. fig7_stability.png               - 内存漂移对比")

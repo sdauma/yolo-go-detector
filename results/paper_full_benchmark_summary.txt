@@ -1,4 +1,5 @@
 ===== 论文完整基准测试 — 汇总报告 =====
+【注意】本汇总文件未被论文引用；其中[6/6]批处理部分Batch 2/4存在测量bug（吞吐显示+Inf、延迟0.000 ms），规范批处理数据见 go_batch_inference_result.json。
 生成时间: 2026-06-26 15:39:48
 
 [1/6] 内存指标验证 (PrivateMemorySize64 vs WorkingSet64)

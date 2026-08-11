@@ -1,0 +1,27 @@
+===== Go Session 生命周期内存累积复现（对照） =====
+模型: YOLO11x, 周期数: 500, intra_op=1, inter_op=1, GOMAXPROCS=6
+注: 每个 per-request 测试独立子进程冷启动，消除顺序混杂
+===== per-request (arena=OFF) =====
+  起始PM: 27.48000 MB
+  峰值PM: 117.91000 MB
+  结束PM: 115.23000 MB
+  总漂移(有界): 87.75000 MB
+
+===== per-request (arena=ON) =====
+  起始PM: 27.20000 MB
+  峰值PM: 119.10000 MB
+  结束PM: 110.96000 MB
+  总漂移(有界): 83.76000 MB
+
+===== pool (arena=OFF) =====
+  起始PM: 266.69000 MB
+  峰值PM: 266.93000 MB
+  结束PM: 266.93000 MB
+  总漂移(有界): 0.24000 MB
+
+===== pool (arena=ON) =====
+  起始PM: 309.48000 MB
+  峰值PM: 574.55000 MB
+  结束PM: 574.52000 MB
+  总漂移(有界): 265.04000 MB
+

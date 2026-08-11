@@ -98,10 +98,10 @@ for num_threads in thread_configs:
             print(f"Failed to load input data: {e}")
             sys.exit(1)
         
-        # Memory sample point 1: after Session creation, before warmup (Start RSS)
+        # Memory sample point 1: after Session creation, before warmup (Start PM)
         process = psutil.Process(os.getpid())
         start_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
-        print(f"Start RSS: {start_rss:.5f} MB")
+        print(f"Start PM: {start_rss:.5f} MB")
         
         # Warmup
         print("Warming up...")
@@ -131,8 +131,8 @@ for num_threads in thread_configs:
         
         # Memory sample point 3: stable value after benchmark
         stable_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
-        print(f"Stable RSS: {stable_rss:.5f} MB")
-        print(f"Peak RSS: {peak_rss:.5f} MB")
+        print(f"Stable PM: {stable_rss:.5f} MB")
+        print(f"Peak PM: {peak_rss:.5f} MB")
         
         # Calculate results
         avg_latency = sum(times) / len(times)
@@ -198,9 +198,9 @@ for num_threads in thread_configs:
     print(f"Min Latency: {min_latency:.5f} ms")
     print(f"Max Latency: {max_latency:.5f} ms")
     print(f"\n===== Memory Usage =====")
-    print(f"Start RSS: {start_rss:.5f} MB")
-    print(f"Peak RSS: {peak_rss:.5f} MB")
-    print(f"Stable RSS: {stable_rss:.5f} MB")
+    print(f"Start PM: {start_rss:.5f} MB")
+    print(f"Peak PM: {peak_rss:.5f} MB")
+    print(f"Stable PM: {stable_rss:.5f} MB")
     
     # Save detailed log
     log_path = os.path.join(current_dir, '..', '..', 'results', f'python_thread_{num_threads}_detailed_log.txt')
@@ -213,9 +213,9 @@ for num_threads in thread_configs:
             f.write(f"P50 Latency: {all_p50_latencies[i]:.5f} ms\n")
             f.write(f"P90 Latency: {all_p90_latencies[i]:.5f} ms\n")
             f.write(f"P99 Latency: {all_p99_latencies[i]:.5f} ms\n")
-            f.write(f"Start RSS: {all_start_rss[i]:.5f} MB\n")
-            f.write(f"Peak RSS: {all_peak_rss[i]:.5f} MB\n")
-            f.write(f"Stable RSS: {all_stable_rss[i]:.5f} MB\n")
+            f.write(f"Start PM: {all_start_rss[i]:.5f} MB\n")
+            f.write(f"Peak PM: {all_peak_rss[i]:.5f} MB\n")
+            f.write(f"Stable PM: {all_stable_rss[i]:.5f} MB\n")
             f.write("\n")
 
         f.write("===== 5-Test Average =====\n")
@@ -229,9 +229,9 @@ for num_threads in thread_configs:
         f.write(f"Min Latency: {min_latency:.5f} ms\n")
         f.write(f"Max Latency: {max_latency:.5f} ms\n")
         f.write("\n===== Memory Usage =====\n")
-        f.write(f"Start RSS: {start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
+        f.write(f"Start PM: {start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {stable_rss:.5f} MB\n")
 
     print(f"\nDetailed log saved to: {log_path}")
 
@@ -253,9 +253,9 @@ for num_threads in thread_configs:
         f"Max Latency: {max_latency:.5f} ms",
         "",
         "===== Memory Usage =====",
-        f"Start RSS: {start_rss:.5f} MB",
-        f"Peak RSS: {peak_rss:.5f} MB",
-        f"Stable RSS: {stable_rss:.5f} MB"
+        f"Start PM: {start_rss:.5f} MB",
+        f"Peak PM: {peak_rss:.5f} MB",
+        f"Stable PM: {stable_rss:.5f} MB"
     ]
     
     # Write with UTF-8 encoding
@@ -271,7 +271,7 @@ print(f"\nSaving comprehensive results to: {comprehensive_result_path}")
 
 with open(comprehensive_result_path, 'w', encoding='utf-8') as f:
     f.write("===== Comprehensive Thread Config Performance Benchmark Results =====\n\n")
-    f.write(f"{'Thread Config':<20} {'Avg Latency(ms)':<15} {'Std Dev(ms)':<12} {'CV(%)':<12} {'FPS':<10} {'P50 Latency(ms)':<15} {'P90 Latency(ms)':<15} {'P99 Latency(ms)':<15} {'Start RSS(MB)':<15} {'Stable RSS(MB)':<15}\n")
+    f.write(f"{'Thread Config':<20} {'Avg Latency(ms)':<15} {'Std Dev(ms)':<12} {'CV(%)':<12} {'FPS':<10} {'P50 Latency(ms)':<15} {'P90 Latency(ms)':<15} {'P99 Latency(ms)':<15} {'Start PM(MB)':<15} {'Stable PM(MB)':<15}\n")
     
     for result in all_thread_results:
         f.write(f"{result['num_threads']:<20} {result['avg_latency']:<15.3f} {result['std_dev']:<12.3f} {result['coeff_var']:<12.2f} {result['fps']:<10.2f} {result['p50_latency']:<15.3f} {result['p90_latency']:<15.3f} {result['p99_latency']:<15.3f} {result['start_rss']:<15.2f} {result['stable_rss']:<15.2f}\n")

@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # python_long_stability_72h.py
 # Python 72-Hour Long-Term Stability Test
@@ -255,11 +256,11 @@ print("=" * 70)
 print(f"  Duration:       {actual_duration_hours:.2f} hours ({format_duration(end_time-start_time)})")
 print(f"  Inferences:     {total_inferences}")
 print(f"  Errors:         {errors}")
-print(f"  Start RSS:      {start_rss:.2f} MB")
+print(f"  Start PM:      {start_rss:.2f} MB")
 print(f"  End RSS:        {end_rss:.2f} MB")
-print(f"  Peak RSS:       {peak_rss:.2f} MB")
+print(f"  Peak PM:       {peak_rss:.2f} MB")
 print(f"  Min RSS:        {min_rss:.2f} MB")
-print(f"  RSS Drift:      {rss_drift:.2f} MB")
+print(f"  PM Drift:      {rss_drift:.2f} MB")
 print(f"  Drift Rate:     {rss_drift_rate:.4f} MB/hour")
 print(f"  Avg Latency:    {avg_latency:.2f} ms")
 print(f"  P50 Latency:    {p50_latency:.2f} ms")
@@ -286,11 +287,11 @@ json_result = {
         "actual_duration_hours": round(actual_duration_hours, 4),
         "total_inferences": total_inferences,
         "errors": errors,
-        "start_rss_mb": round(start_rss, 2),
-        "end_rss_mb": round(end_rss, 2),
-        "peak_rss_mb": round(peak_rss, 2),
-        "min_rss_mb": round(min_rss, 2),
-        "rss_drift_mb": round(rss_drift, 2),
+        "start_pm_mb": round(start_rss, 2),
+        "end_pm_mb": round(end_rss, 2),
+        "peak_pm_mb": round(peak_rss, 2),
+        "min_pm_mb": round(min_rss, 2),
+        "pm_drift_mb": round(rss_drift, 2),
         "rss_drift_rate_mb_per_hour": round(rss_drift_rate, 4),
         "latency": {
             "avg_ms": round(avg_latency, 2),
@@ -302,7 +303,7 @@ json_result = {
             "max_ms": round(max_latency, 2),
         },
     },
-    "rss_samples": [{"hour": round(h, 4), "rss_mb": round(r, 2)} for h, r in rss_samples],
+    "pm_samples": [{"hour": round(h, 4), "pm_mb": round(r, 2)} for h, r in rss_samples],
     "hourly_latencies": [{"hour": round(h, 4), "avg_latency_ms": round(l, 2)} for h, l in hourly_latencies],
     "timestamp": datetime.now().isoformat(),
 }
@@ -314,7 +315,7 @@ print(f"\n  JSON saved: {json_path}")
 # ========== Save CSV (RSS samples) ==========
 with open(csv_path, 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
-    writer.writerow(["hour", "rss_mb"])
+    writer.writerow(["hour", "pm_mb"])
     for h, r in rss_samples:
         writer.writerow([round(h, 4), round(r, 2)])
 print(f"  CSV saved:  {csv_path}")
@@ -327,11 +328,11 @@ with open(txt_path, 'w', encoding='utf-8') as f:
     f.write(f"Duration:         {actual_duration_hours:.2f} hours\n")
     f.write(f"Total Inferences: {total_inferences}\n")
     f.write(f"Errors:           {errors}\n")
-    f.write(f"Start RSS:        {start_rss:.2f} MB\n")
+    f.write(f"Start PM:        {start_rss:.2f} MB\n")
     f.write(f"End RSS:          {end_rss:.2f} MB\n")
-    f.write(f"Peak RSS:         {peak_rss:.2f} MB\n")
+    f.write(f"Peak PM:         {peak_rss:.2f} MB\n")
     f.write(f"Min RSS:          {min_rss:.2f} MB\n")
-    f.write(f"RSS Drift:        {rss_drift:.2f} MB\n")
+    f.write(f"PM Drift:        {rss_drift:.2f} MB\n")
     f.write(f"Drift Rate:       {rss_drift_rate:.4f} MB/hour\n")
     f.write(f"Avg Latency:      {avg_latency:.2f} ms\n")
     f.write(f"P50 Latency:      {p50_latency:.2f} ms\n")

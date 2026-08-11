@@ -5,10 +5,10 @@ P90寤惰繜: 594.76487 ms
 P99寤惰繜: 605.97496 ms
 min_latency: 574.90010 ms
 max_latency: 644.42910 ms
-Start RSS: 701.00000 MB
-Peak RSS: 966.50391 MB
-Stable RSS: 966.37500 MB
-RSS Drift: 265.37500 MB
+Start PM: 701.00000 MB
+Peak PM: 966.50391 MB
+Stable PM: 966.37500 MB
+PM Drift: 265.37500 MB
 
 ===== 绗?2 娆℃祴璇?=====
 avg_latency: 599.01296 ms
@@ -17,10 +17,10 @@ P90寤惰繜: 602.79763 ms
 P99寤惰繜: 930.19218 ms
 min_latency: 573.12060 ms
 max_latency: 1322.38050 ms
-Start RSS: 699.89453 MB
-Peak RSS: 965.86719 MB
-Stable RSS: 965.86719 MB
-RSS Drift: 265.97266 MB
+Start PM: 699.89453 MB
+Peak PM: 965.86719 MB
+Stable PM: 965.86719 MB
+PM Drift: 265.97266 MB
 
 ===== 绗?3 娆℃祴璇?=====
 avg_latency: 585.84516 ms
@@ -29,10 +29,10 @@ P90寤惰繜: 594.84480 ms
 P99寤惰繜: 603.84886 ms
 min_latency: 575.52470 ms
 max_latency: 620.10630 ms
-Start RSS: 700.41016 MB
-Peak RSS: 966.06250 MB
-Stable RSS: 966.06250 MB
-RSS Drift: 265.65234 MB
+Start PM: 700.41016 MB
+Peak PM: 966.06250 MB
+Stable PM: 966.06250 MB
+PM Drift: 265.65234 MB
 
 ===== 绗?4 娆℃祴璇?=====
 avg_latency: 584.88256 ms
@@ -41,10 +41,10 @@ P90寤惰繜: 593.85733 ms
 P99寤惰繜: 602.34273 ms
 min_latency: 574.43820 ms
 max_latency: 603.33590 ms
-Start RSS: 698.51562 MB
-Peak RSS: 964.74219 MB
-Stable RSS: 964.74219 MB
-RSS Drift: 266.22656 MB
+Start PM: 698.51562 MB
+Peak PM: 964.74219 MB
+Stable PM: 964.74219 MB
+PM Drift: 266.22656 MB
 
 ===== 绗?5 娆℃祴璇?=====
 avg_latency: 585.02072 ms
@@ -53,10 +53,10 @@ P90寤惰繜: 591.66708 ms
 P99寤惰繜: 608.08694 ms
 min_latency: 573.51950 ms
 max_latency: 624.16520 ms
-Start RSS: 700.11719 MB
-Peak RSS: 965.72656 MB
-Stable RSS: 965.72656 MB
-RSS Drift: 265.60938 MB
+Start PM: 700.11719 MB
+Peak PM: 965.72656 MB
+Stable PM: 965.72656 MB
+PM Drift: 265.60938 MB
 
 ===== 绗?6 娆℃祴璇?=====
 avg_latency: 593.68626 ms
@@ -65,10 +65,10 @@ P90寤惰繜: 598.83920 ms
 P99寤惰繜: 815.94875 ms
 min_latency: 573.45870 ms
 max_latency: 889.74270 ms
-Start RSS: 700.83984 MB
-Peak RSS: 966.26953 MB
-Stable RSS: 966.23047 MB
-RSS Drift: 265.39062 MB
+Start PM: 700.83984 MB
+Peak PM: 966.26953 MB
+Stable PM: 966.23047 MB
+PM Drift: 265.39062 MB
 
 ===== 绗?7 娆℃祴璇?=====
 avg_latency: 588.35974 ms
@@ -77,10 +77,10 @@ P90寤惰繜: 597.03364 ms
 P99寤惰繜: 694.52822 ms
 min_latency: 572.71700 ms
 max_latency: 717.93970 ms
-Start RSS: 702.75391 MB
-Peak RSS: 968.19141 MB
-Stable RSS: 968.19141 MB
-RSS Drift: 265.43750 MB
+Start PM: 702.75391 MB
+Peak PM: 968.19141 MB
+Stable PM: 968.19141 MB
+PM Drift: 265.43750 MB
 
 ===== 绗?8 娆℃祴璇?=====
 avg_latency: 587.71495 ms
@@ -89,10 +89,10 @@ P90寤惰繜: 595.11822 ms
 P99寤惰繜: 624.83298 ms
 min_latency: 575.74920 ms
 max_latency: 628.55150 ms
-Start RSS: 707.08984 MB
-Peak RSS: 972.53906 MB
-Stable RSS: 972.53906 MB
-RSS Drift: 265.44922 MB
+Start PM: 707.08984 MB
+Peak PM: 972.53906 MB
+Stable PM: 972.53906 MB
+PM Drift: 265.44922 MB
 
 ===== 绗?9 娆℃祴璇?=====
 avg_latency: 585.53738 ms
@@ -101,10 +101,10 @@ P90寤惰繜: 593.24514 ms
 P99寤惰繜: 605.05771 ms
 min_latency: 574.86820 ms
 max_latency: 694.43830 ms
-Start RSS: 701.03516 MB
-Peak RSS: 966.45312 MB
-Stable RSS: 966.45312 MB
-RSS Drift: 265.41797 MB
+Start PM: 701.03516 MB
+Peak PM: 966.45312 MB
+Stable PM: 966.45312 MB
+PM Drift: 265.41797 MB
 
 ===== 绗?10 娆℃祴璇?=====
 avg_latency: 584.81262 ms
@@ -113,10 +113,10 @@ P90寤惰繜: 591.41136 ms
 P99寤惰繜: 598.47952 ms
 min_latency: 573.41980 ms
 max_latency: 602.31290 ms
-Start RSS: 703.32812 MB
-Peak RSS: 968.75781 MB
-Stable RSS: 968.75781 MB
-RSS Drift: 265.42969 MB
+Start PM: 703.32812 MB
+Peak PM: 968.75781 MB
+Stable PM: 968.75781 MB
+PM Drift: 265.42969 MB
 
 ===== Average of 10 runs =====
 avg_latency: 588.12321 ms
@@ -125,7 +125,7 @@ P90寤惰繜: 595.35793 ms
 P99寤惰繜: 668.92929 ms
 min_latency: 574.17160 ms
 max_latency: 734.74021 ms
-Start RSS: 701.49844 MB
-Peak RSS: 967.11133 MB
-Stable RSS: 967.09453 MB
-RSS Drift: 265.59609 MB
+Start PM: 701.49844 MB
+Peak PM: 967.11133 MB
+Stable PM: 967.09453 MB
+PM Drift: 265.59609 MB

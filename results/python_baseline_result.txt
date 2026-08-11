@@ -7,7 +7,7 @@ min_latency: 574.17160 ms
 max_latency: 734.74021 ms
 
 ===== Memory Usage (10 runs average) =====
-Start RSS: 701.49844 MB
-Peak RSS: 967.11133 MB
-Stable RSS: 967.09453 MB
-RSS Drift: 265.59609 MB
+Start PM: 701.49844 MB
+Peak PM: 967.11133 MB
+Stable PM: 967.09453 MB
+PM Drift: 265.59609 MB

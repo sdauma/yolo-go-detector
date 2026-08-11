@@ -384,16 +384,16 @@ func getModelIdentifier(modelPath string) string {
 
 	// 根据模型名称返回对应的标识
 	switch {
+	case strings.Contains(nameLower, "yolo11n"):
+		return "11n"
+	case strings.Contains(nameLower, "yolov8n"):
+		return "v8n"
 	case strings.Contains(nameLower, "yolo11"):
 		return "11x"
 	case strings.Contains(nameLower, "yolov8"):
 		return "v8x"
 	case strings.Contains(nameLower, "yolov5"):
 		return "v5x"
-	case strings.Contains(nameLower, "yolo11n"):
-		return "11n"
-	case strings.Contains(nameLower, "yolov8n"):
-		return "v8n"
 	default:
 		// 如果没有匹配到特定模式，尝试提取包含yolo和版本号的部分
 		if idx := strings.Index(nameLower, "yolo"); idx != -1 {
@@ -731,89 +731,6 @@ func detectImage(inputImagePath, outputImagePath string) (int, string, error) {
 
 // 图片检测输出结果 输入图片地址 输出检测结果中的对象描述:对象个数;描述:对象1是*,置信度;错误信息
 // 核心检测函数，执行完整的检测流程
-func detectImageBAK(inputImagePath, outputImagePath string) (int, string, error) {
-	// 环境变量和中文字体已在init函数中初始化
-	// 字体资源在整个程序生命周期内保持可用，无需在单次检测后清理
-
-	originalPic, e := loadImageFile(inputImagePath)
-	if e != nil {
-		return 0, "", e
-	}
-	originalWidth := originalPic.Bounds().Dx()
-	originalHeight := originalPic.Bounds().Dy()
-
-	modelSession, e := initSession()
-	if e != nil {
-		return 0, "", e
-	}
-	defer modelSession.Destroy()
-
-	var allBoxes []boundingBox
-
-	if *useAugment {
-		// 原图
-		scaleInfo, e := prepareInput(originalPic, modelSession.Input)
-		if e != nil {
-			return 0, "", e
-		}
-		modelSession.Session.Run()
-		originalBoxes := processOutput(modelSession.Output.GetData(), originalWidth, originalHeight,
-			float32(*confidenceThreshold), float32(*iouThreshold), scaleInfo)
-		allBoxes = append(allBoxes, originalBoxes...)
-
-		// 水平翻转图像
-		flippedPic := flipHorizontal(originalPic)
-		scaleInfo, e = prepareInput(flippedPic, modelSession.Input)
-		if e == nil {
-			modelSession.Session.Run()
-			flippedBoxes := processOutput(modelSession.Output.GetData(), originalWidth, originalHeight,
-				float32(*confidenceThreshold), float32(*iouThreshold), scaleInfo)
-			for i := range flippedBoxes {
-				flippedBoxes[i] = flipBoundingBox(flippedBoxes[i], originalWidth)
-			}
-			allBoxes = append(allBoxes, flippedBoxes...)
-		}
-
-		// 合并框并 NMS
-		if len(allBoxes) > 0 {
-			allBoxes = nonMaxSuppression(allBoxes, float32(*iouThreshold))
-		}
-	} else {
-		scaleInfo, e := prepareInput(originalPic, modelSession.Input)
-		if e != nil {
-			return 0, "", e
-		}
-		modelSession.Session.Run()
-		allBoxes = processOutput(modelSession.Output.GetData(), originalWidth, originalHeight,
-			float32(*confidenceThreshold), float32(*iouThreshold), scaleInfo)
-	}
-
-	var outObjectStr string
-	var num int
-	for _, box := range allBoxes {
-		if checkStrIsInArray(box.label, []string{"person", "car", "motorcycle", "bus", "truck"}) {
-			num++
-			chineseLabel := getChineseLabel(box.label)
-			//confStr := fmt.Sprintf("%.2f", float32(math.Round(float64(box.confidence*100))/100))
-			confStr := fmt.Sprintf("%.8f", box.confidence)
-			boxXYStr := fmt.Sprintf("%.8f %.8f %.8f %.8f", box.x1, box.y1, box.x2, box.y2)
-			outObjectStr += "对象" + strconv.Itoa(num) + ": " + box.label + "(" + chineseLabel + ")" + ", 置信度: " + confStr + " ,框：[" + boxXYStr + "] ; "
-		}
-	}
-	if num > 0 {
-		outObjectStr = " AI分析到危险对象共有 " + strconv.Itoa(num) + " 个, " + outObjectStr
-	} else {
-		outObjectStr = "未检测到危险对象"
-	}
-
-	e = drawBoundingBoxesWithLabels(originalPic, allBoxes, outputImagePath)
-	if e != nil {
-		return num, outObjectStr, e
-	}
-
-	return num, outObjectStr, nil
-}
-
 // 安全的ONNX Runtime环境初始化函数
 // 确保ONNX Runtime只被初始化一次，保证线程安全
 
@@ -909,51 +826,6 @@ func loadImageFile(filePath string) (image.Image, error) {
 	return pic, nil
 }
 
-// 旧函数已被替换，请使用resizeWithLetterbox函数
-
-// LetterBox类的rect=False模式实现（auto=False）
-// 对应Python中LetterBox的auto=False参数，用于rect=False模式（标准letterbox）
-// 保持长宽比，将图像缩放到最短边等于目标尺寸，用灰色填充
-func resizeWithLetterboxBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
-	bounds := img.Bounds()
-	originalWidth := bounds.Dx()
-	originalHeight := bounds.Dy()
-
-	// 计算缩放比例，保持长宽比，确保最短边适应目标尺寸
-	scale := float64(targetSize) / math.Max(float64(originalWidth), float64(originalHeight))
-	newWidth := int(float64(originalWidth) * scale)
-	newHeight := int(float64(originalHeight) * scale)
-
-	// 缩放图像
-	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
-	result := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
-
-	// 填充灰色背景 (114, 114, 114) - YOLO标准
-	grayFill := &image.Uniform{color.RGBA{114, 114, 114, 255}}
-	draw.Draw(result, result.Bounds(), grayFill, image.Point{}, draw.Src)
-
-	// 将缩放后的图像居中放置
-	offsetX := (targetSize - newWidth) / 2
-	offsetY := (targetSize - newHeight) / 2
-	draw.Draw(result, image.Rect(offsetX, offsetY, offsetX+newWidth, offsetY+newHeight),
-		resized, image.Point{}, draw.Src)
-
-	// 计算实际的缩放比例（相对于原始图像）
-	scaleX := float32(newWidth) / float32(originalWidth)
-	scaleY := float32(newHeight) / float32(originalHeight)
-
-	scaleInfo := ScaleInfo{
-		ScaleX:    scaleX,
-		ScaleY:    scaleY,
-		PadLeft:   offsetX,
-		PadTop:    offsetY,
-		NewWidth:  newWidth,
-		NewHeight: newHeight,
-	}
-
-	return result, scaleInfo
-}
-
 // 标准 Letterbox (对应 auto=False) 此模式将图像缩放到 imgsz（如 640），并填充到完整的正方形。 	官方版本
 func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInfo) {
 	bounds := img.Bounds()
@@ -966,17 +838,8 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 
 	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
 
-	// 从对象池获取图像
-	result := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if result.Bounds().Dx() != targetSize || result.Bounds().Dy() != targetSize {
-		result = image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
-	} else {
-		// 清空图像
-		for i := range result.Pix {
-			result.Pix[i] = 0
-		}
-	}
+	// 本地分配（原对象池用法在返回后无人归还，形成内存泄漏；此处改为局部分配，像素内容不变）
+	result := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
 
 	// 填充 114 灰色
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
@@ -992,44 +855,6 @@ func resizeWithLetterbox(img image.Image, targetSize int) (image.Image, ScaleInf
 // LetterBox类的rect=True模式实现（auto=True）
 // 对应Python中LetterBox的auto=True参数，用于rect=True模式
 // 保持长宽比，同时确保尺寸能被步长(stride)整除，以提高批处理效率
-func resizeWithRectScalingBAK(img image.Image, targetSize int) (image.Image, ScaleInfo) {
-	bounds := img.Bounds()
-	originalWidth := bounds.Dx()
-	originalHeight := bounds.Dy()
-
-	scale := float64(targetSize) / math.Min(float64(originalWidth), float64(originalHeight))
-	newWidth := int(float64(originalWidth) * scale)
-	newHeight := int(float64(originalHeight) * scale)
-
-	resized := resize.Resize(uint(newWidth), uint(newHeight), img, resize.Bilinear)
-
-	// 中心裁剪成 640x640
-	startX := (newWidth - targetSize) / 2
-	startY := (newHeight - targetSize) / 2
-	if startX < 0 {
-		startX = 0
-	}
-	if startY < 0 {
-		startY = 0
-	}
-
-	cropped := image.NewRGBA(image.Rect(0, 0, targetSize, targetSize))
-	draw.Draw(cropped, cropped.Bounds(), resized, image.Point{startX, startY}, draw.Src)
-
-	scaleX := float32(newWidth) / float32(originalWidth)
-	scaleY := float32(newHeight) / float32(originalHeight)
-
-	scaleInfo := ScaleInfo{
-		ScaleX:    scaleX,
-		ScaleY:    scaleY,
-		PadLeft:   startX,
-		PadTop:    startY,
-		NewWidth:  newWidth,
-		NewHeight: newHeight,
-	}
-	return cropped, scaleInfo
-}
-
 // Rect 缩放 (对应 auto=True) 官方版本：这是 dynamic=True 的精髓：不再填充到 640x640，而是填充到能被 stride（通常为 32）整除的最小矩形，从而大幅提升推理速度。
 func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.Image, ScaleInfo) {
 	bounds := img.Bounds()
@@ -1052,17 +877,8 @@ func resizeWithRectScaling(img image.Image, targetSize int, stride int) (image.I
 
 	resized := resize.Resize(uint(unpadWidth), uint(unpadHeight), img, resize.Bilinear)
 
-	// 从对象池获取图像
-	result := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if result.Bounds().Dx() != finalWidth || result.Bounds().Dy() != finalHeight {
-		result = image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
-	} else {
-		// 清空图像
-		for i := range result.Pix {
-			result.Pix[i] = 0
-		}
-	}
+	// 本地分配（同 resizeWithLetterbox，避免对象池泄漏）
+	result := image.NewRGBA(image.Rect(0, 0, finalWidth, finalHeight))
 
 	draw.Draw(result, result.Bounds(), &image.Uniform{color.RGBA{114, 114, 114, 255}}, image.Point{}, draw.Src)
 
@@ -1123,9 +939,21 @@ func initSession() (*ModelSession, error) {
 	}
 	defer options.Destroy()
 	// ★ 显式设置线程数，避免多 Session 场景下的 CPU 过度订阅
-	// 单 Session 场景默认用满所有核心，多 Session 场景由调用方（SessionPool）控制
-	options.SetIntraOpNumThreads(runtime.NumCPU())
+	// 取物理核心数（=NumCPU()/2，对应论文实验平台 i5-10400 的 6 物理核），与 §4.3 基线一致；
+	// 多 Session 场景由调用方（SessionPool）控制。
+	// 关闭 CPU 内存 Arena 与内存模式，将推理阶段内存漂移降至接近零（论文 §4.5.1 结论落地）。
+	options.SetIntraOpNumThreads(runtime.NumCPU() / 2)
 	options.SetInterOpNumThreads(1)
+	if err := options.SetMemPattern(false); err != nil {
+		inputTensor.Destroy()
+		outputTensor.Destroy()
+		return nil, fmt.Errorf("set memory pattern failed: %w", err)
+	}
+	if err := options.SetCpuMemArena(false); err != nil {
+		inputTensor.Destroy()
+		outputTensor.Destroy()
+		return nil, fmt.Errorf("set cpu mem arena failed: %w", err)
+	}
 	session, err := ort.NewAdvancedSession(modelPath,
 		[]string{"images"}, []string{"output0"},
 		[]ort.ArbitraryTensor{inputTensor}, []ort.ArbitraryTensor{outputTensor}, options)
@@ -1280,17 +1108,8 @@ func flipHorizontal(img image.Image) image.Image {
 	bounds := img.Bounds()
 	w, h := bounds.Dx(), bounds.Dy()
 
-	// 从对象池获取图像
-	result := imagePool.Get().(*image.RGBA)
-	// 调整图像大小
-	if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
-		result = image.NewRGBA(image.Rect(0, 0, w, h))
-	} else {
-		// 清空图像
-		for i := range result.Pix {
-			result.Pix[i] = 0
-		}
-	}
+	// 本地分配（避免对象池泄漏）
+	result := image.NewRGBA(image.Rect(0, 0, w, h))
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
@@ -1309,16 +1128,7 @@ func rotateImage(img image.Image, degrees int) image.Image {
 	switch degrees {
 	case 90:
 		// 从对象池获取图像
-		result := imagePool.Get().(*image.RGBA)
-		// 调整图像大小
-		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
-			result = image.NewRGBA(image.Rect(0, 0, h, w))
-		} else {
-			// 清空图像
-			for i := range result.Pix {
-				result.Pix[i] = 0
-			}
-		}
+		result := image.NewRGBA(image.Rect(0, 0, h, w))
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(y, w-x-1, img.At(x, y))
@@ -1327,16 +1137,7 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		return result
 	case 180:
 		// 从对象池获取图像
-		result := imagePool.Get().(*image.RGBA)
-		// 调整图像大小
-		if result.Bounds().Dx() != w || result.Bounds().Dy() != h {
-			result = image.NewRGBA(image.Rect(0, 0, w, h))
-		} else {
-			// 清空图像
-			for i := range result.Pix {
-				result.Pix[i] = 0
-			}
-		}
+		result := image.NewRGBA(image.Rect(0, 0, w, h))
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(w-x-1, h-y-1, img.At(x, y))
@@ -1345,16 +1146,7 @@ func rotateImage(img image.Image, degrees int) image.Image {
 		return result
 	case 270:
 		// 从对象池获取图像
-		result := imagePool.Get().(*image.RGBA)
-		// 调整图像大小
-		if result.Bounds().Dx() != h || result.Bounds().Dy() != w {
-			result = image.NewRGBA(image.Rect(0, 0, h, w))
-		} else {
-			// 清空图像
-			for i := range result.Pix {
-				result.Pix[i] = 0
-			}
-		}
+		result := image.NewRGBA(image.Rect(0, 0, h, w))
 		for y := 0; y < h; y++ {
 			for x := 0; x < w; x++ {
 				result.Set(h-y-1, x, img.At(x, y))

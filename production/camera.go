@@ -325,9 +325,10 @@ func (cm *CameraManager) doLogin() (string, error) {
 	log.Printf("[摄像头] API 登录失败: %v，尝试 chromedp 浏览器登录...\n", err)
 
 	// 2. 回退到 chromedp 浏览器登录（慢）
+	apiErr := err // 保存 API 登录错误，避免被浏览器错误覆盖
 	token, err = cm.loginViaBrowser(username, password)
 	if err != nil {
-		cm.loginErr = fmt.Errorf("所有登录方式均失败: API(%v), 浏览器(%v)", err, err)
+		cm.loginErr = fmt.Errorf("所有登录方式均失败: API(%v), 浏览器(%v)", apiErr, err)
 		return "", cm.loginErr
 	}
 

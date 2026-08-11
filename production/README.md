@@ -51,7 +51,7 @@ cp config.yaml config.prod.yaml
 | `video_api.password` | 登录密码 | (必填) |
 | `video_api.refresh_interval_minutes` | 在线列表刷新间隔 | `240` (4小时) |
 | `detection.model_path` | ONNX 模型路径 | `../third_party/yolo11x.onnx` |
-| `detection.pool_size` | Session Pool 大小 | `0` (自动=CPU核数) |
+| `detection.pool_size` | Session Pool 大小 | `0` (自动=max(1,CPU/4) 上限3；6核生产机实际=1) |
 | `detection.intra_op_threads` | 每Session线程数 | `0` (自动=CPU/Pool，推荐) |
 | `scheduler.round_interval_seconds` | 每轮检测间隔 | `5` |
 | `scheduler.fetch_concurrency` | 并发取图数 | `100` |
@@ -76,7 +76,9 @@ go build -o yolo-detector .
 #### 每轮摘要
 
 ```json
-{"type":"round_summary","timestamp":"2026-06-03 10:05:30","total_online":2600,"success_count":2598,"fail_count":2,"alert_count":3,"round_total_ms":4823,"avg_fetch_ms":234,"avg_infer_ms":45,"pool_active":14,"pool_idle":0}
+{"type":"round_summary","timestamp":"2026-06-03 10:05:30","total_online":2600,"success_count":2598,"fail_count":2,"alert_count":3,"round_total_ms":4823,"avg_fetch_ms":234,"avg_infer_ms":45,"pool_active":1,"pool_idle":0}
+
+>（示例为结构示意，数值非真实 2600 路生产运行。生产配置 `pool=1/intra_op=6` 下 `pool_active` 恒为 1，各路经 Pool 有界通道串行推理；yolo11x 单帧推理约 737 ms，单轮累计耗时由 2600 路取图与串行推理叠加，详见论文 §5.2 P3 回放数据。）
 ```
 
 ## 设计原则
@@ -105,7 +107,7 @@ production/
 ├── config.yaml            # 示例配置
 ├── camera.go              # 摄像头管理（在线列表/Token/HTTP取图）
 ├── detector.go            # YOLO 检测流水线（预处理+推理+后处理）
-├── scheduler.go           # 轮巡调度器
+├── scheduler.go           # 取图调度器
 ├── output.go              # JSONL 输出 + 告警图片保存
 ├── go.mod / go.sum        # Go 模块
 └── README.md              # 本文档
@@ -128,7 +130,7 @@ production/
 | **池泄漏**（`GetSession()` 非阻塞） | Session 数超容量 → CPU 风暴 | 改为阻塞等待 + 预建满池 Session |
 | **CPU 过度订阅**（未设线程限制） | 每 Session 默认 12 线程 → 144+ 线程争抢 | 添加 `SetIntraOpNumThreads`，自动计算 |
 
-修复后 `engine.SessionPool` 在生产配置（pool=12, intra_op=1）下可稳定运行，2600 路摄像头每路推理延迟可控。配置新增 `detection.intra_op_threads` 参数（0 = 自动计算 CPU/PoolSize，推荐）。
+修复后引入 `detection.intra_op_threads` 参数（0 = 自动计算 CPU/PoolSize，推荐），在线程维度消除过度订阅。最终生产配置落定为 `pool=1, intra_op=6`（见 config.prod.yaml，与论文 §5.2 主推荐一致）：低频取图场景下单 Session 顺序推理已满足延迟，而 Pool 框架提供的有界通道削峰、Session 级故障隔离与容量封顶（内存 = pool_size × 每Session常驻，与摄像头数无关）仍是 7×24 生产系统必需的工程治理能力。早期的 `pool=12` 探索配置因无并发需求且单 Session 已足够而被弃用。
 
 ## 许可证
 

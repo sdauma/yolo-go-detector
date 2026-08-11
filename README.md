@@ -2,7 +2,7 @@
 
 一个基于 **ONNX Runtime** 和 **YOLO11/YOLOv8x** 的轻量级目标检测工具，使用 Go 语言编写，支持中文标签显示、多平台（Windows/macOS/Linux）。
 
-基于48个标准化测试程序（24 Go + 18 Python + 2 消融 + 1 72h + 1 C API + 2 Arena消融）的严格测试，累计逾80万次推理实验，本项目在同线程配置下Go与Python推理延迟几乎相同（差异<1%），Go在单实例内存上约有17%的优势。
+基于48个标准化测试程序（27 Go + 19 Python + 2 C API）的严格测试，累计约93万次推理实验，本项目在同线程配置下Go与Python推理延迟几乎相同（差异<1%），Go在单实例内存上约有17%的优势。通过Session Pool参数消融与固定并发对照实验，揭示了漂移骤增的阈值源于并发Run()数变化而非池容量本身，且关闭Arena后无论架构与池大小推理漂移均接近零（Go/C API/Python 三方跨绑定验证一致）。
 
 ![示例图](assets/bus_11x_false.jpg) 
 
@@ -32,7 +32,7 @@
 
 ### 3. 克隆项目
 ```bash
-git clone https://github.com/yourusername/yolo-go-detector.git
+git clone https://github.com/sdauma/yolo-go-detector.git
 cd yolo-go-detector
 ```
 
@@ -148,7 +148,6 @@ yolo-go-detector/
 ├── engine/           # GoYOLO-Engine核心引擎
 │   ├── session_pool.go    # Session池管理 + BatchInferenceEngine
 │   ├── postprocess.go     # YOLO输出解析、NMS后处理
-│   ├── optimizer.go       # 性能统计组件
 │   ├── tensor_pool.go     # Tensor内存池
 │   └── ...
 ├── examples/         # engine包API使用示例
@@ -171,16 +170,16 @@ yolo-go-detector/
 
 ## 📖 研究成果导航
 
-本仓库是论文《面向工业监控的 ONNX Runtime 高并发推理架构设计与实现》的配套代码。以下是从论文到代码的对应关系：
+本仓库是论文《基于 Session Pool 的 ONNX Runtime 并发推理性能分析》的配套代码。以下是从论文到代码的对应关系：
 
 ### 核心架构实现
 
 | 论文章节 | 代码位置 | 说明 |
 |----------|----------|------|
-| §2.3 Session Pool 并发推理架构 | `test/benchmark/go_architecture_benchmark.go` | 三种并发架构（Unsafe Shared / Mutex / Session Pool）的完整实验实现 |
-| §2.3.3 Session Pool 设计 | `detector_pool.go` | 工程参考实现：`ModelSessionPool` + `VideoDetectorManager` |
-| §2.3.3 会话池核心逻辑 | `engine/session_pool.go` | 架构参考实现：`SessionPool` + `BatchInferenceEngine` |
-| 实际运行逻辑 | `test/benchmark/go_*.go`<br>`test/benchmark/python_*.py` | 48 个标准化测试程序（24 Go + 18 Python + 2 消融 + 1 72h + 1 C API + 2 Arena消融）各自独立实现推理，论文数据均由此产生 |
+| §2.2.3 Session Pool 并发推理架构 | `test/benchmark/go_architecture_benchmark.go` | 三种并发架构（Unsafe Shared / Mutex / Session Pool）的完整实验实现 |
+| §2.2.3 Session Pool 设计 | `detector_pool.go` | 工程参考实现：`ModelSessionPool` + `VideoDetectorManager` |
+| §2.2.4 会话池核心逻辑 | `engine/session_pool.go` | 架构参考实现：`SessionPool` + `BatchInferenceEngine` |
+| 实际运行逻辑 | `test/benchmark/go_*.go`<br>`test/benchmark/python_*.py` | 48 个标准化测试程序（27 Go + 19 Python + 2 C API）各自独立实现推理，论文数据均由此产生 |
 
 ### 实验数据来源
 
@@ -196,7 +195,7 @@ yolo-go-detector/
 - **单图检测**：`go run . -img ./assets/bus.jpg`
 - **批量检测**：`go run . -img ./test_images/ -workers 4`
 - **批量验证（性能基准）**：`cd test/batch_verify && go build -o batch_verify.exe . && batch_verify.exe -dir <图片目录> -limit 100 -model <模型路径>`
-- **全部实验复现**：`cd test && run_all_tests_complete.bat`
+- **全部实验复现**：`cd test && RUN_ALL_STANDARD_TESTS.bat`
 - **跨语言检测一致性验证**：`cd test/compare && python compare.py`（详见 [test/compare/README.md](test/compare/README.md)）
 
 ### 检测结果一致性验证
@@ -227,18 +226,19 @@ yolo-go-detector/
 本项目包含完整的 **48 个标准化测试程序**，用于比较 Go 和 Python 作为主机语言对 ONNX Runtime 推理性能的影响。
 
 **测试程序构成**：
-- **正式测试程序**：48个（24 Go + 18 Python + 2 消融 + 1 72h + 1 C API + 2 Arena消融）
+- **正式测试程序**：48个（27 Go + 19 Python + 2 C API）
+- **后续补充程序（不计入48）**：`thread_config_benchmark_yolo11n.go`、`python_thread_config_yolo11n_benchmark.py`（YOLO11n 同线程延迟对比，支撑论文 §4.3）、`go_session_lifecycle_repro.go` / `python_session_lifecycle_repro.py`（Session 生命周期漂移复现，支撑论文 §4.1）
 - **辅助程序**：4个（统计分析、图表生成、批量验证、结果对比）
 - **Example 示例**：2个
 
 ### 快速运行所有测试
 
-**一键运行全部 41 个测试任务（推荐）**：
+**一键运行全部 48 个标准化测试程序（推荐）**：
 
 ```bash
 # Windows 系统
 cd test
-run_all_tests_complete.bat
+RUN_ALL_STANDARD_TESTS.bat
 ```
 
 该脚本会自动执行以下操作：
@@ -292,53 +292,22 @@ run_all_tests_complete.bat
 
 ### 48个标准化测试程序清单
 
-| 序号 | 测试程序 | 类别 | 状态 |
-|------|----------|------|------|
-| 1 | go_baseline | 基准测试 | ✅ 完成 |
-| 2 | python_baseline | 基准测试 | ✅ 完成 |
-| 3 | go_thread_1 | 线程配置 | ✅ 完成 |
-| 4 | go_thread_2 | 线程配置 | ✅ 完成 |
-| 5 | go_thread_4 | 线程配置 | ✅ 完成 |
-| 6 | go_thread_8 | 线程配置 | ✅ 完成 |
-| 7 | python_thread_1 | 线程配置 | ✅ 完成 |
-| 8 | python_thread_2 | 线程配置 | ✅ 完成 |
-| 9 | python_thread_4 | 线程配置 | ✅ 完成 |
-| 10 | python_thread_8 | 线程配置 | ✅ 完成 |
-| 11 | go_cold_start | 冷启动 | ✅ 完成 |
-| 12 | python_cold_start | 冷启动 | ✅ 完成 |
-| 13 | go_long_stability | 稳定性 | ✅ 完成 |
-| 14 | python_long_stability | 稳定性 | ✅ 完成 |
-| 15 | go_reinforced | 强化测试 | ✅ 完成 |
-| 16 | python_reinforced | 强化测试 | ✅ 完成 |
-| 17 | go_reinforced_small | 强化测试 | ✅ 完成 |
-| 18 | python_reinforced_small | 强化测试 | ✅ 完成 |
-| 19 | go_memory_standardization | 内存测试 | ✅ 完成 |
-| 20 | python_memory_standardization | 内存测试 | ✅ 完成 |
-| 21 | go_cold_start_decomposition | 冷启动分解 | ✅ 完成 |
-| 22 | python_cold_start_decomposition | 冷启动分解 | ✅ 完成 |
-| 23 | go_session_pool | 并发架构 | ✅ 完成 |
-| 24 | go_architecture_comparison | 并发架构 | ✅ 完成 |
-| 25 | python_architecture_comparison | 并发架构 | ✅ 完成 |
-| 26 | go_concurrent_stress | 并发压力 | ✅ 完成 |
-| 27 | go_cpu_monitoring | CPU监控 | ✅ 完成 |
-| 28 | python_cpu_monitoring | CPU监控 | ✅ 完成 |
-| 29 | go_session_creation | Session创建 | ✅ 完成 |
-| 30 | python_session_creation | Session创建 | ✅ 完成 |
-| 31 | go_pure_inference | 纯推理 | ✅ 完成 |
-| 32 | python_pure_inference | 纯推理 | ✅ 完成 |
-| 33 | go_performance_diagnostic | 性能诊断 | ✅ 完成 |
-| 34 | go_output_consistency | 输出一致性 | ✅ 完成 |
-| 35 | python_output_consistency | 输出一致性 | ✅ 完成 |
-| 36 | go_yolo11n_reinforced | 轻模型测试 | ✅ 完成 |
-| 37 | python_yolo11n_reinforced | 轻模型测试 | ✅ 完成 |
-| 38 | go_advanced_session | 高级Session | ✅ 完成 |
-| 39 | python_advanced_session | 高级Session | ✅ 完成 |
-| 40 | go_batch_inference | 批量推理 | ✅ 完成 |
-| 41 | go_long_stability_enhanced | 增强稳定性 | ✅ 完成 |
-| 42 | go_session_pool_ablation | 消融实验 | ✅ 完成 |
-| 43 | python_session_pool_ablation | 消融实验 | ✅ 完成 |
-| 44 | go_72h_stability | 72h稳定性 | ✅ 完成 |
-| 45 | cpp_baseline_benchmark | C API基准 | ✅ 完成 |
+| 类别 | Go | Python | C API | 合计 |
+|------|:--:|:------:|:---:|:----:|
+| 并发架构 | 3 | 1 | 0 | 4 |
+| 基准强化 | 4 | 5 | 0 | 9 |
+| 纯推理 | 1 | 1 | 0 | 2 |
+| 冷启动 | 2 | 2 | 0 | 4 |
+| 稳定性 | 2 | 2 | 0 | 4 |
+| 内存 | 3 | 2 | 0 | 5 |
+| 线程配置 | 1 | 1 | 0 | 2 |
+| 消融 | 4 | 2 | 1 | 7 |
+| 其他 | 7 | 3 | 0 | 10 |
+| C API 基准 | 0 | 0 | 1 | 1 |
+| **合计** | **27** | **19** | **2** | **48** |
+
+> 完整逐程序清单（含文件名、对应论文章节、输出文件）见
+> [测试程序与图表生成程序完整清单](test/测试程序与图表生成程序完整清单.md)。
 
 ### 数据精度规范
 
@@ -360,8 +329,8 @@ run_all_tests_complete.bat
 | P50延迟 (ms) | 584.44 | 736.63 | Go慢26.04% |
 | P90延迟 (ms) | 593.39 | 780.08 | Go慢31.46% |
 | P95延迟 (ms) | 596.09 | 783.49 | Go慢31.44% |
-| Peak RSS (MB) | 970.81 | 802.24 | Go低17.36% |
-| RSS Drift (MB) | 265.46 | 256.11（Go Heap 7.59 MB） | 均稳定 |
+| Peak PM (MB) | 970.81 | 802.24 | Go低17.36% |
+| PM Drift (MB) | 265.46 | 256.11（Go Heap 7.59 MB） | 均稳定 |
 
 注：本节展示的是强化测试（reinforced）结果，执行 10 轮×200 次推理。同线程配置下（均为intra_op=8），Go与Python延迟几乎相同（695.40 ms vs 694.60 ms，差异<1%），表明表观延迟差异主要来自默认线程配置不同。数据来源：go_reinforced_result.txt、python_reinforced_result.txt。
 
@@ -379,13 +348,13 @@ run_all_tests_complete.bat
 | 冷启动时间 (ms) | 608.03 | 759.25 | Go慢24.87% |
 | 稳定状态时间 (ms) | 588.30 | 729.48 | Go慢24.00% |
 | 冷启动/稳定比例 | 1.03x | 1.04x | 接近 |
-| Peak RSS (MB) | 973.99 | 982.53 | 差异<1% |
+| Peak PM (MB) | 973.99 | 982.53 | 差异<1% |
 
 ### 并发架构性能对比（并发数=4）
 
 三种并发架构对比（**Go架构测试结果**）：
 
-| 架构 | 平均延迟(ms) | 吞吐率(REQ/s) | Peak RSS(MB) |
+| 架构 | 平均延迟(ms) | 吞吐率(REQ/s) | Peak PM(MB) |
 |------|-------------|---------------|--------------|
 | Unsafe Shared | 3515.54 | 1.132 | 2216.02 |
 | Mutex Shared | 2067.90 | 0.483 | 607.10 |
@@ -395,7 +364,7 @@ run_all_tests_complete.bat
 
 ### Session Pool扩展性（Python架构测试结果，数据来自python_architecture_comparison.txt）
 
-| 池大小 | 平均延迟(ms) | 吞吐率(REQ/s) | Peak RSS(MB) |
+| 池大小 | 平均延迟(ms) | 吞吐率(REQ/s) | Peak PM(MB) |
 |--------|-------------|---------------|--------------|
 | 1 | 2068.97 | 0.48 | 968.13 |
 | 2 | 2372.95 | 0.84 | 1517.87 |
@@ -448,7 +417,7 @@ v1 存在两个并发 Bug：
 
 **结论（50张快速测试）**：大模型优先保障单Session线程数，小模型才可多路并发。
 
-> **注（2000张参数扫描修正）**：50 张快速测试（v5）因样本过小、内存采样不充分，曾将 `pool=2/intraOp=6` 判为最优；系统性参数扫描（`pool=1/2 × intraOp=1–6` 共 12 组、每组 2000 张真实监控帧，详见 `test/测试规范与性能分析综合报告.md` §5.5.6 与 `test/测试程序与图表生成程序完整清单.md` §2.5.3）表明 `pool=2/intraOp=3`（及 2×4）在纯推理延迟（1457 vs 2796 ms）与峰值内存（1171 vs 2363 MB）上均显著优于 2×6，最终推荐配置修正为 **pool=2/intraOp=3**（与论文 §5.2 一致）。
+> **注（2000张参数扫描修正）**：50 张快速测试（v5）因样本过小、内存采样不充分，曾将 `pool=2/intraOp=6` 判为最优；系统性参数扫描（`pool=1/2 × intraOp=1–6` 共 12 组、每组 2000 张真实监控帧，详见 `test/测试规范与性能分析综合报告.md` §5.5.6 与 `test/测试程序与图表生成程序完整清单.md` §5（交叉验证工具，batch_verify 条目））表明 `pool=2/intraOp=3`（及 2×4）在纯推理延迟（1457 vs 2796 ms）与峰值内存（1171 vs 2363 MB）上均显著优于 2×6，最终推荐配置修正为 **pool=2/intraOp=3**（与论文 §5.2 一致）。
 
 #### 5000 张稳定性验证（v5-stress）
 
@@ -500,8 +469,8 @@ v1 存在两个并发 Bug：
 | 总推理次数 | 238,675 |
 | 平均延迟 | 585.58 ms |
 | P50/P99延迟 | 582.47 / 613.61 ms |
-| 起始RSS / 结束RSS | 965.21 / 984.23 MB |
-| RSS漂移 | +19.02 MB（0.26 MB/h） |
+| 起始PM / 结束PM | 965.21 / 984.23 MB |
+| PM漂移 | +19.02 MB（0.26 MB/h） |
 | 错误数 | 0 |
 
 **Go vs Python 同口径对比**（均为单Session，intraOp=12）：
@@ -522,7 +491,7 @@ v1 存在两个并发 Bug：
 | 对比组 | Go均值 | Python均值 | 差异 | 结论 |
 |--------|--------|-----------|------|------|
 | YOLO11x | 737.52 ms | 585.35 ms | Go慢25.99% | 同线程配置差异<1% |
-| YOLO11n | 40.73 ms | 37.10 ms | Go慢8.9% | 轻量级模型差异更小 |
+| YOLO11n | 40.73 ms | 37.10 ms | Go慢9.8% | 轻量模型运行时开销占比更大 |
 
 数据文件：`results/statistical_analysis.json`。
 
@@ -546,19 +515,33 @@ v1 存在两个并发 Bug：
 
 ### C API 基准测试（ONNX Runtime C API）
 
-使用原生C API直接调用ONNX Runtime，测量纯ORT推理性能基线：
+使用原生 C API 直接调用 ONNX Runtime，测量纯 ORT 推理性能基线（sequential 执行模式，intra_op=12，1000 次推理，数据来源 `results/cpp_arena_ablation_v2_result.json`）：
 
-| 指标 | 值 |
-|------|-----|
-| 推理延迟 | 873.57 ms（2000次推理） |
-| 标准差 | 159.55 ms |
-| P50延迟 | 813.48 ms |
-| P99延迟 | 1486.00 ms |
-| 吞吐量 | 1.145 REQ/s |
+| 指标 | Arena ON | Arena OFF |
+|------|----------|-----------|
+| 推理延迟 | 588.37 ms | 651.30 ms |
+| P50 延迟 | 587.81 ms | 641.87 ms |
+| 吞吐量 | 1.700 REQ/s | 1.535 REQ/s |
+| 峰值 PM | 570.09 MB | 254.93 MB |
 
-**结论**：C API RSS为504.78 MB，低于Go（798.50 MB）和Python（967.11 MB），说明C API内存开销最小。
+**结论**：C API 峰值 PM 为 570.09 MB（Arena ON），低于 Go（798.50 MB）和 Python（967.11 MB），说明 C API 内存开销最小；关闭 Arena 后峰值 PM 降至 254.93 MB（降幅 55.3%），延迟升至 651.30 ms（增幅 10.7%），与 Go 侧 Arena 消融方向一致、量级接近，印证 Arena 是内存—延迟权衡因子。
 
-数据文件：`results/cpp_baseline_result.json`。
+> 注：早期 harness（inter_op=1 及旧编译环境）曾测得 Arena ON 延迟 771.04 ms（数据文件 `results/cpp_arena_ablation_result.json`），v2 放开 inter_op 后收敛至 588.37 ms（与 Python@12 差异 <0.1%），证实该差距系早期配置所致，非 C API 固有开销（详见论文 §4.7 与 §4.6.2）。
+
+---
+
+### Python Arena 开关消融实验（v2 结果 + v3 复测，2026-07-19）
+
+验证 Python 绑定层（Unsafe Shared / Session Pool 架构）的 PM 漂移是否同样来自 ORT CPU 内存 Arena，确认漂移机理跨语言一致性（模型 YOLO11x，每组 500 次推理，数据来源 `results/python_arena_ablation_v3_result.txt` 及 v2 文件）：
+
+| 架构 | Arena ON | Arena OFF | 降幅 |
+|------|----------|-----------|------|
+| Unsafe Shared | 2126.86 MB（v3-ON） | 243.17 MB（v3-OFF） | 88.6% |
+| Session Pool | 2154.21 MB（v3-ON） | 916.96 MB（v3-OFF） | 57.4% |
+
+**结论**：关闭 Arena 后 Python Unsafe Shared 漂移降至 243.17 MB（降幅 88.6%，与 Go 89.2% 同方向），Session Pool 降至 916.96 MB（降幅 57.4%，Python 绑定层 GC/引用持有残留使降幅偏低）；v3 复测 OFF 值与 v2 偏差<1%，Unsafe ON 回升至 2126.86 MB（证伪 v2 首轮 1072.85 MB 一次性异常），采用 v3 内部一致对（2126.86/243.17 MB，降幅 88.6%），与 Go / C API 共同构成三方跨绑定验证（详见论文 §4.6.1）。
+
+> 注：v1 误用不存在属性 `enable_mem_arena` 致 Arena 未切换（四组均为 ON 重复，构成透明负对照）；v2 改用 `enable_cpu_mem_arena` 真正切换 Arena。
 
 ---
 
@@ -569,20 +552,21 @@ v1 存在两个并发 Bug：
 | 对比维度 | 结论 | 统计显著性 |
 |----------|------|------------|
 | **延迟性能** | Python优于Go（585 vs 738 ms），但同线程配置差异<1% | 10轮×200次，高可靠性 |
-| **内存效率** | Go单实例Peak RSS约17%低于Python（799 vs 967 MB） | 多次测量一致 |
+| **内存效率** | Go单实例Peak PM约17%低于Python（799 vs 967 MB） | 多次测量一致 |
 | **冷启动** | 两者冷启动/稳定比例接近（1.03-1.04x），差异不大 | 冷启动分解测试 |
-| **并发性能** | Session Pool优势在资源隔离和CPU利用率梯度，非吞吐量 | 架构对比+CPU监控 |
-| **72h稳定性** | Go 72h: PM漂移0.14 MB/h, 433,652次; Python 72h: RSS漂移0.26 MB/h, 238,675次; 均零错误，72h稳定运行 | 72h测试已完成 |
-| **C API基线** | C API延迟873.57 ms（2000次样本），P50=813.48 ms | 2000次大样本 |
+| **并发性能** | Session Pool优势在资源隔离和内存漂移控制，非吞吐量 | 架构对比+内存监控 |
+| **72h稳定性** | Go 72h: PM漂移0.14 MB/h, 433,652次; Python 72h: PM漂移0.26 MB/h, 238,675次; 均零错误，72h稳定运行 | 72h测试已完成 |
+| **C API基线** | C API延迟588.37 ms（Arena ON，1000次样本），P50=587.81 ms，峰值PM 570.09 MB（关闭Arena降至254.93 MB） | 数据来源 cpp_arena_ablation_v2_result.json |
+| **Arena因果验证** | Go关Arena漂移降89.2%，Python降88.6%，C API降55.3%，三绑定一致 | Go 3轮 + Python v2/v3 + C API v2 |
 
 ### 工程实践建议
 
 | 应用场景 | 推荐方案 | 理由 |
 |----------|----------|------|
 | **延迟敏感场景** | Python + 高intraOp线程 | Python在延迟上约有25%优势（默认配置），同线程配置差异<1% |
-| **内存受限/边缘计算** | Go + 合理池大小 | Go单实例Peak RSS约17%低于Python（799 vs 967 MB） |
-| **高并发推理** | Go/Python + Session Pool | Session Pool提供资源隔离和CPU利用率梯度优势 |
-| **资源监控** | 关注RSS漂移和CPU利用率 | Go PM漂移仅-1.22 MB（10分钟），Python RSS漂移-0.02 MB（10分钟） |
+| **内存受限/边缘计算** | Go + 合理池大小 | Go单实例Peak PM约17%低于Python（799 vs 967 MB） |
+| **高并发推理** | Go/Python + Session Pool | Session Pool提供资源隔离和内存漂移控制优势 |
+| **资源监控** | 关注PM漂移 | Go PM漂移仅-1.22 MB（10分钟），Python PM漂移-0.02 MB（10分钟） |
 
 ### 文档索引
 
@@ -594,7 +578,10 @@ v1 存在两个并发 Bug：
 - 📄 `results/python_session_pool_ablation.json` - Python消融实验原始数据
 - 📄 `results/go_stability_1h_result.json` - Go 1h稳定性结果（单Session，同口径）
 - 📄 `results/python_stability_1h_result.json` - Python 1h稳定性结果（单Session，同口径）
-- 📄 `results/cpp_baseline_result.json` - C API基准测试结果
+- 📄 `results/cpp_arena_ablation_result.json` - C API基准测试原始结果（早期 harness）
+- 📄 `results/cpp_arena_ablation_v2_result.json` - C API Arena开关消融 v2 数据（论文采用）
+- 📄 `results/go_arena_ablation_result.txt` - Go Arena开关消融原始数据（3轮 run10/11/12）
+- 📄 `results/python_arena_ablation_v3_result.txt` - Python Arena开关消融 v3 复测数据
 
 ---
 
@@ -638,7 +625,7 @@ MIT License
 
 ---
 
-**版本**：v3.5  
-**更新日期**：2026-06-30  
-**测试程序**：48 个标准化测试程序（24 Go + 18 Python + 2 消融 + 1 72h + 1 C API + 2 Arena消融）  
-**测试数据**：累计逾80万次推理（48个标准化程序约77.8万次（含72h稳定性测试Go 433,652 + Python 238,675）+ P3外部效度验证79,550次）
+**版本**：v3.6  
+**更新日期**：2026-07-19  
+**测试程序**：48 个标准化测试程序（27 Go + 19 Python + 2 C API）  
+**测试数据**：累计约93万次推理（其中72小时稳定性验证与P3外部效度验证共计约83万次，核心消融与对照实验约10万次）

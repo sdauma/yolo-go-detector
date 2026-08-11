@@ -102,7 +102,7 @@ def run_benchmark():
         print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # Memory sample point 1: After Session creation, before warmup (Start RSS)
+    # Memory sample point 1: After Session creation, before warmup (Start PM)
     process = psutil.Process(os.getpid())
     start_rss = process.memory_info().private / 1024 / 1024
 
@@ -174,10 +174,10 @@ def main():
         print(f"P99寤惰繜: {result.p99_latency:.5f} ms")
         print(f"min_latency: {result.min_latency:.5f} ms")
         print(f"max_latency: {result.max_latency:.5f} ms")
-        print(f"Start RSS: {result.start_rss:.5f} MB")
-        print(f"Peak RSS: {result.peak_rss:.5f} MB")
-        print(f"Stable RSS: {result.stable_rss:.5f} MB")
-        print(f"RSS Drift: {result.stable_rss - result.start_rss:.5f} MB")
+        print(f"Start PM: {result.start_rss:.5f} MB")
+        print(f"Peak PM: {result.peak_rss:.5f} MB")
+        print(f"Stable PM: {result.stable_rss:.5f} MB")
+        print(f"PM Drift: {result.stable_rss - result.start_rss:.5f} MB")
 
     # 璁＄畻骞冲潎鍊?
     avg_latency = sum(r.avg_latency for r in results) / num_runs
@@ -197,10 +197,10 @@ def main():
     print(f"P99 latency: {p99_latency:.5f} ms")
     print(f"Min latency: {min_latency:.5f} ms")
     print(f"Max latency: {max_latency:.5f} ms")
-    print(f"Start RSS: {start_rss:.5f} MB")
-    print(f"Peak RSS: {peak_rss:.5f} MB")
-    print(f"Stable RSS: {stable_rss:.5f} MB")
-    print(f"RSS Drift: {stable_rss - start_rss:.5f} MB")
+    print(f"Start PM: {start_rss:.5f} MB")
+    print(f"Peak PM: {peak_rss:.5f} MB")
+    print(f"Stable PM: {stable_rss:.5f} MB")
+    print(f"PM Drift: {stable_rss - start_rss:.5f} MB")
 
     # Save detailed log
     log_path = os.path.join(base_path, "results", "python_baseline_detailed_log.txt")
@@ -213,10 +213,10 @@ def main():
             f.write(f"P99寤惰繜: {r.p99_latency:.5f} ms\n")
             f.write(f"min_latency: {r.min_latency:.5f} ms\n")
             f.write(f"max_latency: {r.max_latency:.5f} ms\n")
-            f.write(f"Start RSS: {r.start_rss:.5f} MB\n")
-            f.write(f"Peak RSS: {r.peak_rss:.5f} MB\n")
-            f.write(f"Stable RSS: {r.stable_rss:.5f} MB\n")
-            f.write(f"RSS Drift: {r.stable_rss - r.start_rss:.5f} MB\n")
+            f.write(f"Start PM: {r.start_rss:.5f} MB\n")
+            f.write(f"Peak PM: {r.peak_rss:.5f} MB\n")
+            f.write(f"Stable PM: {r.stable_rss:.5f} MB\n")
+            f.write(f"PM Drift: {r.stable_rss - r.start_rss:.5f} MB\n")
             f.write("\n")
 
         f.write("===== Average of 10 runs =====\n")
@@ -226,10 +226,10 @@ def main():
         f.write(f"P99寤惰繜: {p99_latency:.5f} ms\n")
         f.write(f"min_latency: {min_latency:.5f} ms\n")
         f.write(f"max_latency: {max_latency:.5f} ms\n")
-        f.write(f"Start RSS: {start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
+        f.write(f"Start PM: {start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {stable_rss:.5f} MB\n")
+        f.write(f"PM Drift: {stable_rss - start_rss:.5f} MB\n")
 
     print(f"\n璇︾粏鏃ュ織宸蹭繚瀛樺埌: {log_path}")
 
@@ -244,10 +244,10 @@ def main():
         f.write(f"min_latency: {min_latency:.5f} ms\n")
         f.write(f"max_latency: {max_latency:.5f} ms\n")
         f.write("\n===== Memory Usage (10 runs average) =====\n")
-        f.write(f"Start RSS: {start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
+        f.write(f"Start PM: {start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {stable_rss:.5f} MB\n")
+        f.write(f"PM Drift: {stable_rss - start_rss:.5f} MB\n")
 
     print(f"Results saved to: {result_path}")
 

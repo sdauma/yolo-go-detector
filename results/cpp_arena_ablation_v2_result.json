@@ -1,0 +1,104 @@
+{
+  "test_name": "C++_Arena_ExecMode_Ablation_v2",
+  "model": "yolo11x",
+  "graph_optimization_level": "ORT_ENABLE_ALL",
+  "inferences_per_config": 1000,
+  "configs": [
+    {
+      "arena": "on",
+      "exec_mode": "sequential",
+      "inter_op": 1,
+      "intra_op": 12,
+      "avg_latency_ms": 593.003,
+      "p50_latency_ms": 589.407,
+      "p90_latency_ms": 602.08,
+      "throughput_reqs": 1.68633,
+      "peak_rss_mb": 523.965,
+      "peak_pm_mb": 567.328
+    },
+    {
+      "arena": "on",
+      "exec_mode": "sequential",
+      "inter_op": 2,
+      "intra_op": 12,
+      "avg_latency_ms": 589.814,
+      "p50_latency_ms": 588.694,
+      "p90_latency_ms": 599.587,
+      "throughput_reqs": 1.69545,
+      "peak_rss_mb": 514.961,
+      "peak_pm_mb": 561.301
+    },
+    {
+      "arena": "on",
+      "exec_mode": "sequential",
+      "inter_op": 4,
+      "intra_op": 12,
+      "avg_latency_ms": 589.567,
+      "p50_latency_ms": 587.255,
+      "p90_latency_ms": 599.31,
+      "throughput_reqs": 1.69616,
+      "peak_rss_mb": 524.117,
+      "peak_pm_mb": 560.793
+    },
+    {
+      "arena": "on",
+      "exec_mode": "sequential",
+      "inter_op": 0,
+      "intra_op": 12,
+      "avg_latency_ms": 588.368,
+      "p50_latency_ms": 587.812,
+      "p90_latency_ms": 597.243,
+      "throughput_reqs": 1.69962,
+      "peak_rss_mb": 524.906,
+      "peak_pm_mb": 570.094
+    },
+    {
+      "arena": "on",
+      "exec_mode": "sequential",
+      "inter_op": 0,
+      "intra_op": 6,
+      "avg_latency_ms": 765.055,
+      "p50_latency_ms": 770.098,
+      "p90_latency_ms": 792.303,
+      "throughput_reqs": 1.3071,
+      "peak_rss_mb": 504.805,
+      "peak_pm_mb": 564.293
+    },
+    {
+      "arena": "off",
+      "exec_mode": "sequential",
+      "inter_op": 0,
+      "intra_op": 12,
+      "avg_latency_ms": 651.304,
+      "p50_latency_ms": 641.867,
+      "p90_latency_ms": 659.855,
+      "throughput_reqs": 1.53538,
+      "peak_rss_mb": 265.027,
+      "peak_pm_mb": 254.926
+    },
+    {
+      "arena": "on",
+      "exec_mode": "parallel",
+      "inter_op": 0,
+      "intra_op": 12,
+      "avg_latency_ms": 1142.11,
+      "p50_latency_ms": 1139.05,
+      "p90_latency_ms": 1287.03,
+      "throughput_reqs": 0.875572,
+      "peak_rss_mb": 370.273,
+      "peak_pm_mb": 561.621
+    },
+    {
+      "arena": "off",
+      "exec_mode": "parallel",
+      "inter_op": 0,
+      "intra_op": 12,
+      "avg_latency_ms": 1802.45,
+      "p50_latency_ms": 1785.28,
+      "p90_latency_ms": 2038.11,
+      "throughput_reqs": 0.554801,
+      "peak_rss_mb": 266.504,
+      "peak_pm_mb": 255.695
+    }
+  ]
+}

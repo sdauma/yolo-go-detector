@@ -1,0 +1,50 @@
+{
+  "test_name": "C++_Arena_ExecMode_Ablation",
+  "model": "yolo11x",
+  "intra_op": 12,
+  "inter_op": 1,
+  "graph_optimization_level": "ORT_ENABLE_ALL",
+  "inferences_per_config": 1000,
+  "configs": [
+    {
+      "arena": "on",
+      "exec_mode": "sequential",
+      "avg_latency_ms": 771.039,
+      "p50_latency_ms": 767.439,
+      "p90_latency_ms": 786.113,
+      "throughput_reqs": 1.29695,
+      "peak_rss_mb": 523.82,
+      "peak_pm_mb": 567.617
+    },
+    {
+      "arena": "on",
+      "exec_mode": "parallel",
+      "avg_latency_ms": 773.795,
+      "p50_latency_ms": 770.9,
+      "p90_latency_ms": 787.595,
+      "throughput_reqs": 1.29233,
+      "peak_rss_mb": 515.543,
+      "peak_pm_mb": 564.191
+    },
+    {
+      "arena": "off",
+      "exec_mode": "sequential",
+      "avg_latency_ms": 818.775,
+      "p50_latency_ms": 810.557,
+      "p90_latency_ms": 830.968,
+      "throughput_reqs": 1.22134,
+      "peak_rss_mb": 265.398,
+      "peak_pm_mb": 255.777
+    },
+    {
+      "arena": "off",
+      "exec_mode": "parallel",
+      "avg_latency_ms": 817.938,
+      "p50_latency_ms": 813.854,
+      "p90_latency_ms": 832.873,
+      "throughput_reqs": 1.22259,
+      "peak_rss_mb": 263.512,
+      "peak_pm_mb": 252.887
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+===== Python CPU 内存 Arena 开关消融实验结果 =====
+
+模型: YOLO11x, 并发度: 4, 池大小: 4, 请求总数: 500
+intra_op=1, inter_op=1, enable_mem_pattern=False(固定)
+
+===== Unsafe Shared (arena=ON) =====
+  吞吐量: 1.11955 REQ/s
+  平均延迟: 3560.79617 ms
+  起始PM: 420.62109 MB
+  峰值PM: 1494.14062 MB
+  结束PM: 1493.46875 MB
+  PM漂移: 1072.84766 MB
+
+===== Unsafe Shared (arena=OFF) =====
+  吞吐量: 1.07623 REQ/s
+  平均延迟: 3701.79197 ms
+  起始PM: 424.69141 MB
+  峰值PM: 1166.55469 MB
+  结束PM: 670.03125 MB
+  PM漂移: 245.33984 MB
+
+===== Session Pool (arena=ON) =====
+  吞吐量: 1.14144 REQ/s
+  平均延迟: 3481.56423 ms
+  起始PM: 428.29688 MB
+  峰值PM: 2577.80859 MB
+  结束PM: 2577.32031 MB
+  PM漂移: 2149.02344 MB
+
+===== Session Pool (arena=OFF) =====
+  吞吐量: 1.08411 REQ/s
+  平均延迟: 3682.31777 ms
+  起始PM: 428.99609 MB
+  峰值PM: 1841.05469 MB
+  结束PM: 1342.17969 MB
+  PM漂移: 913.18359 MB
+

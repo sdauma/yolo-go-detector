@@ -6,10 +6,10 @@ P90延迟: 47.29800 ms
 P95延迟: 47.36260 ms
 最小延迟: 25.72940 ms
 最大延迟: 47.48550 ms
-Start RSS: 69.457 MB
-Peak RSS: 185.254 MB
-Stable RSS: 185.254 MB
-RSS Drift: 115.797 MB
+Start PM: 69.457 MB
+Peak PM: 185.254 MB
+Stable PM: 185.254 MB
+PM Drift: 115.797 MB
 Go Heap: 17.833 MB
 
 ===== 第 2 轮测试 =====
@@ -20,10 +20,10 @@ P90延迟: 47.32840 ms
 P95延迟: 47.38420 ms
 最小延迟: 31.28300 ms
 最大延迟: 47.72760 ms
-Start RSS: 88.410 MB
-Peak RSS: 204.680 MB
-Stable RSS: 203.875 MB
-RSS Drift: 115.465 MB
+Start PM: 88.410 MB
+Peak PM: 204.680 MB
+Stable PM: 203.875 MB
+PM Drift: 115.465 MB
 Go Heap: 17.837 MB
 
 ===== 第 3 轮测试 =====
@@ -34,10 +34,10 @@ P90延迟: 47.35530 ms
 P95延迟: 47.38190 ms
 最小延迟: 26.78470 ms
 最大延迟: 47.80220 ms
-Start RSS: 86.617 MB
-Peak RSS: 202.430 MB
-Stable RSS: 202.430 MB
-RSS Drift: 115.812 MB
+Start PM: 86.617 MB
+Peak PM: 202.430 MB
+Stable PM: 202.430 MB
+PM Drift: 115.812 MB
 Go Heap: 17.839 MB
 
 ===== 第 4 轮测试 =====
@@ -48,10 +48,10 @@ P90延迟: 47.31560 ms
 P95延迟: 47.37650 ms
 最小延迟: 27.77110 ms
 最大延迟: 47.75240 ms
-Start RSS: 85.949 MB
-Peak RSS: 202.387 MB
-Stable RSS: 202.387 MB
-RSS Drift: 116.438 MB
+Start PM: 85.949 MB
+Peak PM: 202.387 MB
+Stable PM: 202.387 MB
+PM Drift: 116.438 MB
 Go Heap: 17.841 MB
 
 ===== 第 5 轮测试 =====
@@ -62,10 +62,10 @@ P90延迟: 47.35040 ms
 P95延迟: 47.39480 ms
 最小延迟: 31.30180 ms
 最大延迟: 47.85700 ms
-Start RSS: 89.977 MB
-Peak RSS: 206.121 MB
-Stable RSS: 206.121 MB
-RSS Drift: 116.145 MB
+Start PM: 89.977 MB
+Peak PM: 206.121 MB
+Stable PM: 206.121 MB
+PM Drift: 116.145 MB
 Go Heap: 17.843 MB
 
 ===== 第 6 轮测试 =====
@@ -76,10 +76,10 @@ P90延迟: 47.36380 ms
 P95延迟: 47.40250 ms
 最小延迟: 31.23070 ms
 最大延迟: 47.55480 ms
-Start RSS: 89.539 MB
-Peak RSS: 205.691 MB
-Stable RSS: 205.691 MB
-RSS Drift: 116.152 MB
+Start PM: 89.539 MB
+Peak PM: 205.691 MB
+Stable PM: 205.691 MB
+PM Drift: 116.152 MB
 Go Heap: 17.844 MB
 
 ===== 第 7 轮测试 =====
@@ -90,10 +90,10 @@ P90延迟: 47.36540 ms
 P95延迟: 47.38600 ms
 最小延迟: 27.80080 ms
 最大延迟: 47.49110 ms
-Start RSS: 88.676 MB
-Peak RSS: 204.824 MB
-Stable RSS: 204.824 MB
-RSS Drift: 116.148 MB
+Start PM: 88.676 MB
+Peak PM: 204.824 MB
+Stable PM: 204.824 MB
+PM Drift: 116.148 MB
 Go Heap: 17.846 MB
 
 ===== 第 8 轮测试 =====
@@ -104,10 +104,10 @@ P90延迟: 47.34010 ms
 P95延迟: 47.36000 ms
 最小延迟: 30.90410 ms
 最大延迟: 47.69270 ms
-Start RSS: 89.250 MB
-Peak RSS: 205.410 MB
-Stable RSS: 205.410 MB
-RSS Drift: 116.160 MB
+Start PM: 89.250 MB
+Peak PM: 205.410 MB
+Stable PM: 205.410 MB
+PM Drift: 116.160 MB
 Go Heap: 17.848 MB
 
 ===== 第 9 轮测试 =====
@@ -118,10 +118,10 @@ P90延迟: 47.37260 ms
 P95延迟: 47.39210 ms
 最小延迟: 31.28340 ms
 最大延迟: 47.51160 ms
-Start RSS: 86.816 MB
-Peak RSS: 202.836 MB
-Stable RSS: 202.836 MB
-RSS Drift: 116.020 MB
+Start PM: 86.816 MB
+Peak PM: 202.836 MB
+Stable PM: 202.836 MB
+PM Drift: 116.020 MB
 Go Heap: 17.850 MB
 
 ===== 第 10 轮测试 =====
@@ -132,10 +132,10 @@ P90延迟: 47.32100 ms
 P95延迟: 47.36950 ms
 最小延迟: 31.31020 ms
 最大延迟: 47.49170 ms
-Start RSS: 87.453 MB
-Peak RSS: 203.766 MB
-Stable RSS: 203.766 MB
-RSS Drift: 116.312 MB
+Start PM: 87.453 MB
+Peak PM: 203.766 MB
+Stable PM: 203.766 MB
+PM Drift: 116.312 MB
 Go Heap: 17.851 MB
 
 ===== 10轮测试平均值 =====
@@ -146,8 +146,8 @@ P90延迟: 47.34106 ms
 P95延迟: 47.38101 ms
 最小延迟: 29.53992 ms
 最大延迟: 47.63666 ms
-Start RSS: 86.214 MB
-Peak RSS: 202.340 MB
-Stable RSS: 202.259 MB
-RSS Drift: 116.045 MB
+Start PM: 86.214 MB
+Peak PM: 202.340 MB
+Stable PM: 202.259 MB
+PM Drift: 116.045 MB
 Go Heap: 17.843 MB

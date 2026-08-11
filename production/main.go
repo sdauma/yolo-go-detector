@@ -17,7 +17,7 @@ func main() {
 
 	fmt.Println("============================================")
 	fmt.Println("  YOLO-Go 生产级摄像头检测系统")
-	fmt.Println("  基于论文 Session Pool 架构")
+	fmt.Println("  基于论文会话池化（Session Pool）方法")
 	fmt.Println("============================================")
 
 	// 加载配置

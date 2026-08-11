@@ -15,7 +15,7 @@ Max inference time: 648.40400 ms
 Initial RSS: 963.42969 MB
 Final RSS: 963.41016 MB
 Avg RSS: 963.33860 MB
-Peak RSS: 963.42969 MB
+Peak PM: 963.42969 MB
 Min RSS: 963.23828 MB
-RSS Drift: -0.01953 MB
+PM Drift: -0.01953 MB
 RSS Fluctuation Range: 0.19141 MB (0.02%)

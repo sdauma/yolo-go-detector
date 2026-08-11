@@ -3,9 +3,14 @@ setlocal enabledelayedexpansion
 chcp 65001 >nul
 
 REM ============================================================
-REM   run_charts.bat ??Generate all paper charts
+REM   run_charts.bat  生成论文全部图表
 REM   Prerequisite: test result files exist in ../results/
 REM ============================================================
+REM
+REM   STEP CATEGORIES (for reproducibility):
+REM   Paper-cited figures: [1/9] Fig1, [2/9] Fig2-Fig7, [3/9] Fig8 (NEW).
+REM   Supplementary figures: [4/9]-[9/9]; their data files may be missing,
+REM   scripts tolerate this (warn only, no abort).
 
 cd /d "%~dp0"
 
@@ -39,8 +44,19 @@ if errorlevel 1 (
     set /a PASS+=1
 )
 
+REM --- Fig8: Arena core findings (paper-cited, NEW) ---
+echo [3/9] Fig8: Arena core findings...
+python "%~dp0generate_arena_sweetspot_figure.py"
+if errorlevel 1 (
+    echo   [WARN] Fig8 failed
+    set /a FAIL+=1
+) else (
+    echo   [OK] Fig8 done
+    set /a PASS+=1
+)
+
 REM --- Journal supplementary charts ---
-echo [3/9] Journal supplementary charts...
+echo [4/9] Journal supplementary charts...
 python "%~dp0generate_journal_charts.py"
 if errorlevel 1 (
     echo   [WARN] journal_charts failed
@@ -51,24 +67,13 @@ if errorlevel 1 (
 )
 
 REM --- Reinforced experiment charts ---
-echo [4/9] Reinforced experiment charts...
+echo [5/9] Reinforced experiment charts...
 python "%~dp0generate_reinforced_charts.py"
 if errorlevel 1 (
     echo   [WARN] reinforced_charts failed
     set /a FAIL+=1
 ) else (
     echo   [OK] Reinforced experiment charts done
-    set /a PASS+=1
-)
-
-REM --- Model size comparison ---
-echo [5/9] Model size comparison...
-python "%~dp0generate_model_size_comparison.py"
-if errorlevel 1 (
-    echo   [WARN] model_size_comparison failed
-    set /a FAIL+=1
-) else (
-    echo   [OK] Model size comparison done
     set /a PASS+=1
 )
 
@@ -94,14 +99,14 @@ if errorlevel 1 (
     set /a PASS+=1
 )
 
-REM --- RSS curve ---
-echo [8/9] RSS curve...
+REM --- PM curve ---
+echo [8/9] PM curve...
 python "%~dp0plot_rss_curve.py"
 if errorlevel 1 (
-    echo   [WARN] rss_curve failed
+    echo   [WARN] PM curve failed
     set /a FAIL+=1
 ) else (
-    echo   [OK] RSS curve done
+    echo   [OK] PM curve done
     set /a PASS+=1
 )
 
@@ -129,4 +134,3 @@ if %FAIL% gtr 0 (
 )
 
 exit /b 0
-

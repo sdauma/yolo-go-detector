@@ -8,7 +8,7 @@
 //   - 控制变量：同模型(YOLO11x)、同并发度、同 intra_op/inter_op、同 GOMAXPROCS
 //   - 自变量：SetCpuMemArena(true/false)，同时固定 SetMemPattern(false)
 //   - 测试架构：Unsafe Shared (4并发) 与 Session Pool (池大小4)
-//   - 指标：吞吐量、峰值RSS、RSS漂移（稳态窗口：去除前20%后的60%）
+//   - 指标：吞吐量、峰值PM、PM漂移（稳态窗口：去除前20%后的60%）
 //
 // 预期：
 //   - Unsafe Shared 在 arena=false 时漂移显著下降（哪怕吞吐略降）
@@ -467,7 +467,7 @@ func main() {
 	// 输出结果
 	fmt.Println("\n===== Arena 开关消融实验结果 =====")
 	fmt.Println()
-	fmt.Printf("%-16s %-8s %-10s %-12s %-12s %-12s\n", "架构", "Arena", "吞吐量", "平均延迟", "峰值RSS", "RSS漂移")
+	fmt.Printf("%-16s %-8s %-10s %-12s %-12s %-12s\n", "架构", "Arena", "吞吐量", "平均延迟", "峰值PM", "PM漂移")
 	fmt.Printf("%-16s %-8s %-10s %-12s %-12s %-12s\n", "", "", "(REQ/s)", "(ms)", "(MB)", "(MB)")
 	fmt.Println("------------------------------------------------------------------------")
 
@@ -506,10 +506,10 @@ func main() {
 		fmt.Fprintf(f, "  P50延迟: %.5f ms\n", r.P50Latency)
 		fmt.Fprintf(f, "  P90延迟: %.5f ms\n", r.P90Latency)
 		fmt.Fprintf(f, "  P99延迟: %.5f ms\n", r.P99Latency)
-		fmt.Fprintf(f, "  起始RSS: %.5f MB\n", r.StartRSS)
-		fmt.Fprintf(f, "  峰值RSS: %.5f MB\n", r.PeakRSS)
-		fmt.Fprintf(f, "  结束RSS: %.5f MB\n", r.EndRSS)
-		fmt.Fprintf(f, "  RSS漂移: %.5f MB\n", r.RSSDrift)
+		fmt.Fprintf(f, "  起始PM: %.5f MB\n", r.StartRSS)
+		fmt.Fprintf(f, "  峰值PM: %.5f MB\n", r.PeakRSS)
+		fmt.Fprintf(f, "  结束PM: %.5f MB\n", r.EndRSS)
+		fmt.Fprintf(f, "  PM漂移: %.5f MB\n", r.RSSDrift)
 		fmt.Fprintln(f)
 	}
 

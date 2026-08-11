@@ -80,7 +80,7 @@ def run_baseline_test(model_path, num_threads):
         return None, None
     
     start_rss = get_process_rss()
-    print(f"Start RSS: {start_rss:.5f} MB")
+    print(f"Start PM: {start_rss:.5f} MB")
     
     print("Warming up...")
     for i in range(10):
@@ -98,7 +98,7 @@ def run_baseline_test(model_path, num_threads):
         latencies.append(elapsed)
     
     peak_rss = get_process_rss()
-    print(f"Peak RSS: {peak_rss:.5f} MB")
+    print(f"Peak PM: {peak_rss:.5f} MB")
     
     metrics = calculate_metrics(latencies)
     

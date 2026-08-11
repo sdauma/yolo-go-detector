@@ -107,10 +107,10 @@ for test_idx in range(1, test_count + 1):
         print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # Memory sample point 1: after Session creation (Start RSS)
+    # Memory sample point 1: after Session creation (Start PM)
     process = psutil.Process(os.getpid())
     start_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
-    print(f"Start RSS: {start_rss:.5f} MB")
+    print(f"Start PM: {start_rss:.5f} MB")
 
     # Test cold start time
     print("\n===== Testing Cold Start Time =====")
@@ -120,9 +120,9 @@ for test_idx in range(1, test_count + 1):
     cold_start_time = (t1 - t0) * 1000.0
     print(f"Cold Start Time: {cold_start_time:.5f} ms")
 
-    # Memory sample point 2: after cold start (Cold Start RSS)
+    # Memory sample point 2: after cold start (Cold Start PM)
     cold_start_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
-    print(f"Cold Start RSS: {cold_start_rss:.5f} MB")
+    print(f"Cold Start PM: {cold_start_rss:.5f} MB")
 
     # Warmup phase
     print("\n===== Warmup Phase =====")
@@ -154,10 +154,10 @@ for test_idx in range(1, test_count + 1):
             if current_rss > peak_rss:
                 peak_rss = current_rss
 
-    # Memory sample point 3: after stable state (Stable RSS)
+    # Memory sample point 3: after stable state (Stable PM)
     stable_rss = process.memory_info().private / 1024 / 1024  # Convert to MB
-    print(f"\nStable RSS: {stable_rss:.5f} MB")
-    print(f"Peak RSS: {peak_rss:.5f} MB")
+    print(f"\nStable PM: {stable_rss:.5f} MB")
+    print(f"Peak PM: {peak_rss:.5f} MB")
 
     # Calculate stable state statistics
     avg_stable_latency = sum(stable_latencies) / len(stable_latencies)
@@ -216,9 +216,9 @@ print(f"P50 Latency: {p50_stable_latency:.5f} ms")
 print(f"P90 Latency: {p90_stable_latency:.5f} ms")
 print(f"P99 Latency: {p99_stable_latency:.5f} ms")
 print("\n===== Memory Usage =====")
-print(f"Start RSS: {start_rss:.5f} MB")
-print(f"Cold Start RSS: {cold_start_rss:.5f} MB")
-print(f"Stable RSS: {stable_rss:.5f} MB")
+print(f"Start PM: {start_rss:.5f} MB")
+print(f"Cold Start PM: {cold_start_rss:.5f} MB")
+print(f"Stable PM: {stable_rss:.5f} MB")
 print(f"Memory Growth (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB")
 print(f"Memory Growth (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB")
 
@@ -234,9 +234,9 @@ with open(log_path, 'w', encoding='utf-8') as f:
         f.write(f"P50 Latency: {all_p50_stable_latencies[i]:.5f} ms\n")
         f.write(f"P90 Latency: {all_p90_stable_latencies[i]:.5f} ms\n")
         f.write(f"P99 Latency: {all_p99_stable_latencies[i]:.5f} ms\n")
-        f.write(f"Start RSS: {all_start_rss[i]:.5f} MB\n")
-        f.write(f"Cold Start RSS: {all_cold_start_rss[i]:.5f} MB\n")
-        f.write(f"Stable RSS: {all_stable_rss[i]:.5f} MB\n")
+        f.write(f"Start PM: {all_start_rss[i]:.5f} MB\n")
+        f.write(f"Cold Start PM: {all_cold_start_rss[i]:.5f} MB\n")
+        f.write(f"Stable PM: {all_stable_rss[i]:.5f} MB\n")
         f.write("\n")
 
     f.write("===== 5-Test Average =====\n")
@@ -256,9 +256,9 @@ with open(log_path, 'w', encoding='utf-8') as f:
     f.write(f"P99 Latency: {p99_stable_latency:.5f} ms\n")
 
     f.write("\n===== Memory Usage =====\n")
-    f.write(f"Start RSS: {start_rss:.5f} MB\n")
-    f.write(f"Cold Start RSS: {cold_start_rss:.5f} MB\n")
-    f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
+    f.write(f"Start PM: {start_rss:.5f} MB\n")
+    f.write(f"Cold Start PM: {cold_start_rss:.5f} MB\n")
+    f.write(f"Stable PM: {stable_rss:.5f} MB\n")
     f.write(f"Memory Growth (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB\n")
     f.write(f"Memory Growth (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB\n")
 
@@ -287,9 +287,9 @@ result_lines = [
     f"P99 Latency: {p99_stable_latency:.5f} ms",
     "",
     "===== Memory Usage =====",
-    f"Start RSS: {start_rss:.5f} MB",
-    f"Cold Start RSS: {cold_start_rss:.5f} MB",
-    f"Stable RSS: {stable_rss:.5f} MB",
+    f"Start PM: {start_rss:.5f} MB",
+    f"Cold Start PM: {cold_start_rss:.5f} MB",
+    f"Stable PM: {stable_rss:.5f} MB",
     f"Memory Growth (Start -> Cold Start): {cold_start_rss-start_rss:.5f} MB",
     f"Memory Growth (Cold Start -> Stable): {stable_rss-cold_start_rss:.5f} MB"
 ]

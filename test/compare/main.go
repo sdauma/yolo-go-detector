@@ -71,7 +71,7 @@ func findLib() string {
 			return candidate
 		}
 	}
-	return "./third_party/onnxruntime.dll"
+	return ""
 }
 
 // ---------- 推理 ----------

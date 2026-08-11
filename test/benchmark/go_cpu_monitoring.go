@@ -220,7 +220,7 @@ func testIdleCPU(basePath string) *TestResult {
 	fmt.Printf("峰值CPU使用率: %.2f%%\n", peakCPU)
 	fmt.Printf("CPU使用率标准差: %.2f%%\n", stdCPU)
 	fmt.Printf("平均RSS: %.2f MB\n", avgRSS)
-	fmt.Printf("峰值RSS: %.2f MB\n", peakRSS)
+	fmt.Printf("峰值PM: %.2f MB\n", peakRSS)
 
 	monitor.SaveToFile(filepath.Join(basePath, "results", "go_cpu_idle_stats.json"))
 
@@ -283,7 +283,7 @@ func testSingleInferenceCPU(modelPath, inputDataPath string, basePath string) *T
 	fmt.Printf("峰值CPU使用率: %.2f%%\n", peakCPU)
 	fmt.Printf("CPU使用率标准差: %.2f%%\n", stdCPU)
 	fmt.Printf("平均RSS: %.2f MB\n", avgRSS)
-	fmt.Printf("峰值RSS: %.2f MB\n", peakRSS)
+	fmt.Printf("峰值PM: %.2f MB\n", peakRSS)
 
 	monitor.SaveToFile(filepath.Join(basePath, "results", "go_cpu_single_inference_stats.json"))
 
@@ -349,7 +349,7 @@ func testContinuousInferenceCPU(modelPath, inputDataPath string, basePath string
 	fmt.Printf("峰值CPU使用率: %.2f%%\n", peakCPU)
 	fmt.Printf("CPU使用率标准差: %.2f%%\n", stdCPU)
 	fmt.Printf("平均RSS: %.2f MB\n", avgRSS)
-	fmt.Printf("峰值RSS: %.2f MB\n", peakRSS)
+	fmt.Printf("峰值PM: %.2f MB\n", peakRSS)
 
 	monitor.SaveToFile(filepath.Join(basePath, "results", "go_cpu_continuous_stats.json"))
 
@@ -429,7 +429,7 @@ func testConcurrentInferenceCPU(modelPath, inputDataPath string, basePath string
 	fmt.Printf("峰值CPU使用率: %.2f%%\n", peakCPU)
 	fmt.Printf("CPU使用率标准差: %.2f%%\n", stdCPU)
 	fmt.Printf("平均RSS: %.2f MB\n", avgRSS)
-	fmt.Printf("峰值RSS: %.2f MB\n", peakRSS)
+	fmt.Printf("峰值PM: %.2f MB\n", peakRSS)
 
 	monitor.SaveToFile(filepath.Join(basePath, "results", "go_cpu_concurrent_stats.json"))
 

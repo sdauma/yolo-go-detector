@@ -18,7 +18,7 @@ P90 latency: 38.08258 ms
 P95 latency: 39.36088 ms
 Min latency: 36.04143 ms
 Max latency: 46.89703 ms
-Start RSS: 448.81445 MB
-Peak RSS: 565.33320 MB
-Stable RSS: 565.32500 MB
-RSS Drift: 116.51055 MB
+Start PM: 448.81445 MB
+Peak PM: 565.33320 MB
+Stable PM: 565.32500 MB
+PM Drift: 116.51055 MB

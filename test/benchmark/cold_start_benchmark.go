@@ -241,10 +241,10 @@ func main() {
 			continue
 		}
 
-		// 内存采样点 1：Session 创建后（Start RSS）
+		// 内存采样点 1：Session 创建后（Start PM）
 		startRSS := getProcessRSS()
 		// 中间数据保留5位小数，符合核心期刊规范
-		fmt.Printf("Start RSS: %.5f MB\n", startRSS)
+		fmt.Printf("Start PM: %.5f MB\n", startRSS)
 
 		// 测试冷启动时间
 		fmt.Println("\n===== 测试冷启动时间 =====")
@@ -262,9 +262,9 @@ func main() {
 		// 中间数据保留5位小数，符合核心期刊规范
 		fmt.Printf("冷启动时间: %.5f ms\n", coldStartTime)
 
-		// 内存采样点 2：冷启动后（Cold Start RSS）
+		// 内存采样点 2：冷启动后（Cold Start PM）
 		coldStartRSS := getProcessRSS()
-		fmt.Printf("Cold Start RSS: %.5f MB\n", coldStartRSS)
+		fmt.Printf("Cold Start PM: %.5f MB\n", coldStartRSS)
 
 		// 预热阶段
 		fmt.Println("\n===== 预热阶段 =====")
@@ -314,11 +314,11 @@ func main() {
 			}
 		}
 
-		// 内存采样点 3：稳定状态后（Stable RSS）
+		// 内存采样点 3：稳定状态后（Stable PM）
 		stableRSS := getProcessRSS()
 		// 中间数据保留5位小数，符合核心期刊规范
-		fmt.Printf("\nStable RSS: %.5f MB\n", stableRSS)
-		fmt.Printf("Peak RSS: %.5f MB\n", peakRSS)
+		fmt.Printf("\nStable PM: %.5f MB\n", stableRSS)
+		fmt.Printf("Peak PM: %.5f MB\n", peakRSS)
 
 		// 计算稳定状态的统计数据
 		sort.Float64s(stableLatencies)
@@ -410,9 +410,9 @@ func main() {
 	fmt.Printf("P99延迟: %.5f ms\n", p99StableLatency)
 	fmt.Printf("\n===== 内存使用情况 =====\n")
 	// 中间数据保留5位小数，符合核心期刊规范
-	fmt.Printf("Start RSS: %.5f MB\n", startRSS)
-	fmt.Printf("Cold Start RSS: %.5f MB\n", coldStartRSS)
-	fmt.Printf("Stable RSS: %.5f MB\n", stableRSS)
+	fmt.Printf("Start PM: %.5f MB\n", startRSS)
+	fmt.Printf("Cold Start PM: %.5f MB\n", coldStartRSS)
+	fmt.Printf("Stable PM: %.5f MB\n", stableRSS)
 	fmt.Printf("内存增长 (Start -> Cold Start): %.5f MB\n", coldStartRSS-startRSS)
 	fmt.Printf("内存增长 (Cold Start -> Stable): %.5f MB\n", stableRSS-coldStartRSS)
 	fmt.Printf("Go Heap: %.5f MB\n", float64(m.Alloc)/1024/1024)
@@ -452,9 +452,9 @@ func main() {
 		fmt.Fprintf(logFile, "P50延迟: %.5f ms\n", allP50StableLatencies[i])
 		fmt.Fprintf(logFile, "P90延迟: %.5f ms\n", allP90StableLatencies[i])
 		fmt.Fprintf(logFile, "P99延迟: %.5f ms\n", allP99StableLatencies[i])
-		fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", allStartRSS[i])
-		fmt.Fprintf(logFile, "Cold Start RSS: %.5f MB\n", allColdStartRSS[i])
-		fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", allStableRSS[i])
+		fmt.Fprintf(logFile, "Start PM: %.5f MB\n", allStartRSS[i])
+		fmt.Fprintf(logFile, "Cold Start PM: %.5f MB\n", allColdStartRSS[i])
+		fmt.Fprintf(logFile, "Stable PM: %.5f MB\n", allStableRSS[i])
 		fmt.Fprintf(logFile, "\n")
 	}
 
@@ -475,9 +475,9 @@ func main() {
 	fmt.Fprintf(logFile, "P99延迟: %.5f ms\n", p99StableLatency)
 
 	fmt.Fprintf(logFile, "\n===== 内存使用情况 =====\n")
-	fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", startRSS)
-	fmt.Fprintf(logFile, "Cold Start RSS: %.5f MB\n", coldStartRSS)
-	fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", stableRSS)
+	fmt.Fprintf(logFile, "Start PM: %.5f MB\n", startRSS)
+	fmt.Fprintf(logFile, "Cold Start PM: %.5f MB\n", coldStartRSS)
+	fmt.Fprintf(logFile, "Stable PM: %.5f MB\n", stableRSS)
 	fmt.Fprintf(logFile, "内存增长 (Start -> Cold Start): %.5f MB\n", coldStartRSS-startRSS)
 	fmt.Fprintf(logFile, "内存增长 (Cold Start -> Stable): %.5f MB\n", stableRSS-coldStartRSS)
 	fmt.Fprintf(logFile, "Go Heap: %.5f MB\n", float64(m.Alloc)/1024/1024)
@@ -512,9 +512,9 @@ func main() {
 	fmt.Fprintf(file, "P99延迟: %.5f ms\n\n", result.P99StableLatency)
 
 	fmt.Fprintf(file, "===== 内存使用情况 =====\n")
-	fmt.Fprintf(file, "Start RSS: %.5f MB\n", result.StartRSS)
-	fmt.Fprintf(file, "Cold Start RSS: %.5f MB\n", result.ColdStartRSS)
-	fmt.Fprintf(file, "Stable RSS: %.5f MB\n", result.StableRSS)
+	fmt.Fprintf(file, "Start PM: %.5f MB\n", result.StartRSS)
+	fmt.Fprintf(file, "Cold Start PM: %.5f MB\n", result.ColdStartRSS)
+	fmt.Fprintf(file, "Stable PM: %.5f MB\n", result.StableRSS)
 	fmt.Fprintf(file, "内存增长 (Start -> Cold Start): %.5f MB\n", result.ColdStartRSS-result.StartRSS)
 	fmt.Fprintf(file, "内存增长 (Cold Start -> Stable): %.5f MB\n", result.StableRSS-result.ColdStartRSS)
 	fmt.Fprintf(file, "Go Heap: %.5f MB\n\n", float64(m.Alloc)/1024/1024)

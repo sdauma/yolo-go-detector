@@ -120,8 +120,8 @@ def run_cold_start_test(model_path, model_name):
     print(f"Model Loading Time: {model_loading_time:.3f} ms")
     print(f"First Inference Time: {first_inference_time:.3f} ms")
     print(f"Total Cold Start Time: {total_cold_start_time:.3f} ms")
-    print(f"Start RSS: {start_rss:.2f} MB")
-    print(f"Peak RSS: {peak_rss:.2f} MB")
+    print(f"Start PM: {start_rss:.2f} MB")
+    print(f"Peak PM: {peak_rss:.2f} MB")
     
     return ColdStartResult(
         session_creation_time=session_creation_time,
@@ -173,16 +173,16 @@ def main():
     print(f"Model Loading Time: {avg_model_loading_large:.3f} ms")
     print(f"First Inference Time: {avg_first_inference_large:.3f} ms")
     print(f"Total Cold Start Time: {avg_total_cold_start_large:.3f} ms")
-    print(f"Start RSS: {avg_start_rss_large:.2f} MB")
-    print(f"Peak RSS: {avg_peak_rss_large:.2f} MB")
+    print(f"Start PM: {avg_start_rss_large:.2f} MB")
+    print(f"Peak PM: {avg_peak_rss_large:.2f} MB")
 
     print("\n===== Small Model (YOLO11n) 20-Run Average =====")
     print(f"Session Creation Time: {avg_session_creation_small:.3f} ms")
     print(f"Model Loading Time: {avg_model_loading_small:.3f} ms")
     print(f"First Inference Time: {avg_first_inference_small:.3f} ms")
     print(f"Total Cold Start Time: {avg_total_cold_start_small:.3f} ms")
-    print(f"Start RSS: {avg_start_rss_small:.2f} MB")
-    print(f"Peak RSS: {avg_peak_rss_small:.2f} MB")
+    print(f"Start PM: {avg_start_rss_small:.2f} MB")
+    print(f"Peak PM: {avg_peak_rss_small:.2f} MB")
 
     # Save results
     result_path = os.path.join(base_path, "results", "python_cold_start_decomposition_result.txt")
@@ -196,16 +196,16 @@ def main():
             f.write(f"Model Loading Time: {r.model_loading_time:.5f} ms\n")
             f.write(f"First Inference Time: {r.first_inference_time:.5f} ms\n")
             f.write(f"Total Cold Start Time: {r.total_cold_start_time:.5f} ms\n")
-            f.write(f"Start RSS: {r.start_rss:.5f} MB\n")
-            f.write(f"Peak RSS: {r.peak_rss:.5f} MB\n\n")
+            f.write(f"Start PM: {r.start_rss:.5f} MB\n")
+            f.write(f"Peak PM: {r.peak_rss:.5f} MB\n\n")
         
         f.write("===== Large Model (YOLO11x) 20-Run Average =====\n")
         f.write(f"Session Creation Time: {avg_session_creation_large:.5f} ms\n")
         f.write(f"Model Loading Time: {avg_model_loading_large:.5f} ms\n")
         f.write(f"First Inference Time: {avg_first_inference_large:.5f} ms\n")
         f.write(f"Total Cold Start Time: {avg_total_cold_start_large:.5f} ms\n")
-        f.write(f"Start RSS: {avg_start_rss_large:.5f} MB\n")
-        f.write(f"Peak RSS: {avg_peak_rss_large:.5f} MB\n\n")
+        f.write(f"Start PM: {avg_start_rss_large:.5f} MB\n")
+        f.write(f"Peak PM: {avg_peak_rss_large:.5f} MB\n\n")
         
         f.write("===== Small Model (YOLO11n) =====\n")
         for i, r in enumerate(results_small):
@@ -214,16 +214,16 @@ def main():
             f.write(f"Model Loading Time: {r.model_loading_time:.5f} ms\n")
             f.write(f"First Inference Time: {r.first_inference_time:.5f} ms\n")
             f.write(f"Total Cold Start Time: {r.total_cold_start_time:.5f} ms\n")
-            f.write(f"Start RSS: {r.start_rss:.5f} MB\n")
-            f.write(f"Peak RSS: {r.peak_rss:.5f} MB\n\n")
+            f.write(f"Start PM: {r.start_rss:.5f} MB\n")
+            f.write(f"Peak PM: {r.peak_rss:.5f} MB\n\n")
         
         f.write("===== Small Model (YOLO11n) 20-Run Average =====\n")
         f.write(f"Session Creation Time: {avg_session_creation_small:.5f} ms\n")
         f.write(f"Model Loading Time: {avg_model_loading_small:.5f} ms\n")
         f.write(f"First Inference Time: {avg_first_inference_small:.5f} ms\n")
         f.write(f"Total Cold Start Time: {avg_total_cold_start_small:.5f} ms\n")
-        f.write(f"Start RSS: {avg_start_rss_small:.5f} MB\n")
-        f.write(f"Peak RSS: {avg_peak_rss_small:.5f} MB\n")
+        f.write(f"Start PM: {avg_start_rss_small:.5f} MB\n")
+        f.write(f"Peak PM: {avg_peak_rss_small:.5f} MB\n")
 
     print(f"\nResults saved to: {result_path}")
     print("Test complete!")

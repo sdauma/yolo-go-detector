@@ -7,16 +7,7 @@ echo Chart Generation Test Script
 echo ============================================================
 echo.
 
-echo [Test 1] Generate Model Size Comparison Chart...
-python generate_model_size_comparison.py
-if errorlevel 1 (
-    echo X Failed: Model Size Comparison Chart
-) else (
-    echo V Success: Model Size Comparison Chart
-)
-echo.
-
-echo [Test 2] Generate Memory Scalability Chart...
+echo [Test 1] Generate Memory Scalability Chart...
 python generate_memory_scalability.py
 if errorlevel 1 (
     echo X Failed: Memory Scalability Chart
@@ -25,7 +16,7 @@ if errorlevel 1 (
 )
 echo.
 
-echo [Test 3] Generate Latency Boxplot...
+echo [Test 2] Generate Latency Boxplot...
 python generate_latency_boxplot.py
 if errorlevel 1 (
     echo X Failed: Latency Boxplot
@@ -34,7 +25,7 @@ if errorlevel 1 (
 )
 echo.
 
-echo [Test 4] Generate RSS Curve...
+echo [Test 3] Generate RSS Curve...
 python plot_rss_curve.py
 if errorlevel 1 (
     echo X Failed: RSS Curve
@@ -43,7 +34,7 @@ if errorlevel 1 (
 )
 echo.
 
-echo [Test 5] Generate All Main Charts (7 charts)...
+echo [Test 4] Generate All Main Charts (7 charts)...
 python generate_all_charts.py
 if errorlevel 1 (
     echo X Failed: All Main Charts
@@ -52,7 +43,7 @@ if errorlevel 1 (
 )
 echo.
 
-echo [Test 6] Generate Journal Standard Charts (9 charts)...
+echo [Test 5] Generate Journal Standard Charts (9 charts)...
 python generate_journal_charts.py
 if errorlevel 1 (
     echo ! Partial Success: Journal Standard Charts (optional charts skipped)

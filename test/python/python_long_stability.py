@@ -213,9 +213,9 @@ print(f"\n===== Memory Usage Statistics =====")
 print(f"Initial RSS: {initial_rss:.5f} MB")
 print(f"Final RSS: {final_rss:.5f} MB")
 print(f"Avg RSS: {avg_rss:.5f} MB")
-print(f"Peak RSS: {peak_rss:.5f} MB")
+print(f"Peak PM: {peak_rss:.5f} MB")
 print(f"Min RSS: {min_rss:.5f} MB")
-print(f"RSS Drift: {rss_drift:.5f} MB")
+print(f"PM Drift: {rss_drift:.5f} MB")
 print(f"RSS Fluctuation Range: {rss_range:.5f} MB ({rss_range_percent:.2f}%)")
 
 # Save detailed results
@@ -238,9 +238,9 @@ try:
         f.write(f"Initial RSS: {initial_rss:.5f} MB\n")
         f.write(f"Final RSS: {final_rss:.5f} MB\n")
         f.write(f"Avg RSS: {avg_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
+        f.write(f"Peak PM: {peak_rss:.5f} MB\n")
         f.write(f"Min RSS: {min_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {rss_drift:.5f} MB\n")
+        f.write(f"PM Drift: {rss_drift:.5f} MB\n")
         f.write(f"RSS Fluctuation Range: {rss_range:.5f} MB ({rss_range_percent:.2f}%)\n")
     print("Results saved successfully!")
 except Exception as e:

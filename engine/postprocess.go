@@ -183,19 +183,18 @@ func minFloat32(a, b float32) float32 {
 	return b
 }
 
-// ScaleBboxes 缩放边界框到原始图像尺寸
-func (p *Postprocessor) ScaleBboxes(boxes []BoundingBox, inputWidth, inputHeight, originalWidth, originalHeight int) []BoundingBox {
+// ScaleBboxes 将边界框从模型输入空间（含 Letterbox 填充）映射回原始图像坐标。
+// 与 production/detector.go 的坐标映射逻辑一致：origCoord = (coord - Pad) / Scale。
+// scaleX/scaleY: Letterbox 缩放因子；padLeft/padTop: Letterbox 填充偏移。
+func (p *Postprocessor) ScaleBboxes(boxes []BoundingBox, scaleX, scaleY, padLeft, padTop float32) []BoundingBox {
 	scaled := make([]BoundingBox, len(boxes))
-
-	scaleX := float32(originalWidth) / float32(inputWidth)
-	scaleY := float32(originalHeight) / float32(inputHeight)
 
 	for i, box := range boxes {
 		scaled[i] = BoundingBox{
-			XMin:      box.XMin * scaleX,
-			YMin:      box.YMin * scaleY,
-			XMax:      box.XMax * scaleX,
-			YMax:      box.YMax * scaleY,
+			XMin:      (box.XMin - padLeft) / scaleX,
+			YMin:      (box.YMin - padTop) / scaleY,
+			XMax:      (box.XMax - padLeft) / scaleX,
+			YMax:      (box.YMax - padTop) / scaleY,
 			ClassID:   box.ClassID,
 			Confidence: box.Confidence,
 		}

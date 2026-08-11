@@ -100,7 +100,7 @@ def run_benchmark(model_name, model_path):
         print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # Memory sample point 1: after Session creation, before warmup (Start RSS)
+    # Memory sample point 1: after Session creation, before warmup (Start PM)
     start_rss = process.memory_info().private / 1024 / 1024
 
     # Warmup
@@ -185,10 +185,10 @@ def main():
     print(f"P95 Latency: {yolo11x_result.p95_latency:.3f} ms")
     print(f"Min Latency: {yolo11x_result.min_latency:.3f} ms")
     print(f"Max Latency: {yolo11x_result.max_latency:.3f} ms")
-    print(f"Start RSS: {yolo11x_result.start_rss:.2f} MB")
-    print(f"Peak RSS: {yolo11x_result.peak_rss:.2f} MB")
-    print(f"Stable RSS: {yolo11x_result.stable_rss:.2f} MB")
-    print(f"RSS Drift: {yolo11x_result.stable_rss - yolo11x_result.start_rss:.2f} MB")
+    print(f"Start PM: {yolo11x_result.start_rss:.2f} MB")
+    print(f"Peak PM: {yolo11x_result.peak_rss:.2f} MB")
+    print(f"Stable PM: {yolo11x_result.stable_rss:.2f} MB")
+    print(f"PM Drift: {yolo11x_result.stable_rss - yolo11x_result.start_rss:.2f} MB")
 
     # Test YOLO11n model
     print("\n===== Testing YOLO11n Model =====")
@@ -207,10 +207,10 @@ def main():
     print(f"P95 Latency: {yolo11n_result.p95_latency:.3f} ms")
     print(f"Min Latency: {yolo11n_result.min_latency:.3f} ms")
     print(f"Max Latency: {yolo11n_result.max_latency:.3f} ms")
-    print(f"Start RSS: {yolo11n_result.start_rss:.2f} MB")
-    print(f"Peak RSS: {yolo11n_result.peak_rss:.2f} MB")
-    print(f"Stable RSS: {yolo11n_result.stable_rss:.2f} MB")
-    print(f"RSS Drift: {yolo11n_result.stable_rss - yolo11n_result.start_rss:.2f} MB")
+    print(f"Start PM: {yolo11n_result.start_rss:.2f} MB")
+    print(f"Peak PM: {yolo11n_result.peak_rss:.2f} MB")
+    print(f"Stable PM: {yolo11n_result.stable_rss:.2f} MB")
+    print(f"PM Drift: {yolo11n_result.stable_rss - yolo11n_result.start_rss:.2f} MB")
 
     # Get system info
     import platform
@@ -242,10 +242,10 @@ def main():
         f.write(f"P95 Latency: {yolo11x_result.p95_latency:.5f} ms\n")
         f.write(f"Min Latency: {yolo11x_result.min_latency:.5f} ms\n")
         f.write(f"Max Latency: {yolo11x_result.max_latency:.5f} ms\n")
-        f.write(f"Start RSS: {yolo11x_result.start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {yolo11x_result.peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {yolo11x_result.stable_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {yolo11x_result.stable_rss - yolo11x_result.start_rss:.5f} MB\n")
+        f.write(f"Start PM: {yolo11x_result.start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {yolo11x_result.peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {yolo11x_result.stable_rss:.5f} MB\n")
+        f.write(f"PM Drift: {yolo11x_result.stable_rss - yolo11x_result.start_rss:.5f} MB\n")
         f.write("\n")
         
         f.write("===== YOLO11n Test Results =====\n")
@@ -257,10 +257,10 @@ def main():
         f.write(f"P95 Latency: {yolo11n_result.p95_latency:.5f} ms\n")
         f.write(f"Min Latency: {yolo11n_result.min_latency:.5f} ms\n")
         f.write(f"Max Latency: {yolo11n_result.max_latency:.5f} ms\n")
-        f.write(f"Start RSS: {yolo11n_result.start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {yolo11n_result.peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {yolo11n_result.stable_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {yolo11n_result.stable_rss - yolo11n_result.start_rss:.5f} MB\n")
+        f.write(f"Start PM: {yolo11n_result.start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {yolo11n_result.peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {yolo11n_result.stable_rss:.5f} MB\n")
+        f.write(f"PM Drift: {yolo11n_result.stable_rss - yolo11n_result.start_rss:.5f} MB\n")
 
     print(f"\nResults saved to: {result_path}")
     print("Test complete!")

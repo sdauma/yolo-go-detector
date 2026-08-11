@@ -18,7 +18,7 @@ P90 latency: 593.38859 ms
 P95 latency: 596.08789 ms
 
 ===== Memory Usage (10-round average) =====
-Start RSS: 705.32852 MB
-Peak RSS: 970.80625 MB
-Stable RSS: 970.78750 MB
-RSS Drift: 265.45898 MB
+Start PM: 705.32852 MB
+Peak PM: 970.80625 MB
+Stable PM: 970.78750 MB
+PM Drift: 265.45898 MB

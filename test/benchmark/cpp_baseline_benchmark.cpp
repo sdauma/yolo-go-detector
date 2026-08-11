@@ -326,10 +326,10 @@ int main(int argc, char* argv[]) {
     std::cout << "P99 latency: " << p99 << " ms" << std::endl;
     std::cout << "Min latency: " << minLat << " ms" << std::endl;
     std::cout << "Max latency: " << maxLat << " ms" << std::endl;
-    std::cout << "Start RSS: " << startRSS << " MB" << std::endl;
-    std::cout << "Peak RSS: " << peakRSS << " MB" << std::endl;
+    std::cout << "Start PM: " << startRSS << " MB" << std::endl;
+    std::cout << "Peak PM: " << peakRSS << " MB" << std::endl;
     std::cout << "End RSS: " << endRSS << " MB" << std::endl;
-    std::cout << "RSS drift: " << (endRSS - startRSS) << " MB" << std::endl;
+    std::cout << "PM drift: " << (endRSS - startRSS) << " MB" << std::endl;
 
     // -- Cross-reference with Go/Python baseline (paper Table 10) --
     std::cout << std::endl;

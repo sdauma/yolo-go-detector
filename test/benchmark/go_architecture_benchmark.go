@@ -591,8 +591,8 @@ func main() {
 		content.WriteString(fmt.Sprintf("  P99延迟: %.5f ms\n", r.P99Latency))
 		content.WriteString(fmt.Sprintf("  最小延迟: %.5f ms\n", r.MinLatency))
 		content.WriteString(fmt.Sprintf("  最大延迟: %.5f ms\n", r.MaxLatency))
-		content.WriteString(fmt.Sprintf("  峰值RSS: %.5f MB\n", r.PeakRSS))
-		content.WriteString(fmt.Sprintf("  RSS漂移: %.5f MB\n\n", r.RSSDrift))
+		content.WriteString(fmt.Sprintf("  峰值PM: %.5f MB\n", r.PeakRSS))
+		content.WriteString(fmt.Sprintf("  PM漂移: %.5f MB\n\n", r.RSSDrift))
 	}
 
 	err = os.WriteFile(resultPath, []byte(content.String()), 0644)

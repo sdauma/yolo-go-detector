@@ -16,10 +16,10 @@ P90 latency: 37.52143 ms
 P95 latency: 39.14054 ms
 Min latency: 35.77540 ms
 Max latency: 46.48310 ms
-Start RSS: 445.76953 MB
-Peak RSS: 561.78516 MB
-Stable RSS: 561.78516 MB
-RSS Drift: 116.01562 MB
+Start PM: 445.76953 MB
+Peak PM: 561.78516 MB
+Stable PM: 561.78516 MB
+PM Drift: 116.01562 MB
 
 ===== Round 2 =====
 Avg latency: 36.97505 ms
@@ -29,10 +29,10 @@ P90 latency: 37.99002 ms
 P95 latency: 38.43541 ms
 Min latency: 35.90810 ms
 Max latency: 47.81690 ms
-Start RSS: 447.12109 MB
-Peak RSS: 563.69531 MB
-Stable RSS: 563.69531 MB
-RSS Drift: 116.57422 MB
+Start PM: 447.12109 MB
+Peak PM: 563.69531 MB
+Stable PM: 563.69531 MB
+PM Drift: 116.57422 MB
 
 ===== Round 3 =====
 Avg latency: 37.10252 ms
@@ -42,10 +42,10 @@ P90 latency: 38.40457 ms
 P95 latency: 39.62689 ms
 Min latency: 35.97690 ms
 Max latency: 48.69720 ms
-Start RSS: 451.10156 MB
-Peak RSS: 568.19922 MB
-Stable RSS: 568.19922 MB
-RSS Drift: 117.09766 MB
+Start PM: 451.10156 MB
+Peak PM: 568.19922 MB
+Stable PM: 568.19922 MB
+PM Drift: 117.09766 MB
 
 ===== Round 4 =====
 Avg latency: 37.21354 ms
@@ -55,10 +55,10 @@ P90 latency: 38.20238 ms
 P95 latency: 39.94934 ms
 Min latency: 36.02570 ms
 Max latency: 46.74770 ms
-Start RSS: 450.11328 MB
-Peak RSS: 566.67188 MB
-Stable RSS: 566.67188 MB
-RSS Drift: 116.55859 MB
+Start PM: 450.11328 MB
+Peak PM: 566.67188 MB
+Stable PM: 566.67188 MB
+PM Drift: 116.55859 MB
 
 ===== Round 5 =====
 Avg latency: 36.99503 ms
@@ -68,10 +68,10 @@ P90 latency: 37.72714 ms
 P95 latency: 38.53098 ms
 Min latency: 35.99440 ms
 Max latency: 46.66410 ms
-Start RSS: 448.42969 MB
-Peak RSS: 565.03125 MB
-Stable RSS: 565.03125 MB
-RSS Drift: 116.60156 MB
+Start PM: 448.42969 MB
+Peak PM: 565.03125 MB
+Stable PM: 565.03125 MB
+PM Drift: 116.60156 MB
 
 ===== Round 6 =====
 Avg latency: 37.09215 ms
@@ -81,10 +81,10 @@ P90 latency: 38.26081 ms
 P95 latency: 39.81710 ms
 Min latency: 36.04660 ms
 Max latency: 44.54050 ms
-Start RSS: 450.46875 MB
-Peak RSS: 566.53516 MB
-Stable RSS: 566.53516 MB
-RSS Drift: 116.06641 MB
+Start PM: 450.46875 MB
+Peak PM: 566.53516 MB
+Stable PM: 566.53516 MB
+PM Drift: 116.06641 MB
 
 ===== Round 7 =====
 Avg latency: 37.17348 ms
@@ -94,10 +94,10 @@ P90 latency: 38.44857 ms
 P95 latency: 39.97076 ms
 Min latency: 36.11070 ms
 Max latency: 47.45810 ms
-Start RSS: 448.95703 MB
-Peak RSS: 565.51562 MB
-Stable RSS: 565.51562 MB
-RSS Drift: 116.55859 MB
+Start PM: 448.95703 MB
+Peak PM: 565.51562 MB
+Stable PM: 565.51562 MB
+PM Drift: 116.55859 MB
 
 ===== Round 8 =====
 Avg latency: 37.27673 ms
@@ -107,10 +107,10 @@ P90 latency: 37.88144 ms
 P95 latency: 40.06246 ms
 Min latency: 36.23480 ms
 Max latency: 45.74080 ms
-Start RSS: 448.57031 MB
-Peak RSS: 565.08984 MB
-Stable RSS: 565.00781 MB
-RSS Drift: 116.43750 MB
+Start PM: 448.57031 MB
+Peak PM: 565.08984 MB
+Stable PM: 565.00781 MB
+PM Drift: 116.43750 MB
 
 ===== Round 9 =====
 Avg latency: 37.06829 ms
@@ -120,10 +120,10 @@ P90 latency: 38.07141 ms
 P95 latency: 38.91808 ms
 Min latency: 36.03390 ms
 Max latency: 45.86840 ms
-Start RSS: 448.05469 MB
-Peak RSS: 564.58594 MB
-Stable RSS: 564.58594 MB
-RSS Drift: 116.53125 MB
+Start PM: 448.05469 MB
+Peak PM: 564.58594 MB
+Stable PM: 564.58594 MB
+PM Drift: 116.53125 MB
 
 ===== Round 10 =====
 Avg latency: 37.34482 ms
@@ -133,10 +133,10 @@ P90 latency: 38.31803 ms
 P95 latency: 39.15727 ms
 Min latency: 36.30780 ms
 Max latency: 48.95350 ms
-Start RSS: 449.55859 MB
-Peak RSS: 566.22266 MB
-Stable RSS: 566.22266 MB
-RSS Drift: 116.66406 MB
+Start PM: 449.55859 MB
+Peak PM: 566.22266 MB
+Stable PM: 566.22266 MB
+PM Drift: 116.66406 MB
 
 ===== 10-Round Average =====
 Avg latency: 37.10418 ms
@@ -146,7 +146,7 @@ P90 latency: 38.08258 ms
 P95 latency: 39.36088 ms
 Min latency: 36.04143 ms
 Max latency: 46.89703 ms
-Start RSS: 448.81445 MB
-Peak RSS: 565.33320 MB
-Stable RSS: 565.32500 MB
-RSS Drift: 116.51055 MB
+Start PM: 448.81445 MB
+Peak PM: 565.33320 MB
+Stable PM: 565.32500 MB
+PM Drift: 116.51055 MB

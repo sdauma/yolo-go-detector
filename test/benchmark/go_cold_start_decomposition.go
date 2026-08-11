@@ -146,8 +146,8 @@ func runColdStartTest(modelPath, modelName, libPath string) (*ColdStartResult, e
 	fmt.Printf("模型加载时间: %.5f ms\n", modelLoadingTime)
 	fmt.Printf("首次推理时间: %.5f ms\n", firstInferenceTime)
 	fmt.Printf("总冷启动时间: %.5f ms\n", totalColdStartTime)
-	fmt.Printf("Start RSS: %.5f MB\n", startRSS)
-	fmt.Printf("Peak RSS: %.5f MB\n", peakRSS)
+	fmt.Printf("Start PM: %.5f MB\n", startRSS)
+	fmt.Printf("Peak PM: %.5f MB\n", peakRSS)
 
 	return &ColdStartResult{
 		SessionCreationTime: sessionCreationTime,
@@ -264,8 +264,8 @@ func main() {
 	fmt.Printf("模型加载时间: %.5f ms\n", avgModelLoadingLarge)
 	fmt.Printf("首次推理时间: %.5f ms\n", avgFirstInferenceLarge)
 	fmt.Printf("总冷启动时间: %.5f ms\n", avgTotalColdStartLarge)
-	fmt.Printf("Start RSS: %.5f MB\n", avgStartRSSLarge)
-	fmt.Printf("Peak RSS: %.5f MB\n\n", avgPeakRSSLarge)
+	fmt.Printf("Start PM: %.5f MB\n", avgStartRSSLarge)
+	fmt.Printf("Peak PM: %.5f MB\n\n", avgPeakRSSLarge)
 
 	fmt.Println("===== 轻模型 (YOLO11n) 20次测试平均值 =====")
 	// 中间数据保留5位小数
@@ -273,8 +273,8 @@ func main() {
 	fmt.Printf("模型加载时间: %.5f ms\n", avgModelLoadingSmall)
 	fmt.Printf("首次推理时间: %.5f ms\n", avgFirstInferenceSmall)
 	fmt.Printf("总冷启动时间: %.5f ms\n", avgTotalColdStartSmall)
-	fmt.Printf("Start RSS: %.5f MB\n", avgStartRSSSmall)
-	fmt.Printf("Peak RSS: %.5f MB\n", avgPeakRSSSmall)
+	fmt.Printf("Start PM: %.5f MB\n", avgStartRSSSmall)
+	fmt.Printf("Peak PM: %.5f MB\n", avgPeakRSSSmall)
 
 	// 保存结果
 	resultsDir := filepath.Join(basePath, "results")
@@ -298,8 +298,8 @@ func main() {
 		fmt.Fprintf(resultFile, "首次推理时间: %.5f ms\n", r.FirstInferenceTime)
 		fmt.Fprintf(resultFile, "总冷启动时间: %.5f ms\n", r.TotalColdStartTime)
 		// 中间数据保留5位小数，符合核心期刊规范
-		fmt.Fprintf(resultFile, "Start RSS: %.5f MB\n", r.StartRSS)
-		fmt.Fprintf(resultFile, "Peak RSS: %.5f MB\n\n", r.PeakRSS)
+		fmt.Fprintf(resultFile, "Start PM: %.5f MB\n", r.StartRSS)
+		fmt.Fprintf(resultFile, "Peak PM: %.5f MB\n\n", r.PeakRSS)
 	}
 
 	fmt.Fprintf(resultFile, "===== 大模型 (YOLO11x) 20次测试平均值 =====\n")
@@ -308,8 +308,8 @@ func main() {
 	fmt.Fprintf(resultFile, "首次推理时间: %.5f ms\n", avgFirstInferenceLarge)
 	fmt.Fprintf(resultFile, "总冷启动时间: %.5f ms\n", avgTotalColdStartLarge)
 	// 中间数据保留5位小数，符合核心期刊规范
-	fmt.Fprintf(resultFile, "Start RSS: %.5f MB\n", avgStartRSSLarge)
-	fmt.Fprintf(resultFile, "Peak RSS: %.5f MB\n\n", avgPeakRSSLarge)
+	fmt.Fprintf(resultFile, "Start PM: %.5f MB\n", avgStartRSSLarge)
+	fmt.Fprintf(resultFile, "Peak PM: %.5f MB\n\n", avgPeakRSSLarge)
 
 	fmt.Fprintf(resultFile, "===== 轻模型 (YOLO11n) =====\n")
 	for i, r := range resultsSmall {
@@ -319,8 +319,8 @@ func main() {
 		fmt.Fprintf(resultFile, "首次推理时间: %.5f ms\n", r.FirstInferenceTime)
 		fmt.Fprintf(resultFile, "总冷启动时间: %.5f ms\n", r.TotalColdStartTime)
 		// 中间数据保留5位小数，符合核心期刊规范
-		fmt.Fprintf(resultFile, "Start RSS: %.5f MB\n", r.StartRSS)
-		fmt.Fprintf(resultFile, "Peak RSS: %.5f MB\n\n", r.PeakRSS)
+		fmt.Fprintf(resultFile, "Start PM: %.5f MB\n", r.StartRSS)
+		fmt.Fprintf(resultFile, "Peak PM: %.5f MB\n\n", r.PeakRSS)
 	}
 
 	fmt.Fprintf(resultFile, "===== 轻模型 (YOLO11n) 20次测试平均值 =====\n")
@@ -329,8 +329,8 @@ func main() {
 	fmt.Fprintf(resultFile, "首次推理时间: %.5f ms\n", avgFirstInferenceSmall)
 	fmt.Fprintf(resultFile, "总冷启动时间: %.5f ms\n", avgTotalColdStartSmall)
 	// 中间数据保留5位小数，符合核心期刊规范
-	fmt.Fprintf(resultFile, "Start RSS: %.5f MB\n", avgStartRSSSmall)
-	fmt.Fprintf(resultFile, "Peak RSS: %.5f MB\n", avgPeakRSSSmall)
+	fmt.Fprintf(resultFile, "Start PM: %.5f MB\n", avgStartRSSSmall)
+	fmt.Fprintf(resultFile, "Peak PM: %.5f MB\n", avgPeakRSSSmall)
 
 	fmt.Printf("\n结果已保存到: %s\n", resultPath)
 	fmt.Println("测试完成!")

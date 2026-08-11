@@ -18,8 +18,8 @@ P90延迟: 780.07549 ms
 P95延迟: 783.49367 ms
 
 ===== 内存使用情况（10轮运行平均值） =====
-Start RSS: 536.94023 MB
-Peak RSS: 802.23633 MB
-Stable RSS: 793.04961 MB
-RSS Drift: 256.10938 MB
+Start PM: 536.94023 MB
+Peak PM: 802.23633 MB
+Stable PM: 793.04961 MB
+PM Drift: 256.10938 MB
 Go Heap: 7.59191 MB

@@ -11,7 +11,7 @@
 8	696.62548	703.05530	704.03110	719.39010	685.97050	719.39010
 
 工程指标：
-线程配置	Tensor分配次数	I/O Binding	Session创建次数	峰值RSS(MB)
+线程配置	Tensor分配次数	I/O Binding	Session创建次数	峰值PM(MB)
 1	2	true	1	576.11328
 2	2	true	1	576.32031
 4	2	true	1	580.48047

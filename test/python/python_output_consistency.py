@@ -302,6 +302,32 @@ def save_detection_results(results, output_dir):
                 f.write(f"{i+1},{box.x:.5f},{box.y:.5f},{box.width:.5f},{box.height:.5f},{box.confidence:.5f},{box.class_id}\n")
         print(f"Results saved to: {output_path}")
 
+def compare_with_go_export(model_path, model_name):
+    """方案 B：加载 Go 导出的输入张量，绕开 Python 自身预处理，仅验证 ONNX Runtime
+    的 Go 绑定与 Python 绑定在同一输入下的输出一致性（论文 §3.3 真正声明）。"""
+    go_input_path = os.path.join(base_path, "results", f"go_{model_name}_input.bin")
+    go_output_path = os.path.join(base_path, "results", f"go_{model_name}_output.bin")
+    if not os.path.exists(go_input_path) or not os.path.exists(go_output_path):
+        print(f"[方案B] 未找到 Go 导出文件（{go_input_path}），跳过张量级比对")
+        return
+
+    go_input = np.fromfile(go_input_path, dtype=np.float32).reshape(1, 3, model_input_size, model_input_size)
+    go_output = np.fromfile(go_output_path, dtype=np.float32).reshape(1, 84, 8400)
+
+    sess_options = ort.SessionOptions()
+    sess_options.intra_op_num_threads = 12
+    sess_options.inter_op_num_threads = 1
+    sess_options.log_severity_level = 3
+    sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+    sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+    sess = ort.InferenceSession(model_path, sess_options=sess_options, providers=["CPUExecutionProvider"])
+    input_name = sess.get_inputs()[0].name
+    py_output = sess.run(None, {input_name: go_input})[0].reshape(1, 84, 8400)
+
+    max_diff = float(np.max(np.abs(go_output - py_output)))
+    print(f"\n[方案B] 模型 {model_name}: 张量级 max|diff| = {max_diff:.6e}  (预期 < 1e-4)")
+
+
 def main():
     print("===== Python Output Consistency Verification Test =====")
 
@@ -317,6 +343,10 @@ def main():
 
     output_dir = os.path.join(base_path, "results")
     save_detection_results(results, output_dir)
+
+    # 方案 B：加载 Go 导出的输入张量，绕开 Python 预处理，仅验证引擎绑定一致性
+    compare_with_go_export(model_path_large, "yolo11x")
+    compare_with_go_export(model_path_small, "yolo11n")
 
     print("\nTest completed!")
 

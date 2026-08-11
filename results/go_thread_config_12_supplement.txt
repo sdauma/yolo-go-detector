@@ -1,0 +1,9 @@
+===== Go 线程配置补测: intra_op_num_threads=12（5次运行平均值）=====
+模型: YOLO11x
+平均延迟: 587.66400 ms
+标准差: 0.75465 ms
+FPS: 1.70
+Peak PM: 589.05 MB
+
+注: 与 thread_config_benchmark.go 完全相同的测试方法（5次独立测试×100次推理）
+用途: 补全表7同线程配置对比（Go intra_op=12 vs Python intra_op=12=588.12ms）

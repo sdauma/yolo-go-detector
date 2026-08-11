@@ -617,7 +617,7 @@ func main() {
 			resultContent += fmt.Sprintf("  P50延迟: %.2f ms\n", r.P50Latency)
 			resultContent += fmt.Sprintf("  P90延迟: %.2f ms\n", r.P90Latency)
 			resultContent += fmt.Sprintf("  P99延迟: %.2f ms\n", r.P99Latency)
-			resultContent += fmt.Sprintf("  峰值RSS: %.2f MB\n\n", r.PeakRSS)
+			resultContent += fmt.Sprintf("  峰值PM: %.2f MB\n\n", r.PeakRSS)
 		}
 	}
 

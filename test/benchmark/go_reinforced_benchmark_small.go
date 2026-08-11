@@ -161,7 +161,7 @@ func runBenchmark() (*BenchmarkResult, error) {
 	}
 	defer session.Destroy()
 
-	// 内存采样点 1：Session 创建后、warmup 前（Start RSS）
+	// 内存采样点 1：Session 创建后、warmup 前（Start PM）
 	startRSS := getProcessRSS()
 
 	// Warmup
@@ -267,10 +267,10 @@ func main() {
 		fmt.Printf("P95延迟: %.5f ms\n", result.P95Latency)
 		fmt.Printf("最小延迟: %.5f ms\n", result.MinLatency)
 		fmt.Printf("最大延迟: %.5f ms\n", result.MaxLatency)
-		fmt.Printf("Start RSS: %.5f MB\n", result.StartRSS)
-		fmt.Printf("Peak RSS: %.5f MB\n", result.PeakRSS)
-		fmt.Printf("Stable RSS: %.5f MB\n", result.StableRSS)
-		fmt.Printf("RSS Drift: %.5f MB\n", result.StableRSS-result.StartRSS)
+		fmt.Printf("Start PM: %.5f MB\n", result.StartRSS)
+		fmt.Printf("Peak PM: %.5f MB\n", result.PeakRSS)
+		fmt.Printf("Stable PM: %.5f MB\n", result.StableRSS)
+		fmt.Printf("PM Drift: %.5f MB\n", result.StableRSS-result.StartRSS)
 		fmt.Printf("Go Heap: %.5f MB\n", result.GoHeap)
 	}
 
@@ -313,10 +313,10 @@ func main() {
 	fmt.Printf("P95延迟: %.5f ms\n", p95Latency)
 	fmt.Printf("最小延迟: %.5f ms\n", minLatency)
 	fmt.Printf("最大延迟: %.5f ms\n", maxLatency)
-	fmt.Printf("Start RSS: %.5f MB\n", startRSS)
-	fmt.Printf("Peak RSS: %.5f MB\n", peakRSS)
-	fmt.Printf("Stable RSS: %.5f MB\n", stableRSS)
-	fmt.Printf("RSS Drift: %.5f MB\n", stableRSS-startRSS)
+	fmt.Printf("Start PM: %.5f MB\n", startRSS)
+	fmt.Printf("Peak PM: %.5f MB\n", peakRSS)
+	fmt.Printf("Stable PM: %.5f MB\n", stableRSS)
+	fmt.Printf("PM Drift: %.5f MB\n", stableRSS-startRSS)
 	fmt.Printf("Go Heap: %.5f MB\n", goHeap)
 
 	// 保存详细日志
@@ -337,10 +337,10 @@ func main() {
 		fmt.Fprintf(logFile, "P95延迟: %.5f ms\n", r.P95Latency)
 		fmt.Fprintf(logFile, "最小延迟: %.5f ms\n", r.MinLatency)
 		fmt.Fprintf(logFile, "最大延迟: %.5f ms\n", r.MaxLatency)
-		fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", r.StartRSS)
-		fmt.Fprintf(logFile, "Peak RSS: %.5f MB\n", r.PeakRSS)
-		fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", r.StableRSS)
-		fmt.Fprintf(logFile, "RSS Drift: %.5f MB\n", r.StableRSS-r.StartRSS)
+		fmt.Fprintf(logFile, "Start PM: %.5f MB\n", r.StartRSS)
+		fmt.Fprintf(logFile, "Peak PM: %.5f MB\n", r.PeakRSS)
+		fmt.Fprintf(logFile, "Stable PM: %.5f MB\n", r.StableRSS)
+		fmt.Fprintf(logFile, "PM Drift: %.5f MB\n", r.StableRSS-r.StartRSS)
 		fmt.Fprintf(logFile, "Go Heap: %.5f MB\n", r.GoHeap)
 		fmt.Fprintf(logFile, "\n")
 	}
@@ -353,10 +353,10 @@ func main() {
 	fmt.Fprintf(logFile, "P95延迟: %.5f ms\n", p95Latency)
 	fmt.Fprintf(logFile, "最小延迟: %.5f ms\n", minLatency)
 	fmt.Fprintf(logFile, "最大延迟: %.5f ms\n", maxLatency)
-	fmt.Fprintf(logFile, "Start RSS: %.5f MB\n", startRSS)
-	fmt.Fprintf(logFile, "Peak RSS: %.5f MB\n", peakRSS)
-	fmt.Fprintf(logFile, "Stable RSS: %.5f MB\n", stableRSS)
-	fmt.Fprintf(logFile, "RSS Drift: %.5f MB\n", stableRSS-startRSS)
+	fmt.Fprintf(logFile, "Start PM: %.5f MB\n", startRSS)
+	fmt.Fprintf(logFile, "Peak PM: %.5f MB\n", peakRSS)
+	fmt.Fprintf(logFile, "Stable PM: %.5f MB\n", stableRSS)
+	fmt.Fprintf(logFile, "PM Drift: %.5f MB\n", stableRSS-startRSS)
 	fmt.Fprintf(logFile, "Go Heap: %.5f MB\n", goHeap)
 
 	fmt.Printf("\n详细日志已保存到: %s\n", logPath)
@@ -381,10 +381,10 @@ func main() {
 	fmt.Fprintf(resultFile, "P90延迟: %.5f ms\n", p90Latency)
 	fmt.Fprintf(resultFile, "P95延迟: %.5f ms\n", p95Latency)
 	fmt.Fprintf(resultFile, "\n===== 内存使用情况（10轮运行平均值） =====\n")
-	fmt.Fprintf(resultFile, "Start RSS: %.5f MB\n", startRSS)
-	fmt.Fprintf(resultFile, "Peak RSS: %.5f MB\n", peakRSS)
-	fmt.Fprintf(resultFile, "Stable RSS: %.5f MB\n", stableRSS)
-	fmt.Fprintf(resultFile, "RSS Drift: %.5f MB\n", stableRSS-startRSS)
+	fmt.Fprintf(resultFile, "Start PM: %.5f MB\n", startRSS)
+	fmt.Fprintf(resultFile, "Peak PM: %.5f MB\n", peakRSS)
+	fmt.Fprintf(resultFile, "Stable PM: %.5f MB\n", stableRSS)
+	fmt.Fprintf(resultFile, "PM Drift: %.5f MB\n", stableRSS-startRSS)
 	fmt.Fprintf(resultFile, "Go Heap: %.5f MB\n", goHeap)
 
 	fmt.Printf("结果已保存到: %s\n", resultPath)

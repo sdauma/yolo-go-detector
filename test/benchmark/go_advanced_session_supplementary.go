@@ -85,7 +85,7 @@ func main() {
 
 		fmt.Printf("性能指标: avg=%.5f ms, p50=%.5f ms, p90=%.5f ms, p99=%.5f ms, min=%.5f ms, max=%.5f ms\n",
 			perfMetrics.Avg, perfMetrics.P50, perfMetrics.P90, perfMetrics.P99, perfMetrics.Min, perfMetrics.Max)
-		fmt.Printf("工程指标: Tensor分配次数=%d, I/O Binding=%t, Session创建次数=%d, 峰值RSS=%.5f MB\n",
+		fmt.Printf("工程指标: Tensor分配次数=%d, I/O Binding=%t, Session创建次数=%d, 峰值PM=%.5f MB\n",
 			engMetrics.TensorAllocationCount, engMetrics.IOBindingEnabled, engMetrics.SessionCreationCount, engMetrics.PeakRSS)
 		fmt.Println()
 	}
@@ -165,7 +165,7 @@ func runAdvancedSessionTest(modelPath string, numThreads int, projectRoot string
 	fmt.Printf("线程配置: intra_op_num_threads=%d, inter_op_num_threads=1\n", numThreads)
 
 	startRSS := getProcessRSS()
-	fmt.Printf("Start RSS: %.5f MB\n", startRSS)
+	fmt.Printf("Start PM: %.5f MB\n", startRSS)
 
 	fmt.Println("Warming up...")
 	for i := 0; i < 10; i++ {
@@ -196,7 +196,7 @@ func runAdvancedSessionTest(modelPath string, numThreads int, projectRoot string
 	}
 
 	engMetrics.PeakRSS = getProcessRSS()
-	fmt.Printf("Peak RSS: %.5f MB\n", engMetrics.PeakRSS)
+	fmt.Printf("Peak PM: %.5f MB\n", engMetrics.PeakRSS)
 
 	return calculateMetrics(latencies), engMetrics
 }
@@ -298,7 +298,7 @@ func saveResults(results map[int]PerformanceMetrics, engineeringResults map[int]
 	}
 
 	file.WriteString("\n工程指标：\n")
-	file.WriteString("线程配置\tTensor分配次数\tI/O Binding\tSession创建次数\t峰值RSS(MB)\n")
+	file.WriteString("线程配置\tTensor分配次数\tI/O Binding\tSession创建次数\t峰值PM(MB)\n")
 	for _, numThreads := range []int{1, 2, 4, 8} {
 		metrics := engineeringResults[numThreads]
 		file.WriteString(fmt.Sprintf("%d\t%d\t%t\t%d\t%.5f\n",

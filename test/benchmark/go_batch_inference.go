@@ -161,7 +161,7 @@ func testBatchInference(modelPath, inputDataPath string, batchSizes []int) ([]Ba
 		fmt.Printf("总时间: %.5f ms\n", totalTimeMs)
 		fmt.Printf("每张图片: %.5f ms\n", perImageTimeMs)
 		fmt.Printf("吞吐量: %.5f images/sec\n", throughput)
-		fmt.Printf("峰值RSS: %.5f MB\n", peakRSS)
+		fmt.Printf("峰值PM: %.5f MB\n", peakRSS)
 
 		// 清理
 		session.Destroy()

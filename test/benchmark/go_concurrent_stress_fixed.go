@@ -333,10 +333,10 @@ func main() {
 		fmt.Printf("最小延迟：%.5f ms\n", result.MinLatency)
 		fmt.Printf("最大延迟：%.5f ms\n", result.MaxLatency)
 		fmt.Printf("吞吐量：%.5f REQ/s\n", result.Throughput)
-		fmt.Printf("初始RSS：%.5f MB\n", result.StartRSS)
-		fmt.Printf("峰值RSS：%.5f MB\n", result.PeakRSS)
+		fmt.Printf("初始PM：%.5f MB\n", result.StartRSS)
+		fmt.Printf("峰值PM：%.5f MB\n", result.PeakRSS)
 		fmt.Printf("最终RSS：%.5f MB\n", result.EndRSS)
-		fmt.Printf("RSS漂移：%.5f MB\n", result.RSSDrift)
+		fmt.Printf("PM漂移：%.5f MB\n", result.RSSDrift)
 	}
 
 	resultPath := filepath.Join(basePath, "results", "go_session_pool_performance.txt")
@@ -358,10 +358,10 @@ func main() {
 		resultContent += fmt.Sprintf("最小延迟：%.5f ms\n", result.MinLatency)
 		resultContent += fmt.Sprintf("最大延迟：%.5f ms\n", result.MaxLatency)
 		resultContent += fmt.Sprintf("吞吐量：%.5f REQ/s\n", result.Throughput)
-		resultContent += fmt.Sprintf("初始RSS：%.5f MB\n", result.StartRSS)
-		resultContent += fmt.Sprintf("峰值RSS：%.5f MB\n", result.PeakRSS)
+		resultContent += fmt.Sprintf("初始PM：%.5f MB\n", result.StartRSS)
+		resultContent += fmt.Sprintf("峰值PM：%.5f MB\n", result.PeakRSS)
 		resultContent += fmt.Sprintf("最终RSS：%.5f MB\n", result.EndRSS)
-		resultContent += fmt.Sprintf("RSS漂移：%.5f MB\n\n", result.RSSDrift)
+		resultContent += fmt.Sprintf("PM漂移：%.5f MB\n\n", result.RSSDrift)
 	}
 
 	err = os.WriteFile(resultPath, []byte(resultContent), 0644)

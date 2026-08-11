@@ -25,7 +25,8 @@ func (p *TensorMemoryPool) Acquire(size int) []float32 {
 		lastIndex := len(buffers) - 1
 		buffer := buffers[lastIndex]
 		p.buffers[size] = buffers[:lastIndex]
-		return buffer
+		// 复用前将长度恢复为 size（Release 时存的是 buffer[:0]，cap 仍为 size）
+		return buffer[:size]
 	}
 
 	return make([]float32, size)

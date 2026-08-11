@@ -263,9 +263,9 @@ func main() {
 	endRSS := getProcessRSS()
 	rssDrift := endRSS - startRSS
 
-	fmt.Printf("初始RSS: %.5f MB\n", startRSS)
+	fmt.Printf("初始PM: %.5f MB\n", startRSS)
 	fmt.Printf("最终RSS: %.5f MB\n", endRSS)
-	fmt.Printf("RSS漂移: %.5f MB\n", rssDrift)
+	fmt.Printf("PM漂移: %.5f MB\n", rssDrift)
 
 	resultPath := filepath.Join(basePath, "results", "go_memory_copy_overhead_result.txt")
 	os.MkdirAll(filepath.Dir(resultPath), 0755)
@@ -277,9 +277,9 @@ func main() {
 	resultContent += fmt.Sprintf("总开销时间: %.5f ms\n", avgTotalOverhead)
 	resultContent += fmt.Sprintf("推理时间: %.5f ms\n", avgInference)
 	resultContent += fmt.Sprintf("开销占比: %.5f%%\n\n", avgOverheadPercent)
-	resultContent += fmt.Sprintf("初始RSS: %.5f MB\n", startRSS)
+	resultContent += fmt.Sprintf("初始PM: %.5f MB\n", startRSS)
 	resultContent += fmt.Sprintf("最终RSS: %.5f MB\n", endRSS)
-	resultContent += fmt.Sprintf("RSS漂移: %.5f MB\n", rssDrift)
+	resultContent += fmt.Sprintf("PM漂移: %.5f MB\n", rssDrift)
 
 	os.WriteFile(resultPath, []byte(resultContent), 0644)
 	fmt.Printf("\n结果已保存到: %s\n", resultPath)

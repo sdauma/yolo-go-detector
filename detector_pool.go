@@ -28,7 +28,6 @@ type ModelSessionPool struct {
 	sessions       chan *ModelSession
 	maxSize        int
 	activeSessions int32 // 活跃会话计数，使用原子操作
-	mutex          sync.Mutex
 	modelPath      string
 }
 

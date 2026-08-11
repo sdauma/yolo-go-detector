@@ -1,0 +1,15 @@
+===== Python Thread Config Benchmark Results (5-run average) (intra_op_num_threads=4) =====
+Avg Latency: 46.63823 ms
+Std Dev: 0.70920 ms
+Coeff of Variation: 1.52%
+FPS: 21.44
+P50 Latency: 46.98173 ms
+P90 Latency: 53.41931 ms
+P99 Latency: 55.32618 ms
+Min Latency: 38.17814 ms
+Max Latency: 56.63348 ms
+
+===== Memory Usage =====
+Start PM: 447.30313 MB
+Peak PM: 563.43672 MB
+Stable PM: 563.43672 MB

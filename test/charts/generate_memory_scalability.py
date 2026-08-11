@@ -79,7 +79,7 @@ def read_go_memory_data(file_path):
                             break
                         except ValueError:
                             pass
-            elif ('峰值RSS' in line or '峰值PM' in line or 'Peak RSS' in line) and current_arch and concurrency is not None:
+            elif ('峰值RSS' in line or '峰值PM' in line or 'Peak PM' in line) and current_arch and concurrency is not None:
                 # 提取内存值，支持"峰值RSS: 60.75000 MB"或"峰值PM: 60.75000 MB"
                 for sep in [':', '：']:
                     if sep in line:

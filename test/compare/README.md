@@ -79,6 +79,8 @@ y1 = clamp(y1, 0, float32(origH))
 |----------|----------|-----------|
 | 模型输出张量一致性 | `go_output_consistency` / `python_output_consistency` | ✅ 端到端检测结果（类别+坐标+置信度） |
 | 延迟/内存/并发 | 48 个标准化 Benchmark | — |
+
+> 注：另有后续补充程序（`thread_config_benchmark_yolo11n.go`、`python_thread_config_yolo11n_benchmark.py`、`go_session_lifecycle_repro.go`、`go_session_pool_fault_injection.go` 等）未计入上述 48，分别支撑论文 §4.3 / §4.1 补充结论与 §4.6.1 / §5.1 / §5.2 / §7 的 Session Pool 故障隔离与自动重建实验验证。
 | **跨语言检测一致性** | — | ✅ `compare` + `batch_verify` |
 
 ## 参数

@@ -104,7 +104,7 @@ def run_benchmark():
         print(f"Failed to load input data: {e}")
         sys.exit(1)
 
-    # Memory sample point 1: after Session creation, before Warmup (Start RSS)
+    # Memory sample point 1: after Session creation, before Warmup (Start PM)
     start_rss = process.memory_info().private / 1024 / 1024
 
     # Warmup
@@ -178,10 +178,10 @@ def main():
         print(f"P95 latency: {result.p95_latency:.3f} ms")
         print(f"Min latency: {result.min_latency:.3f} ms")
         print(f"Max latency: {result.max_latency:.3f} ms")
-        print(f"Start RSS: {result.start_rss:.2f} MB")
-        print(f"Peak RSS: {result.peak_rss:.2f} MB")
-        print(f"Stable RSS: {result.stable_rss:.2f} MB")
-        print(f"RSS Drift: {result.stable_rss - result.start_rss:.2f} MB")
+        print(f"Start PM: {result.start_rss:.2f} MB")
+        print(f"Peak PM: {result.peak_rss:.2f} MB")
+        print(f"Stable PM: {result.stable_rss:.2f} MB")
+        print(f"PM Drift: {result.stable_rss - result.start_rss:.2f} MB")
 
     # Compute averages
     avg_latency = sum(r.avg_latency for r in results) / num_runs
@@ -203,10 +203,10 @@ def main():
     print(f"P95 latency: {p95_latency:.3f} ms")
     print(f"Min latency: {min_latency:.3f} ms")
     print(f"Max latency: {max_latency:.3f} ms")
-    print(f"Start RSS: {start_rss:.2f} MB")
-    print(f"Peak RSS: {peak_rss:.2f} MB")
-    print(f"Stable RSS: {stable_rss:.2f} MB")
-    print(f"RSS Drift: {stable_rss - start_rss:.2f} MB")
+    print(f"Start PM: {start_rss:.2f} MB")
+    print(f"Peak PM: {peak_rss:.2f} MB")
+    print(f"Stable PM: {stable_rss:.2f} MB")
+    print(f"PM Drift: {stable_rss - start_rss:.2f} MB")
 
     # Save detailed log
     log_path = os.path.join(base_path, "results", "python_reinforced_small_detailed_log.txt")
@@ -220,10 +220,10 @@ def main():
             f.write(f"P95 latency: {r.p95_latency:.5f} ms\n")
             f.write(f"Min latency: {r.min_latency:.5f} ms\n")
             f.write(f"Max latency: {r.max_latency:.5f} ms\n")
-            f.write(f"Start RSS: {r.start_rss:.5f} MB\n")
-            f.write(f"Peak RSS: {r.peak_rss:.5f} MB\n")
-            f.write(f"Stable RSS: {r.stable_rss:.5f} MB\n")
-            f.write(f"RSS Drift: {r.stable_rss - r.start_rss:.5f} MB\n")
+            f.write(f"Start PM: {r.start_rss:.5f} MB\n")
+            f.write(f"Peak PM: {r.peak_rss:.5f} MB\n")
+            f.write(f"Stable PM: {r.stable_rss:.5f} MB\n")
+            f.write(f"PM Drift: {r.stable_rss - r.start_rss:.5f} MB\n")
             f.write("\n")
 
         f.write("===== 10-Round Average =====\n")
@@ -234,10 +234,10 @@ def main():
         f.write(f"P95 latency: {p95_latency:.5f} ms\n")
         f.write(f"Min latency: {min_latency:.5f} ms\n")
         f.write(f"Max latency: {max_latency:.5f} ms\n")
-        f.write(f"Start RSS: {start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
+        f.write(f"Start PM: {start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {stable_rss:.5f} MB\n")
+        f.write(f"PM Drift: {stable_rss - start_rss:.5f} MB\n")
 
     print(f"\nDetailed log saved to: {log_path}")
 
@@ -254,10 +254,10 @@ def main():
         f.write(f"P90 latency: {p90_latency:.5f} ms\n")
         f.write(f"P95 latency: {p95_latency:.5f} ms\n")
         f.write("\n===== Memory Usage (10-round average) =====\n")
-        f.write(f"Start RSS: {start_rss:.5f} MB\n")
-        f.write(f"Peak RSS: {peak_rss:.5f} MB\n")
-        f.write(f"Stable RSS: {stable_rss:.5f} MB\n")
-        f.write(f"RSS Drift: {stable_rss - start_rss:.5f} MB\n")
+        f.write(f"Start PM: {start_rss:.5f} MB\n")
+        f.write(f"Peak PM: {peak_rss:.5f} MB\n")
+        f.write(f"Stable PM: {stable_rss:.5f} MB\n")
+        f.write(f"PM Drift: {stable_rss - start_rss:.5f} MB\n")
 
     print(f"Results saved to: {result_path}")
 

@@ -140,7 +140,7 @@ func (dp *DetectionPipeline) Detect(cam *CameraInfo, imgData []byte) *DetectResu
 
 	runErr := session.Session.Run()
 	if runErr != nil {
-		dp.pool.PutSession(session)
+		dp.pool.PutSessionBroken(session)
 		result.Error = fmt.Sprintf("infer: %v", runErr)
 		return result
 	}

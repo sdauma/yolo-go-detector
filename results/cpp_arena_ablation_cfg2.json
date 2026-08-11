@@ -1,0 +1,11 @@
+{
+  "config_index": 2,
+  "arena": "on",
+  "exec_mode": "parallel",
+  "avg_latency_ms": 773.795,
+  "p50_latency_ms": 770.9,
+  "p90_latency_ms": 787.595,
+  "throughput_reqs": 1.29233,
+  "peak_rss_mb": 515.543,
+  "peak_pm_mb": 564.191
+}

@@ -10,9 +10,9 @@ CPU 内存 Arena 开关消融实验（Python 侧）
 
 设计：
   - 控制变量：同模型(YOLO11x)、同并发度、同 intra_op/inter_op
-  - 自变量：enable_mem_arena (True/False)，同时固定 enable_mem_pattern=False
+  - 自变量：enable_cpu_mem_arena (True/False)，同时固定 enable_mem_pattern=False
   - 测试架构：Unsafe Shared (4并发) 与 Session Pool (池大小4)
-  - 指标：吞吐量、峰值RSS、RSS漂移
+  - 指标：吞吐量、峰值PM、PM漂移
 """
 
 import os
@@ -41,12 +41,11 @@ def create_session(model_path, intra_op_threads=1, arena_enabled=True):
     sess_options.enable_mem_pattern = False
     
     # 自变量：arena 开关
-    # 注意：较新版本的 onnxruntime 支持 enable_mem_arena
-    try:
-        sess_options.enable_mem_arena = arena_enabled
-    except AttributeError:
-        # 如果版本不支持，通过日志告知
-        print(f"  警告: 当前 onnxruntime 版本不支持 enable_mem_arena，arena={arena_enabled} 设置无效")
+    # 正确属性名为 enable_cpu_mem_arena（默认 True，设为 False 可关闭 Arena）。
+    # 早期版本误写为 enable_mem_arena（不存在的属性），被 try/except AttributeError
+    # 静默吞掉，导致 Arena 从未被切换、四组实验均为 Arena-ON 重复跑。
+    # 本次修正后直接赋值：若属性不存在将显式抛错而非静默失效，避免再次污染负对照。
+    sess_options.enable_cpu_mem_arena = arena_enabled
     
     session = ort.InferenceSession(
         model_path,
@@ -233,7 +232,7 @@ def main():
     # 输出结果
     print("\n===== Arena 开关消融实验结果 =====")
     print()
-    print(f"{'架构':<16} {'Arena':<8} {'吞吐量':<12} {'平均延迟':<12} {'峰值RSS':<12} {'RSS漂移':<12}")
+    print(f"{'架构':<16} {'Arena':<8} {'吞吐量':<12} {'平均延迟':<12} {'峰值PM':<12} {'PM漂移':<12}")
     print(f"{'':<16} {'':<8} {'(REQ/s)':<12} {'(ms)':<12} {'(MB)':<12} {'(MB)':<12}")
     print("-" * 72)
     
@@ -241,10 +240,17 @@ def main():
         arena_str = "ON" if r['arena_enabled'] else "OFF"
         print(f"{r['architecture']:<16} {arena_str:<8} {r['throughput']:<12.5f} {r['avg_latency']:<12.3f} {r['peak_rss']:<12.2f} {r['rss_drift']:<12.2f}")
     
-    # 保存到文件
-    output_path = os.path.join("..", "..", "results", "python_arena_ablation_result.txt")
+    # 保存到文件（版本历史：同一脚本仅输出路径随复测递增，实验逻辑不变）：
+    #   v1(原始, python_arena_ablation_result*.txt): 误用不存在属性 enable_mem_arena，
+    #       Arena 从未切换，四组均为 Arena-ON，ON 有效 / OFF 无效（透明负对照）。
+    #   v2(python_arena_ablation_v2_result.txt): 修正为 enable_cpu_mem_arena，真正切换
+    #       Arena，但 Unsafe Shared ON 测得 1072.85 MB 异常（未在混合表采用）。
+    #   v3(python_arena_ablation_v3_result.txt): 可复现性复测，验证 v2 OFF 值是否稳定。
+    #   原始 v1 与 v2 文件均保留不覆盖。
+    output_path = os.path.join("..", "..", "results", "python_arena_ablation_v3_result.txt")
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("===== Python CPU 内存 Arena 开关消融实验结果 =====\n\n")
+        f.write("===== Python CPU 内存 Arena 开关消融实验结果 =====\n")
+        f.write("# v3 re-run (reproducibility check for v2 OFF values)\n\n")
         f.write(f"模型: YOLO11x, 并发度: {concurrency}, 池大小: {pool_size}, 请求总数: {num_requests}\n")
         f.write(f"intra_op={intra_op_threads}, inter_op=1, enable_mem_pattern=False(固定)\n\n")
         
@@ -253,10 +259,10 @@ def main():
             f.write(f"===== {r['architecture']} (arena={arena_str}) =====\n")
             f.write(f"  吞吐量: {r['throughput']:.5f} REQ/s\n")
             f.write(f"  平均延迟: {r['avg_latency']:.5f} ms\n")
-            f.write(f"  起始RSS: {r['start_rss']:.5f} MB\n")
-            f.write(f"  峰值RSS: {r['peak_rss']:.5f} MB\n")
-            f.write(f"  结束RSS: {r['end_rss']:.5f} MB\n")
-            f.write(f"  RSS漂移: {r['rss_drift']:.5f} MB\n\n")
+            f.write(f"  起始PM: {r['start_rss']:.5f} MB\n")
+            f.write(f"  峰值PM: {r['peak_rss']:.5f} MB\n")
+            f.write(f"  结束PM: {r['end_rss']:.5f} MB\n")
+            f.write(f"  PM漂移: {r['rss_drift']:.5f} MB\n\n")
     
     print(f"\n结果已保存至: {output_path}")
 

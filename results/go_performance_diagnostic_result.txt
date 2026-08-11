@@ -9,9 +9,9 @@ InterOpNumThreads: 1
 P50推理延迟: 731.00000 ms
 P90推理延迟: 767.00000 ms
 P95推理延迟: 779.00000 ms
-Start RSS: 528.50 MB
-Peak RSS: 892.52 MB
-Stable RSS: 892.43 MB
+Start PM: 528.50 MB
+Peak PM: 892.52 MB
+Stable PM: 892.43 MB
 Go Heap Alloc: 16.97 MB
 Go Heap Sys: 334.89 MB
 GC 次数: 4

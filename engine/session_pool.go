@@ -50,7 +50,6 @@ type SessionPool struct {
 	sessions       chan *ModelSession
 	maxSize        int
 	activeSessions int32
-	mutex          sync.Mutex
 	modelPath      string
 	inputSize      int
 	batchSize      int
@@ -139,6 +138,17 @@ func (pool *SessionPool) PutSession(session *ModelSession) {
 	default:
 		session.Destroy()
 	}
+}
+
+// PutSessionBroken 归还故障会话：不回收，直接销毁并从活跃计数中移除。
+// 用于推理调用返回错误（软故障）或取用时检测到句柄失效的场景。
+// 配合 GetSession 在池容量上限内的惰性重建，实现故障自愈（见 §2.2.4）。
+func (pool *SessionPool) PutSessionBroken(session *ModelSession) {
+	atomic.AddInt32(&pool.activeSessions, -1)
+	if session == nil {
+		return
+	}
+	session.Destroy()
 }
 
 // GetStats 获取会话池统计信息
@@ -280,14 +290,13 @@ func (engine *BatchInferenceEngine) processTask(task *InferenceTask) *InferenceR
 	if err != nil {
 		return &InferenceResult{Error: fmt.Errorf("get session failed: %w", err)}
 	}
-	defer engine.sessionPool.PutSession(session)
 
 	// 复制输入数据到张量
 	copy(session.Input.GetData(), task.ImageData)
 
-	// 运行推理
-	err = session.Session.Run()
-	if err != nil {
+	// 运行推理；若推理调用返回错误，视为会话故障，销毁而非归还（由 GetSession 惰性自愈）
+	if err := session.Session.Run(); err != nil {
+		engine.sessionPool.PutSessionBroken(session)
 		return &InferenceResult{Error: fmt.Errorf("run inference failed: %w", err)}
 	}
 
@@ -295,6 +304,7 @@ func (engine *BatchInferenceEngine) processTask(task *InferenceTask) *InferenceR
 	// 注意：BatchInferenceEngine 为旧版异步回调 API，生产环境已改用
 	// Postprocessor + SessionPool 的同步推理（见 production/detector.go）。
 	// 此处返回空 Boxes 是有意为之——完整后处理见 Postprocessor。
+	engine.sessionPool.PutSession(session)
 	return &InferenceResult{Boxes: []BoundingBox{}}
 }
 
@@ -389,6 +399,20 @@ func initSessionWithThreads(modelPath string, inputSize, batchSize, intraOpThrea
 	options.SetIntraOpNumThreads(intraOpThreads)
 	options.SetInterOpNumThreads(1)
 
+	// ★ 论文 §4.6 核心结论落地：关闭 CPU 内存 Arena，可将推理阶段内存漂移降低约 89.2%
+	// 同时固定 SetMemPattern(false) 避免额外预分配，与消融实验 "Arena OFF" 配置完全一致。
+	// 此前此处未设置，Arena 保持 ONNX Runtime 默认开启（即论文证明漂移 2GB+/会话的"坏"配置）。
+	if err := options.SetMemPattern(false); err != nil {
+		inputTensor.Destroy()
+		outputTensor.Destroy()
+		return nil, fmt.Errorf("set memory pattern failed: %w", err)
+	}
+	if err := options.SetCpuMemArena(false); err != nil {
+		inputTensor.Destroy()
+		outputTensor.Destroy()
+		return nil, fmt.Errorf("set cpu mem arena failed: %w", err)
+	}
+
 	session, err := ort.NewAdvancedSession(modelPath,
 		[]string{"images"}, []string{"output0"},
 		[]ort.ArbitraryTensor{inputTensor}, []ort.ArbitraryTensor{outputTensor}, options)
@@ -458,4 +482,3 @@ func getSharedLibPath() string {
 	// 回退：返回 exe 目录下的路径，由调用方检查文件是否存在并打印告警
 	return filepath.Join(basePath, "third_party", libFileName)
 }
-

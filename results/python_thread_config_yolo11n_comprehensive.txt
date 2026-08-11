@@ -1,0 +1,6 @@
+===== Comprehensive Thread Config Performance Benchmark Results =====
+
+Thread Config        Avg Latency(ms) Std Dev(ms)  CV(%)        FPS        P50 Latency(ms) P90 Latency(ms) P99 Latency(ms) Start PM(MB)    Stable PM(MB)  
+4                    46.638          0.709        1.52         21.44      46.982          53.419          55.326          447.30          563.44         
+8                    39.611          0.138        0.35         25.25      39.556          40.518          42.054          452.46          568.59         
+12                   37.615          0.188        0.50         26.59      37.104          39.499          43.652          453.80          570.30         

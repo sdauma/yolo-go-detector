@@ -16,9 +16,9 @@ P90延迟: 766.35952 ms
 P99延迟: 794.64504 ms
 
 ===== 内存使用情况 =====
-Start RSS: 717.10312 MB
-Cold Start RSS: 982.15625 MB
-Stable RSS: 982.53125 MB
+Start PM: 717.10312 MB
+Cold Start PM: 982.15625 MB
+Stable PM: 982.53125 MB
 内存增长 (Start -> Cold Start): 265.05313 MB
 内存增长 (Cold Start -> Stable): 0.37500 MB
 Go Heap: 225.08856 MB

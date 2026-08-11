@@ -7,8 +7,11 @@ matplotlib.use('Agg')
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 设置中文字体为SimHei以支持中文
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+# 与论文其余图表统一：用 font_utils 注册华文中宋（回退宋体/黑体），避免字体不一致
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import font_utils
+font_utils.setup_fonts()
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 
 # 读取已经生成的 CSV
@@ -48,7 +51,7 @@ plt.grid(linestyle=":", linewidth=0.5, color='gray', alpha=0.6)
 
 plt.tight_layout()
 plt.savefig("../../results/rss_curve.pdf", dpi=600)
-plt.savefig("../../results/charts/fig7_stability.png", dpi=600)
+plt.savefig("../../results/charts/rss_curve.png", dpi=600)
 print("内存使用曲线已生成: ../../results/rss_curve.pdf")
-print("内存使用曲线(PNG)已生成: ../../results/charts/fig7_stability.png")
+print("内存使用曲线(PNG)已生成: ../../results/charts/rss_curve.png")
 

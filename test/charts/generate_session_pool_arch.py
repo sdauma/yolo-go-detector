@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 图1生成脚本：基于三层结构的 Session Pool 并发推理架构图
 
-本脚本生成论文图1，展示YOLO目标检测系统中Go语言并发推理的分层架构：
-  第一层：摄像头流数据输入（2600路视频流）
-  第二层：推理任务队列（有界缓冲，削峰填谷）
-  第三层：Worker Pool（工作协程池，从队列消费任务）
-  第四层：Session Pool（ONNX会话池，Worker通过GetSession获取Session进行推理）
-  第五层：检测结果输出
-
-数据流：摄像头 → 任务队列 → Worker Pool → Session Pool → 检测结果输出
-核心机制：Session Pool通过池化复用ONNX Runtime Session，避免频繁创建/销毁的开销
+期刊级信息架构（参考 ChatGPT 版布局优点，保持 matplotlib 矢量轻量本质）：
+  - 扁宽布局：主流程从左至右一条直线，三层核心（任务队列/Worker Pool/Session Pool）突出
+  - Worker 2×2 紧凑、Session 单列居中
+  - 不绘制图例（符号为通用惯例，含义由 caption/正文承载，符合核心期刊规范）
+  - GetSession（实线）/ PutSession（虚线返回）语义明确
+  - 不保留图内大段说明框：解释性文字由 LaTeX \caption 与正文 §2.2.3 承载，符合核心期刊规范
+  - 术语严格对齐论文 §2.2.3 与代码：任务队列 / 工作协程池 / Session Pool（会话池）/
+    GetSession / PutSession；不引入"Worker Pool""ONNX 会话池""轮询分配"等论文未用措辞
 """
 import warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='matplotlib')
@@ -21,184 +20,198 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, FancyArrowPatch
 from matplotlib import font_manager
+from matplotlib.font_manager import FontProperties
 import os
+import dataclasses
 
-# 注册华文中宋字体（检查多个路径）
+# ============================================================
+# 字体注册（优先 STZhongsong，失败回退 SimSun）
+# ============================================================
 base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# 字体文件可能存在的路径
+# 统一使用 ASCII 别名，避免某些 .ttf 内部名含中文导致 PDF 后端
+# UnicodeEncodeError: 'ascii' codec can't encode characters
+CN_FONT_ALIAS = "STZhongsong"
+
 font_paths = [
-    "C:\\Windows\\Fonts\\simsun.ttc",  # 系统宋体
-    "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\simsun.ttc"  # 用户字体目录
+    os.path.join(base_dir, "paper", "STZhongsong.ttf"),  # 英文文件名副本：华文中宋内部名 STZhongsong(ASCII)
+                                                         # 用英文名避免 matplotlib 以含中文的文件名派生 PDF 字体资源名
+    os.path.join(base_dir, "paper", "华文中宋.ttf"),      # 原始中文文件名（兜底）
+    "C:\\Windows\\Fonts\\STZHONGS.TTF",                  # 系统华文中宋（回退）
+    "C:\\Windows\\Fonts\\simsun.ttc",                    # 宋体（回退）
 ]
 
-# 打印当前工作目录
-print("Current working directory:", os.getcwd())
-
-# 尝试注册字体
-font_registered = False
+registered_path = None
 for font_path in font_paths:
-    print("Checking font path:", font_path)
-    print("Font file exists:", os.path.exists(font_path))
     if os.path.exists(font_path):
-        # 添加到字体管理器
         font_manager.fontManager.addfont(font_path)
-        print("Successfully registered font:", font_path)
-        font_registered = True
+        registered_path = font_path
+        # 把该字体的内部名（可能是中文）覆盖为 ASCII 别名，
+        # 否则 matplotlib 写 PDF 时字体资源名含中文会触发 ascii 编码错误
+        # 注意：FontEntry 是冻结 dataclass，需用 dataclasses.replace 生成新条目
+        norm = os.path.normcase(font_path)
+        ttflist = font_manager.fontManager.ttflist
+        for i, f in enumerate(ttflist):
+            if os.path.normcase(f.fname) == norm:
+                ttflist[i] = dataclasses.replace(f, name=CN_FONT_ALIAS)
         break
 
-if not font_registered:
-    print("Warning: Font file not found in any path, will use system default Chinese font")
+if registered_path:
+    print("中文字体已加载：", registered_path)
+else:
+    print("Warning: No Chinese font found, using system default")
 
-# 检查字体是否已注册
-font_names = [f.name for f in font_manager.fontManager.ttflist]
-print("Registered fonts containing 'STZhongsong':", [name for name in font_names if 'STZhongsong' in name])
+# 全局字体设置：中文 STZhongsong，英文通过 FontProperties 单独指定 Times New Roman
+plt.rcParams['font.sans-serif'] = [CN_FONT_ALIAS, 'SimSun', 'SimHei']
+plt.rcParams['axes.unicode_minus'] = False
 
-# 设置字体：中文使用宋体，英文使用 Times New Roman
-plt.rcParams['font.sans-serif'] = ['SimSun', 'SimHei']  # 优先宋体，回退到黑体
-plt.rcParams['font.serif'] = ['Times New Roman']  # 英文使用 Times New Roman
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+# 纯英文标签使用 Times New Roman
+font_en = FontProperties(family='Times New Roman', size=10)
 
-# 打印最终使用的字体配置
-print("\n=== 字体配置信息 ===")
-print("中文字体 (sans-serif):", plt.rcParams['font.sans-serif'])
-print("英文字体 (serif):", plt.rcParams['font.serif'])
-
-# 检查实际可用的中文字体
-available_chinese_fonts = [name for name in font_names if 'STZhongsong' in name or 'SimHei' in name or 'SimSun' in name]
-print("可用的中文字体:", available_chinese_fonts[:5] if available_chinese_fonts else "未找到特定中文字体")
-
-# 检查实际可用的英文字体
-available_english_fonts = [name for name in font_names if 'Times' in name]
-print("可用的Times字体:", available_english_fonts[:5] if available_english_fonts else "未找到Times New Roman")
-print("===================\n")
-
-# 定义路径
-base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# ============================================================
+# 路径与画布（扁宽布局，高度加大给主图留足空间）
+# ============================================================
 output_dir = os.path.join(base_dir, "results", "charts")
 final_charts_dir = os.path.join(output_dir, "final_charts")
-
-# 创建目录
 os.makedirs(final_charts_dir, exist_ok=True)
 
-fig, ax = plt.subplots(figsize=(14, 7))  # 加宽画布以容纳 Worker Pool
+fig, ax = plt.subplots(figsize=(15, 6.5))
 
+# ============================================================
 # 绘制函数
-def box(x, y, w, h, text, fontsize=10, fill=False, facecolor='lightgray'):
-    rect = Rectangle((x, y), w, h, fill=fill, linewidth=1.5, edgecolor='black',
-                     facecolor=facecolor, alpha=0.3)
+# ============================================================
+def box(x, y, w, h, text, fontsize=11, fill=True, facecolor='#E8E8E8', fp=None):
+    """实线框，默认浅灰填充（兼容黑白印刷）。fp 用于纯英文标签。"""
+    rect = Rectangle((x, y), w, h, fill=fill, linewidth=1.2, edgecolor='black',
+                     facecolor=facecolor, alpha=0.35 if fill else 0)
     ax.add_patch(rect)
-    ax.text(x + w/2, y + h/2, text, ha='center', va='center', fontsize=fontsize)
+    if fp is not None:
+        ax.text(x + w/2, y + h/2, text, ha='center', va='center', fontproperties=fp)
+    else:
+        ax.text(x + w/2, y + h/2, text, ha='center', va='center', fontsize=fontsize)
 
-def dashed_box(x, y, w, h, text, fontsize=10):
-    """虚线框，用于表示逻辑分组"""
+def dashed_box(x, y, w, h, title, fontsize=10):
+    """虚线框（逻辑分组），标题置于顶部居中，与内部元素保持充足间距"""
     rect = Rectangle((x, y), w, h, fill=False, linewidth=1.0, edgecolor='gray',
                      linestyle='--')
     ax.add_patch(rect)
-    ax.text(x + w/2, y + h/2, text, ha='center', va='center', fontsize=fontsize,
-            color='gray', style='italic')
+    ax.text(x + w/2, y + h - 0.18, title, ha='center', va='top', fontsize=fontsize,
+            color='black')
 
-def arrow(x1, y1, x2, y2, style='->', color='black'):
-    arr = FancyArrowPatch((x1, y1), (x2, y2), arrowstyle=style, linewidth=1.2,
-                          edgecolor=color, mutation_scale=18)
+def arrow(x1, y1, x2, y2, color='black', lw=1.2, style='->', ls='-'):
+    """实线/虚线箭头"""
+    arr = FancyArrowPatch((x1, y1), (x2, y2), arrowstyle=style, linewidth=lw,
+                          edgecolor=color, mutation_scale=16, linestyle=ls)
     ax.add_patch(arr)
 
-# === 第一层：数据输入 ===
-box(0.3, 4.8, 1.5, 0.8, "摄像头流\n(2600 路)", fontsize=9)
+# ============================================================
+# 主流程框（统一中心 Y=3.2，高度 1.0）
+# ============================================================
+Y = 3.2
+H = 1.0
 
-# === 第二层：任务队列（削峰填谷）===
-box(2.5, 4.8, 1.8, 0.8, "推理任务队列\n(有界缓冲)", fontsize=9)
+# 输入边界
+box(0.4, Y - H/2, 1.8, H, "视频流\n输入", fontsize=11)
 
-# === 第三层：Worker Pool（工作协程池）===
-# 虚线大框表示 Worker Pool 逻辑分组
-dashed_box(5.0, 3.8, 3.6, 2.2, "工作协程池\n(Worker Pool)", fontsize=9)
-# 多个 Worker 协程（灰度填充，兼容黑白印刷）
-box(5.3, 5.0, 1.2, 0.6, "Worker 1", fontsize=8, fill=True, facecolor='#E8E8E8')
-box(6.8, 5.0, 1.2, 0.6, "Worker 2", fontsize=8, fill=True, facecolor='#E8E8E8')
-box(5.3, 4.0, 1.2, 0.6, "Worker 3", fontsize=8, fill=True, facecolor='#E8E8E8')
-box(6.8, 4.0, 1.2, 0.6, "Worker N", fontsize=8, fill=True, facecolor='#E8E8E8')
+# 第一层：任务队列（论文 §2.2.3 原文"任务队列——有界缓冲"）
+box(2.8, Y - H/2, 2.0, H, "任务队列", fontsize=11)
+# "有界缓冲"作为框下小注，避免框内括号堆叠
+ax.text(2.8 + 1.0, Y - H/2 - 0.22, "（有界缓冲）", ha='center', va='top',
+        fontsize=9, color='gray')
 
-# === 第四层：Session Pool（大框内嵌 Session 子框，展示池内结构）===
-# Session Pool 虚线框（右移至 x=9.4 与 Worker Pool 拉开间距给 GetSession 标注留空间；高度缩至 2.2 与 Worker Pool 顶部对齐）
-dashed_box(9.4, 3.8, 3.6, 2.2, "", fontsize=9)
-# 标题文字放在框内左侧（左对齐）
-ax.text(9.6, 5.1, "Session Pool\n(ONNX 会话池)\nSession 级\n轮询分配", fontsize=8,
-        ha='left', va='center', color='gray', style='italic')
-# Session 子框紧挨文字右侧
-box(11.4, 5.3, 1.2, 0.55, "Session 1", fontsize=8)
-box(11.4, 4.65, 1.2, 0.55, "Session 2", fontsize=8)
-box(11.4, 4.0, 1.2, 0.55, "Session N", fontsize=8)
+# 输出边界（右移，与 Session Pool 之间留出空隙放置轮询分配标签）
+box(15.0, Y - H/2, 1.8, H, "检测结果\n输出", fontsize=11)
 
-# === 第五层：检测结果输出 ===
-box(13.4, 4.8, 1.6, 0.8, "检测结果\n输出", fontsize=9)
+# ============================================================
+# 第二层：Worker Pool（虚线框 + 内部 2×2 Worker）
+# ============================================================
+WP_X, WP_W = 5.4, 4.0
+WP_Y, WP_H = 1.4, 3.0
+dashed_box(WP_X, WP_Y, WP_W, WP_H, "工作 goroutine 池", fontsize=10)
 
-# === 箭头 ===
-# 摄像头 → 任务队列
-arrow(1.8, 5.2, 2.5, 5.2)
+worker_w, worker_h = 1.35, 0.70
+wx1 = WP_X + 0.55
+wx2 = WP_X + 2.10
+wy_top = 3.20
+wy_bot = 1.95
 
-# 任务队列 → Worker Pool（整体）
-arrow(4.3, 5.2, 5.0, 5.2)
-# 任务队列 → Worker Pool 内部各 Worker 分发（起点统一对齐到任务队列右边缘中心）
-arrow(4.3, 5.2, 5.3, 5.3)
-arrow(4.3, 5.2, 6.8, 5.3)
-arrow(4.3, 5.2, 5.3, 4.3)
-arrow(4.3, 5.2, 6.8, 4.3)
+box(wx1, wy_top, worker_w, worker_h, "Worker 1", fill=True, fp=font_en)
+box(wx2, wy_top, worker_w, worker_h, "Worker 2", fill=True, fp=font_en)
+box(wx1, wy_bot, worker_w, worker_h, "Worker 3", fill=True, fp=font_en)
+box(wx2, wy_bot, worker_w, worker_h, "... Worker N", fill=True, fp=font_en)
 
-# Worker Pool → Session Pool (GetSession)
-arrow(8.6, 5.3, 9.4, 5.3)
-# 标注获取接口（位于两框中间，间距 0.8 足够文字不落在框边上）
-ax.text(9.0, 5.45, "GetSession", fontsize=7, ha='center', va='bottom', style='italic')
+# ============================================================
+# 第三层：Session Pool（虚线框 + 内部 Session 单列居中）
+# ============================================================
+SP_X, SP_W = 11.0, 3.4
+SP_Y, SP_H = 1.4, 3.0
+dashed_box(SP_X, SP_Y, SP_W, SP_H, "Session Pool", fontsize=10)
+# 论文 §2.2.3 (1) 明确"每个拥有独立 Arena"，补一行注释级小注保证图-文一致
+ax.text(SP_X + SP_W/2, SP_Y + SP_H - 0.42, "每 Session 独立 Arena",
+        ha='center', va='top', fontsize=9, color='black')
 
-# Session 子框 → 检测结果输出（数据流从 Session Pool 内的 Session 汇聚到输出）
-arrow(12.6, 5.57, 13.4, 5.2)
-arrow(12.6, 4.92, 13.4, 5.2)
-arrow(12.6, 4.27, 13.4, 5.2)
+sess_w, sess_h = 1.7, 0.60
+sx = SP_X + (SP_W - sess_w) / 2
+sy_top = 3.20
+sy_mid = 2.45
+sy_bot = 1.70
 
-# === 设置坐标轴 ===
-ax.set_xlim(0, 16.0)
-ax.set_ylim(3.2, 6.2)
+box(sx, sy_top, sess_w, sess_h, "Session 1", fill=True, fp=font_en)
+box(sx, sy_mid, sess_w, sess_h, "Session 2", fill=True, fp=font_en)
+box(sx, sy_bot, sess_w, sess_h, "... Session N", fill=True, fp=font_en)
+
+# ============================================================
+# 箭头（语义区分：实线=数据流，虚线=资源归还，弧线=轮询）
+# ============================================================
+
+# 数据流：摄像头 → 队列
+arrow(2.2, Y, 2.8, Y, lw=1.2)
+
+# 数据流：队列 → Worker Pool
+arrow(4.8, Y, WP_X, Y, lw=1.2)
+
+# 数据流 + 控制调用：Worker Pool → Session Pool（GetSession，加粗主箭头）
+get_y = 3.45
+arrow(WP_X + WP_W, get_y, SP_X, get_y, lw=1.6)
+ax.text((WP_X + WP_W + SP_X)/2, get_y + 0.18, "GetSession",
+        fontproperties=font_en, ha='center', va='bottom')
+
+# 资源归还：Session Pool → Worker Pool（PutSession，虚线返回）
+put_y = 2.35
+arrow(SP_X, put_y, WP_X + WP_W, put_y, lw=1.1, ls='--')
+ax.text((WP_X + WP_W + SP_X)/2, put_y - 0.15, "PutSession",
+        fontproperties=font_en, ha='center', va='top')
+
+# 数据流：Session Pool → 检测结果输出
+arrow(SP_X + SP_W, Y, 15.0, Y, lw=1.2)
+
+# 注：论文 §2.2.3 仅描述"Goroutine 通过 GetSession/PutSession 租用 Session"，
+# 未规定 Session 之间的轮询/分配策略，故图中不额外绘制"轮询分配"弧线，避免引入论文未用机制。
+
+# ============================================================
+# 图例：不绘制
+# 理由：实线框=处理单元、虚线框=逻辑分组、实线箭头=数据流、虚线箭头=资源归还
+#       均为通用绘图惯例，审稿人可直接识别；PutSession 已在虚线箭头上以行内标注，
+#       无需底部图例重复解释。符号语义由 LaTeX \caption 与正文 §2.2.3 承载，符合
+#       中文核心期刊架构图惯例，并避免图例挤占高度导致 LaTeX 排版被过度压缩。
+# ============================================================
+
+# ============================================================
+# 坐标轴与保存
+# （图标题由 LaTeX \caption 生成，图内不硬编码，避免排版重复）
+# ============================================================
+ax.set_xlim(0, 17.2)
+# 收紧 y 范围以贴合内容（池子虚线框 1.4–4.4），避免 axis('off') 下
+# bbox_inches='tight' 仍按整个 axes 矩形裁切导致图下方出现大片白边。
+ax.set_ylim(1.25, 4.55)
 ax.axis('off')
 
-# 注：图内不放标题，图注由论文 LaTeX \\caption 提供（符合《计算机系统应用》规范）
-
-# 检测实际使用的字体
-from matplotlib.font_manager import findfont, FontProperties
-
-# 检测中文字体使用的字体
-chinese_text = "摄像头流"
-english_text = "Session"
-
-# 获取实际使用的字体文件路径
-chinese_font_path = findfont(FontProperties(family=plt.rcParams['font.sans-serif']))
-english_font_path = findfont(FontProperties(family=plt.rcParams['font.serif']))
-
-print("\n=== 实际使用的字体 ===")
-print("中文字体文件路径:", chinese_font_path)
-print("英文字体文件路径:", english_font_path)
-
-# 从路径中提取字体名称
-chinese_font_name = os.path.basename(chinese_font_path).lower()
-english_font_name = os.path.basename(english_font_path).lower()
-
-if 'stzhongsong' in chinese_font_name or 'huawen' in chinese_font_name or '华文中宋' in chinese_font_path:
-    print("[OK] 中文实际使用: 华文中宋 (STZhongsong)")
-elif 'simhei' in chinese_font_name:
-    print("[OK] 中文实际使用: 黑体 (SimHei) - 回退字体")
-elif 'simsun' in chinese_font_name:
-    print("[OK] 中文实际使用: 宋体 (SimSun) - 回退字体")
-else:
-    print("[?] 中文实际使用:", os.path.basename(chinese_font_path))
-
-if 'times' in english_font_name:
-    print("[OK] 英文实际使用: Times New Roman")
-else:
-    print("[?] 英文实际使用:", os.path.basename(english_font_path))
-print("=====================\n")
-
-# 保存图片
-plt.savefig(os.path.join(output_dir, "fig1_session_pool_architecture.png"), dpi=600, bbox_inches='tight', format='png')
-plt.savefig(os.path.join(output_dir, "fig1_session_pool_architecture.pdf"), bbox_inches='tight', format='pdf')
-plt.savefig(os.path.join(final_charts_dir, "fig1_session_pool_architecture.png"), dpi=600, bbox_inches='tight', format='png')
+plt.savefig(os.path.join(output_dir, "fig1_session_pool_architecture.png"),
+            dpi=600, bbox_inches='tight', format='png')
+plt.savefig(os.path.join(output_dir, "fig1_session_pool_architecture.pdf"),
+            bbox_inches='tight', format='pdf')
+plt.savefig(os.path.join(final_charts_dir, "fig1_session_pool_architecture.png"),
+            dpi=600, bbox_inches='tight', format='png')
 print("图 1 已生成：fig1_session_pool_architecture.png")
 print("图表已保存到：", output_dir)
 print("最终图表已保存到：", final_charts_dir)

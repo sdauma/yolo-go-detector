@@ -287,8 +287,8 @@ def generate_reinforced_performance_comparison():
         x = np.arange(len(metrics))
         width = 0.35
         
-        bars1 = ax1.bar(x - width/2, py_values, width, label='Python', color='#FF6B6B', alpha=0.8)
-        bars2 = ax1.bar(x + width/2, go_values, width, label='Go', color='#4ECDC4', alpha=0.8)
+        bars1 = ax1.bar(x - width/2, py_values, width, label='Python', color='#E8E8E8', alpha=0.8, hatch='//')
+        bars2 = ax1.bar(x + width/2, go_values, width, label='Go', color='#B8B8B8', alpha=0.8, hatch='\\\\')
         
         ax1.set_xlabel('性能指标', fontsize=11)
         ax1.set_ylabel('延迟 (ms)', fontsize=11)
@@ -319,8 +319,8 @@ def generate_reinforced_performance_comparison():
         x = np.arange(len(metrics))
         width = 0.35
         
-        bars1 = ax2.bar(x - width/2, py_values, width, label='Python', color='#FF6B6B', alpha=0.8)
-        bars2 = ax2.bar(x + width/2, go_values, width, label='Go', color='#4ECDC4', alpha=0.8)
+        bars1 = ax2.bar(x - width/2, py_values, width, label='Python', color='#E8E8E8', alpha=0.8, hatch='//')
+        bars2 = ax2.bar(x + width/2, go_values, width, label='Go', color='#B8B8B8', alpha=0.8, hatch='\\\\')
         
         ax2.set_xlabel('性能指标', fontsize=11)
         ax2.set_ylabel('延迟 (ms)', fontsize=11)
@@ -375,8 +375,8 @@ def generate_ttest_visualization():
     # 大模型延迟分布
     ax1 = axes[0, 0]
     if py_large_times and go_large_times:
-        ax1.hist(py_large_times, bins=30, alpha=0.6, label='Python', color='#FF6B6B', density=True)
-        ax1.hist(go_large_times, bins=30, alpha=0.6, label='Go', color='#4ECDC4', density=True)
+        ax1.hist(py_large_times, bins=30, alpha=0.6, label='Python', color='#E8E8E8', density=True)
+        ax1.hist(go_large_times, bins=30, alpha=0.6, label='Go', color='#B8B8B8', density=True)
         ax1.set_xlabel('延迟 (ms)', fontsize=10)
         ax1.set_ylabel('密度', fontsize=10)
         ax1.set_title('大模型 (YOLO11x) 延迟分布', fontsize=11, fontweight='bold')
@@ -387,13 +387,13 @@ def generate_ttest_visualization():
         t_stat, p_value = stats.ttest_ind(py_large_times, go_large_times)
         ax1.text(0.95, 0.95, f't-statistic: {t_stat:.3f}\np-value: {p_value:.3e}', 
                 transform=ax1.transAxes, ha='right', va='top', fontsize=9,
-                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+                bbox=dict(boxstyle='round', facecolor='#F5F5F5', alpha=0.5))
     
     # 轻模型延迟分布
     ax2 = axes[0, 1]
     if py_small_times and go_small_times:
-        ax2.hist(py_small_times, bins=30, alpha=0.6, label='Python', color='#FF6B6B', density=True)
-        ax2.hist(go_small_times, bins=30, alpha=0.6, label='Go', color='#4ECDC4', density=True)
+        ax2.hist(py_small_times, bins=30, alpha=0.6, label='Python', color='#E8E8E8', density=True)
+        ax2.hist(go_small_times, bins=30, alpha=0.6, label='Go', color='#B8B8B8', density=True)
         ax2.set_xlabel('延迟 (ms)', fontsize=10)
         ax2.set_ylabel('密度', fontsize=10)
         ax2.set_title('轻模型 (YOLO11n) 延迟分布', fontsize=11, fontweight='bold')
@@ -404,16 +404,16 @@ def generate_ttest_visualization():
         t_stat, p_value = stats.ttest_ind(py_small_times, go_small_times)
         ax2.text(0.95, 0.95, f't-statistic: {t_stat:.3f}\np-value: {p_value:.3e}', 
                 transform=ax2.transAxes, ha='right', va='top', fontsize=9,
-                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+                bbox=dict(boxstyle='round', facecolor='#F5F5F5', alpha=0.5))
     
     # 大模型箱线图
     ax3 = axes[1, 0]
     if py_large_times and go_large_times:
         data = [py_large_times, go_large_times]
         bp = ax3.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
-        bp['boxes'][0].set_facecolor('#FF6B6B')
+        bp['boxes'][0].set_facecolor('#E8E8E8'); bp['boxes'][0].set_hatch('//')
         bp['boxes'][0].set_alpha(0.6)
-        bp['boxes'][1].set_facecolor('#4ECDC4')
+        bp['boxes'][1].set_facecolor('#B8B8B8'); bp['boxes'][1].set_hatch('\\\\')
         bp['boxes'][1].set_alpha(0.6)
         ax3.set_ylabel('延迟 (ms)', fontsize=10)
         ax3.set_title('大模型 (YOLO11x) 延迟箱线图', fontsize=11, fontweight='bold')
@@ -424,9 +424,9 @@ def generate_ttest_visualization():
     if py_small_times and go_small_times:
         data = [py_small_times, go_small_times]
         bp = ax4.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
-        bp['boxes'][0].set_facecolor('#FF6B6B')
+        bp['boxes'][0].set_facecolor('#E8E8E8'); bp['boxes'][0].set_hatch('//')
         bp['boxes'][0].set_alpha(0.6)
-        bp['boxes'][1].set_facecolor('#4ECDC4')
+        bp['boxes'][1].set_facecolor('#B8B8B8'); bp['boxes'][1].set_hatch('\\\\')
         bp['boxes'][1].set_alpha(0.6)
         ax4.set_ylabel('延迟 (ms)', fontsize=10)
         ax4.set_title('轻模型 (YOLO11n) 延迟箱线图', fontsize=11, fontweight='bold')
@@ -485,8 +485,8 @@ def generate_cold_start_decomposition():
         x = np.arange(len(categories))
         width = 0.35
         
-        bars1 = ax1.bar(x - width/2, py_means, width, label='Python', color='#FF6B6B', alpha=0.8)
-        bars2 = ax1.bar(x + width/2, go_means, width, label='Go', color='#4ECDC4', alpha=0.8)
+        bars1 = ax1.bar(x - width/2, py_means, width, label='Python', color='#E8E8E8', alpha=0.8, hatch='//')
+        bars2 = ax1.bar(x + width/2, go_means, width, label='Go', color='#B8B8B8', alpha=0.8, hatch='\\\\')
         
         ax1.set_xlabel('冷启动阶段', fontsize=10)
         ax1.set_ylabel('时间 (ms)', fontsize=10)
@@ -531,7 +531,7 @@ def generate_cold_start_decomposition():
             languages = ['Python', 'Go']
             factors = [py_factor, go_factor]
             
-            bars = ax2.bar(languages, factors, color=['#FF6B6B', '#4ECDC4'], alpha=0.8)
+            bars = ax2.bar(languages, factors, color=['#E8E8E8', '#B8B8B8'], alpha=0.8)
             ax2.set_ylabel('冷启动因子', fontsize=10)
             ax2.set_title('大模型 (YOLO11x) 冷启动因子分析', fontsize=11, fontweight='bold')
             ax2.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -545,8 +545,8 @@ def generate_cold_start_decomposition():
     # 大模型冷启动时间分布
     ax3 = axes[1, 0]
     if py_large_cold and go_large_cold:
-        ax3.hist(py_large_cold['total_cold_start'], bins=20, alpha=0.6, label='Python', color='#FF6B6B', density=True)
-        ax3.hist(go_large_cold['total_cold_start'], bins=20, alpha=0.6, label='Go', color='#4ECDC4', density=True)
+        ax3.hist(py_large_cold['total_cold_start'], bins=20, alpha=0.6, label='Python', color='#E8E8E8', density=True)
+        ax3.hist(go_large_cold['total_cold_start'], bins=20, alpha=0.6, label='Go', color='#B8B8B8', density=True)
         ax3.set_xlabel('总冷启动时间 (ms)', fontsize=10)
         ax3.set_ylabel('密度', fontsize=10)
         ax3.set_title('大模型 (YOLO11x) 冷启动时间分布', fontsize=11, fontweight='bold')
@@ -558,9 +558,9 @@ def generate_cold_start_decomposition():
     if py_large_cold and go_large_cold:
         data = [py_large_cold['total_cold_start'], go_large_cold['total_cold_start']]
         bp = ax4.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
-        bp['boxes'][0].set_facecolor('#FF6B6B')
+        bp['boxes'][0].set_facecolor('#E8E8E8'); bp['boxes'][0].set_hatch('//')
         bp['boxes'][0].set_alpha(0.6)
-        bp['boxes'][1].set_facecolor('#4ECDC4')
+        bp['boxes'][1].set_facecolor('#B8B8B8'); bp['boxes'][1].set_hatch('\\\\')
         bp['boxes'][1].set_alpha(0.6)
         ax4.set_ylabel('总冷启动时间 (ms)', fontsize=10)
         ax4.set_title('大模型 (YOLO11x) 冷启动时间箱线图', fontsize=11, fontweight='bold')
@@ -608,8 +608,8 @@ def generate_memory_comparison():
         x = np.arange(len(categories))
         width = 0.35
         
-        bars1 = ax1.bar(x - width/2, py_means, width, label='Python', color='#FF6B6B', alpha=0.8)
-        bars2 = ax1.bar(x + width/2, go_means, width, label='Go', color='#4ECDC4', alpha=0.8)
+        bars1 = ax1.bar(x - width/2, py_means, width, label='Python', color='#E8E8E8', alpha=0.8, hatch='//')
+        bars2 = ax1.bar(x + width/2, go_means, width, label='Go', color='#B8B8B8', alpha=0.8, hatch='\\\\')
         
         ax1.set_xlabel('内存阶段', fontsize=10)
         ax1.set_ylabel('内存使用 (MB)', fontsize=10)
@@ -638,7 +638,7 @@ def generate_memory_comparison():
         languages = ['Python', 'Go']
         increases = [py_increase, go_increase]
         
-        bars = ax2.bar(languages, increases, color=['#FF6B6B', '#4ECDC4'], alpha=0.8)
+        bars = ax2.bar(languages, increases, color=['#E8E8E8', '#B8B8B8'], alpha=0.8)
         ax2.set_ylabel('内存增加量 (MB)', fontsize=10)
         ax2.set_title('大模型 (YOLO11x) 内存增加量对比', fontsize=11, fontweight='bold')
         ax2.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -653,9 +653,9 @@ def generate_memory_comparison():
     ax3 = axes[1, 0]
     if py_large_memory and go_large_memory:
         ax3.hist(py_large_memory['post_inference_memory'], bins=20, alpha=0.6, 
-                label='Python', color='#FF6B6B', density=True)
+                label='Python', color='#E8E8E8', density=True)
         ax3.hist(go_large_memory['post_inference_memory'], bins=20, alpha=0.6, 
-                label='Go', color='#4ECDC4', density=True)
+                label='Go', color='#B8B8B8', density=True)
         ax3.set_xlabel('推理后内存使用 (MB)', fontsize=10)
         ax3.set_ylabel('密度', fontsize=10)
         ax3.set_title('大模型 (YOLO11x) 内存使用分布', fontsize=11, fontweight='bold')
@@ -667,9 +667,9 @@ def generate_memory_comparison():
     if py_large_memory and go_large_memory:
         data = [py_large_memory['post_inference_memory'], go_large_memory['post_inference_memory']]
         bp = ax4.boxplot(data, tick_labels=['Python', 'Go'], patch_artist=True)
-        bp['boxes'][0].set_facecolor('#FF6B6B')
+        bp['boxes'][0].set_facecolor('#E8E8E8'); bp['boxes'][0].set_hatch('//')
         bp['boxes'][0].set_alpha(0.6)
-        bp['boxes'][1].set_facecolor('#4ECDC4')
+        bp['boxes'][1].set_facecolor('#B8B8B8'); bp['boxes'][1].set_hatch('\\\\')
         bp['boxes'][1].set_alpha(0.6)
         ax4.set_ylabel('推理后内存使用 (MB)', fontsize=10)
         ax4.set_title('大模型 (YOLO11x) 内存使用箱线图', fontsize=11, fontweight='bold')
@@ -715,7 +715,7 @@ def generate_output_consistency():
     languages = ['Python', 'Go']
     counts = [py_large_count, go_large_count]
     
-    bars = ax1.bar(languages, counts, color=['#FF6B6B', '#4ECDC4'], alpha=0.8)
+    bars = ax1.bar(languages, counts, color=['#E8E8E8', '#B8B8B8'], alpha=0.8)
     ax1.set_ylabel('检测目标数量', fontsize=10)
     ax1.set_title('大模型 (YOLO11x) 检测目标数量对比', fontsize=11, fontweight='bold')
     ax1.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -734,7 +734,7 @@ def generate_output_consistency():
         languages = ['Python vs Go']
         errors = [l2_error]
         
-        bars = ax2.bar(languages, errors, color='#9B59B6', alpha=0.8)
+        bars = ax2.bar(languages, errors, color='#888888', alpha=0.8, hatch='xx')
         ax2.set_ylabel('L2误差', fontsize=10)
         ax2.set_title('大模型 (YOLO11x) Bounding Box L2误差', fontsize=11, fontweight='bold')
         ax2.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -752,7 +752,7 @@ def generate_output_consistency():
     
     counts = [py_small_count, go_small_count]
     
-    bars = ax3.bar(languages, counts, color=['#FF6B6B', '#4ECDC4'], alpha=0.8)
+    bars = ax3.bar(languages, counts, color=['#E8E8E8', '#B8B8B8'], alpha=0.8)
     ax3.set_ylabel('检测目标数量', fontsize=10)
     ax3.set_title('轻模型 (YOLO11n) 检测目标数量对比', fontsize=11, fontweight='bold')
     ax3.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
@@ -770,7 +770,7 @@ def generate_output_consistency():
         
         errors = [l2_error]
         
-        bars = ax4.bar(languages, errors, color='#9B59B6', alpha=0.8)
+        bars = ax4.bar(languages, errors, color='#888888', alpha=0.8, hatch='xx')
         ax4.set_ylabel('L2误差', fontsize=10)
         ax4.set_title('轻模型 (YOLO11n) Bounding Box L2误差', fontsize=11, fontweight='bold')
         ax4.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)

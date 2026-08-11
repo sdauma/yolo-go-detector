@@ -37,7 +37,8 @@ production/*.exe
 # Batch files (not to be uploaded to repository)
 # *.bat
 
-# IDE
+# IDE / dot-prefixed folders (block all dot-started directories from upload)
+.*/
 .idea/
 .venv/
 .codebuddy/

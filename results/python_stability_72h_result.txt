@@ -4,11 +4,11 @@ Model:            yolo11x.onnx
 Duration:         72.00 hours
 Total Inferences: 238675
 Errors:           0
-Start RSS:        965.21 MB
+Start PM:        965.21 MB
 End RSS:          984.23 MB
-Peak RSS:         984.23 MB
+Peak PM:         984.23 MB
 Min RSS:          965.02 MB
-RSS Drift:        19.02 MB
+PM Drift:        19.02 MB
 Drift Rate:       0.2642 MB/hour
 Avg Latency:      585.58 ms
 P50 Latency:      582.47 ms

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 字体配置工具模块
-按照《计算机工程》期刊要求设置字体：
+按照《计算机系统应用》期刊要求设置字体：
 - 中文：华文中宋
 - 英文：Times New Roman
 """
@@ -18,14 +18,17 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def setup_fonts():
-    """设置字体配置，按照《小型微型计算机系统》要求使用宋体"""
+    """设置字体配置，按照《计算机系统应用》期刊要求使用华文中宋"""
     # 获取项目根目录
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
     # 字体文件可能存在的路径
     font_paths = [
-        "C:\\Windows\\Fonts\\simsun.ttc",  # 系统宋体
-        "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\simsun.ttc"  # 用户字体目录
+        os.path.join(base_dir, "paper", "STZhongsong.ttf"),  # 英文文件名副本：华文中宋(ASCII内部名)，避免PDF中文资源名报错
+        os.path.join(base_dir, "paper", "华文中宋.ttf"),      # 原始中文文件名（兜底）
+        "C:\\Windows\\Fonts\\STZHONGS.TTF",                  # 系统华文中宋（回退）
+        "C:\\Windows\\Fonts\\simsun.ttc",                    # 系统宋体（回退）
+        "C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\Windows\\Fonts\\simsun.ttc"  # 用户字体目录（回退）
     ]
     
     # 尝试注册字体
@@ -37,8 +40,8 @@ def setup_fonts():
             font_registered = True
             break
     
-    # 设置字体：中文使用宋体，英文使用 Times New Roman
-    plt.rcParams['font.sans-serif'] = ['SimSun', 'SimHei']  # 优先宋体，回退到黑体
+    # 设置字体：中文使用华文中宋（STZhongsong），英文使用 Times New Roman
+    plt.rcParams['font.sans-serif'] = ['STZhongsong', 'SimSun', 'SimHei']  # 与 fig1 统一为华文中宋，回退宋体/黑体
     plt.rcParams['font.serif'] = ['Times New Roman']  # 英文使用 Times New Roman
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
     

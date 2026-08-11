@@ -9,10 +9,10 @@ intra_op=1, inter_op=1, MemPattern=false(固定), GOMAXPROCS=6
   P50延迟: 3485.00000 ms
   P90延迟: 3642.00000 ms
   P99延迟: 3798.00000 ms
-  起始RSS: 26.89453 MB
-  峰值RSS: 2194.97656 MB
-  结束RSS: 2194.87891 MB
-  RSS漂移: 2167.98438 MB
+  起始PM: 26.89453 MB
+  峰值PM: 2194.97656 MB
+  结束PM: 2194.87891 MB
+  PM漂移: 2167.98438 MB
 
 ===== Unsafe Shared (arena=OFF) =====
   吞吐量: 1.08523 REQ/s
@@ -20,10 +20,10 @@ intra_op=1, inter_op=1, MemPattern=false(固定), GOMAXPROCS=6
   P50延迟: 3672.00000 ms
   P90延迟: 3828.00000 ms
   P99延迟: 3965.00000 ms
-  起始RSS: 71.19531 MB
-  峰值RSS: 847.60938 MB
-  结束RSS: 313.75000 MB
-  RSS漂移: 242.55469 MB
+  起始PM: 71.19531 MB
+  峰值PM: 847.60938 MB
+  结束PM: 313.75000 MB
+  PM漂移: 242.55469 MB
 
 ===== Session Pool (arena=ON) =====
   吞吐量: 1.14668 REQ/s
@@ -31,10 +31,10 @@ intra_op=1, inter_op=1, MemPattern=false(固定), GOMAXPROCS=6
   P50延迟: 3453.00000 ms
   P90延迟: 3578.00000 ms
   P99延迟: 3703.00000 ms
-  起始RSS: 77.52344 MB
-  峰值RSS: 2249.01562 MB
-  结束RSS: 69.12891 MB
-  RSS漂移: -8.39453 MB
+  起始PM: 77.52344 MB
+  峰值PM: 2249.01562 MB
+  结束PM: 69.12891 MB
+  PM漂移: -8.39453 MB
 
 ===== Session Pool (arena=OFF) =====
   吞吐量: 1.09105 REQ/s
@@ -42,8 +42,8 @@ intra_op=1, inter_op=1, MemPattern=false(固定), GOMAXPROCS=6
   P50延迟: 3625.00000 ms
   P90延迟: 3797.00000 ms
   P99延迟: 3969.00000 ms
-  起始RSS: 69.16016 MB
-  峰值RSS: 1439.61328 MB
-  结束RSS: 71.65625 MB
-  RSS漂移: 2.49609 MB
+  起始PM: 69.16016 MB
+  峰值PM: 1439.61328 MB
+  结束PM: 71.65625 MB
+  PM漂移: 2.49609 MB
 

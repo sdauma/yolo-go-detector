@@ -41,7 +41,7 @@ type DetectionConfig struct {
 	ConfThresh float64 `yaml:"conf_thresh"`  // 置信度阈值
 	IOUThresh  float64 `yaml:"iou_thresh"`   // IOU 阈值
 	InputSize  int     `yaml:"input_size"`   // 模型输入尺寸
-	PoolSize   int     `yaml:"pool_size"`    // Session Pool 大小（0=CPU核数）
+	PoolSize   int     `yaml:"pool_size"`    // Session Pool 大小（0=自动：max(1,CPU/4) 上限3）
 	IntraOpThreads int `yaml:"intra_op_threads"` // 每Session线程数（0=自动计算 CPU/Pool，推荐0）
 }
 

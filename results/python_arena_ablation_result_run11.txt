@@ -6,32 +6,32 @@ intra_op=1, inter_op=1, enable_mem_pattern=False(固定)
 ===== Unsafe Shared (arena=ON) =====
   吞吐量: 1.16316 REQ/s
   平均延迟: 3427.36307 ms
-  起始RSS: 421.05859 MB
-  峰值RSS: 2550.25781 MB
-  结束RSS: 2549.57422 MB
-  RSS漂移: 2128.51562 MB
+  起始PM: 421.05859 MB
+  峰值PM: 2550.25781 MB
+  结束PM: 2549.57422 MB
+  PM漂移: 2128.51562 MB
 
 ===== Unsafe Shared (arena=OFF) =====
   吞吐量: 1.15837 REQ/s
   平均延迟: 3445.89983 ms
-  起始RSS: 424.60156 MB
-  峰值RSS: 2550.64453 MB
-  结束RSS: 2551.04297 MB
-  RSS漂移: 2126.44141 MB
+  起始PM: 424.60156 MB
+  峰值PM: 2550.64453 MB
+  结束PM: 2551.04297 MB
+  PM漂移: 2126.44141 MB
 
 ===== Session Pool (arena=ON) =====
   吞吐量: 1.15283 REQ/s
   平均延迟: 3461.96180 ms
-  起始RSS: 426.70703 MB
-  峰值RSS: 2584.43750 MB
-  结束RSS: 2583.95312 MB
-  RSS漂移: 2157.24609 MB
+  起始PM: 426.70703 MB
+  峰值PM: 2584.43750 MB
+  结束PM: 2583.95312 MB
+  PM漂移: 2157.24609 MB
 
 ===== Session Pool (arena=OFF) =====
   吞吐量: 1.14215 REQ/s
   平均延迟: 3496.24418 ms
-  起始RSS: 426.33984 MB
-  峰值RSS: 2585.76172 MB
-  结束RSS: 2585.27734 MB
-  RSS漂移: 2158.93750 MB
+  起始PM: 426.33984 MB
+  峰值PM: 2585.76172 MB
+  结束PM: 2585.27734 MB
+  PM漂移: 2158.93750 MB
 

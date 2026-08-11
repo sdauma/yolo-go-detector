@@ -218,7 +218,7 @@ def read_python_memory_data(file_path, concurrency_list):
                             concurrency = int(part.split('=')[1].strip())
                         except ValueError:
                             pass
-                    elif '峰值RSS=' in part or 'peak_rss=' in part:
+                    elif '峰值RSS=' in part or '峰值PM=' in part or 'peak_rss=' in part or 'peak_pm=' in part:
                         try:
                             value_str = part.split('=', 1)[1].strip().split(' ')[0]
                             memory = float(value_str)
@@ -271,7 +271,7 @@ def generate_memory_scalability():
             markeredgewidth=2, markeredgecolor='black')
     
     ax.set_xlabel('并发数', fontsize=12, fontweight='bold')
-    ax.set_ylabel('Peak RSS (MB)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Peak PM (MB)', fontsize=12, fontweight='bold')
     ax.set_title('内存扩展性曲线', fontsize=14, fontweight='bold', pad=15)
     ax.legend(fontsize=11, loc='upper left', frameon=True, edgecolor='black')
     ax.grid(True, alpha=0.3, linestyle='--')
@@ -596,7 +596,7 @@ def generate_perf_memory_scatter():
                       edgecolors='black', linewidths=2, label=label)
     
     ax.set_xlabel('平均延迟 (ms)', fontsize=12, fontweight='bold')
-    ax.set_ylabel('Peak RSS (MB)', fontsize=12, fontweight='bold')
+    ax.set_ylabel('Peak PM (MB)', fontsize=12, fontweight='bold')
     ax.set_title('性能-内存权衡散点图', fontsize=14, fontweight='bold', pad=15)
     ax.legend(fontsize=9, loc='upper right', frameon=True, edgecolor='black')
     ax.grid(True, alpha=0.3, linestyle='--')
@@ -643,7 +643,7 @@ def read_baseline_data(file_path):
                             break
                         except ValueError:
                             pass
-            elif 'Peak RSS' in line:
+            elif 'Peak PM' in line:
                 # 支持中文冒号和英文冒号
                 for separator in [':', '：']:
                     if separator in line:
@@ -655,7 +655,7 @@ def read_baseline_data(file_path):
         
         # 检查是否读取到数据
         if avg_latency == 0 or peak_rss == 0:
-            raise FileNotFoundError(f"未从文件 {file_path} 中读取到平均延迟或Peak RSS，请检查文件格式是否正确")
+            raise FileNotFoundError(f"未从文件 {file_path} 中读取到平均延迟或Peak PM，请检查文件格式是否正确")
         
         return {'avg_latency': avg_latency, 'peak_rss': peak_rss}
     except Exception as e:
@@ -791,7 +791,7 @@ def generate_reinforced_memory():
     go_data = read_reinforced_memory_data(os.path.join(results_dir, 'go_reinforced_result.txt'))
     python_data = read_reinforced_memory_data(os.path.join(results_dir, 'python_reinforced_result.txt'))
     
-    metrics = ['Start RSS', 'Stable RSS', 'Peak RSS']
+    metrics = ['Start PM', 'Stable PM', 'Peak PM']
     
     x = np.arange(len(metrics))
     width = 0.35
@@ -854,7 +854,7 @@ def read_reinforced_memory_data(file_path):
         
         for line in lines:
             line = line.strip()
-            if 'Start RSS' in line:
+            if 'Start PM' in line:
                 # 支持中文冒号和英文冒号
                 for separator in [':', '：']:
                     if separator in line:
@@ -863,7 +863,7 @@ def read_reinforced_memory_data(file_path):
                             break
                         except ValueError:
                             pass
-            elif 'Stable RSS' in line:
+            elif 'Stable PM' in line:
                 # 支持中文冒号和英文冒号
                 for separator in [':', '：']:
                     if separator in line:
@@ -872,7 +872,7 @@ def read_reinforced_memory_data(file_path):
                             break
                         except ValueError:
                             pass
-            elif 'Peak RSS' in line:
+            elif 'Peak PM' in line:
                 # 支持中文冒号和英文冒号
                 for separator in [':', '：']:
                     if separator in line:

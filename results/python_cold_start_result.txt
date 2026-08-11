@@ -15,8 +15,8 @@ P90 Latency: 600.01259 ms
 P99 Latency: 666.74333 ms
 
 ===== Memory Usage =====
-Start RSS: 708.62969 MB
-Cold Start RSS: 973.98672 MB
-Stable RSS: 973.97734 MB
+Start PM: 708.62969 MB
+Cold Start PM: 973.98672 MB
+Stable PM: 973.97734 MB
 Memory Growth (Start -> Cold Start): 265.35703 MB
 Memory Growth (Cold Start -> Stable): -0.00937 MB

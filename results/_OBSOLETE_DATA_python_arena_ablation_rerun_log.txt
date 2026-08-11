@@ -1,0 +1,29 @@
+﻿===== Python CPU 内存 Arena 开关消融实验 =====
+模型: YOLO11x, 并发度: 4, 池大小: 4, 请求总数: 500
+intra_op=1, inter_op=1, enable_mem_pattern=False(固定)
+
+--- 实验 1: Unsafe Shared, arena=ON ---
+测试 Unsafe Shared (arena=ON): 4 并发，500 请求
+python : Traceback (most recent call last):
+At line:1 char:917
++ ... .ps1' } catch {}; python python\python_arena_ablation.py 2>&1 | Tee-O ...
++                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "D:\mlz\trae_projects\1\yolo-go-detector\test\python\python_arena_ablation.py", line 264, in <module>
+    main()
+  File "D:\mlz\trae_projects\1\yolo-go-detector\test\python\python_arena_ablation.py", line 214, in main
+    r1 = test_unsafe_shared(model_path, input_data, concurrency, num_requests, intra_op_threads, True)
+  File "D:\mlz\trae_projects\1\yolo-go-detector\test\python\python_arena_ablation.py", line 67, in test_unsafe_shared
+    session = create_session(model_path, intra_op_threads, arena_enabled)
+  File "D:\mlz\trae_projects\1\yolo-go-detector\test\python\python_arena_ablation.py", line 50, in create_session
+    session = ort.InferenceSession(
+  File "C:\Users\Administrator\AppData\Roaming\TRAE SOLO CN\ModularData\ai-agent\vm\tools\python\lib\site-packages\onnx
+runtime\capi\onnxruntime_inference_collection.py", line 465, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "C:\Users\Administrator\AppData\Roaming\TRAE SOLO CN\ModularData\ai-agent\vm\tools\python\lib\site-packages\onnx
+runtime\capi\onnxruntime_inference_collection.py", line 526, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+onnxruntime.capi.onnxruntime_pybind11_state.NoSuchFile: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from ../../th
+ird_party/yolo11x.onnx failed:Load model ../../third_party/yolo11x.onnx failed. File doesn't exist

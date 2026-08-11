@@ -1,0 +1,70 @@
+===== Run #1 =====
+Avg Latency: 39.85414 ms
+Min Latency: 38.34190 ms
+Max Latency: 43.11060 ms
+P50 Latency: 39.78745 ms
+P90 Latency: 40.64452 ms
+P99 Latency: 42.72697 ms
+Start PM: 454.59766 MB
+Peak PM: 570.33984 MB
+Stable PM: 570.33984 MB
+
+===== Run #2 =====
+Avg Latency: 39.65261 ms
+Min Latency: 38.16950 ms
+Max Latency: 43.74740 ms
+P50 Latency: 39.52605 ms
+P90 Latency: 40.57383 ms
+P99 Latency: 42.99411 ms
+Start PM: 453.41016 MB
+Peak PM: 569.14844 MB
+Stable PM: 569.14844 MB
+
+===== Run #3 =====
+Avg Latency: 39.47202 ms
+Min Latency: 38.14180 ms
+Max Latency: 41.82550 ms
+P50 Latency: 39.43625 ms
+P90 Latency: 40.31435 ms
+P99 Latency: 41.34208 ms
+Start PM: 449.60938 MB
+Peak PM: 566.28516 MB
+Stable PM: 566.28516 MB
+
+===== Run #4 =====
+Avg Latency: 39.49224 ms
+Min Latency: 38.05220 ms
+Max Latency: 44.20160 ms
+P50 Latency: 39.47475 ms
+P90 Latency: 40.56036 ms
+P99 Latency: 41.52286 ms
+Start PM: 449.94922 MB
+Peak PM: 566.19141 MB
+Stable PM: 566.19141 MB
+
+===== Run #5 =====
+Avg Latency: 39.58503 ms
+Min Latency: 38.12300 ms
+Max Latency: 42.41180 ms
+P50 Latency: 39.55770 ms
+P90 Latency: 40.49743 ms
+P99 Latency: 41.68286 ms
+Start PM: 454.72656 MB
+Peak PM: 570.99219 MB
+Stable PM: 570.99219 MB
+
+===== 5-Test Average =====
+Avg Latency: 39.61121 ms
+Std Dev: 0.13780 ms
+Coeff of Variation: 0.35%
+FPS: 25.25
+P50 Latency: 39.55644 ms
+P90 Latency: 40.51810 ms
+P99 Latency: 42.05378 ms
+Min Latency: 38.16568 ms
+Max Latency: 43.05938 ms
+
+===== Memory Usage =====
+Start PM: 452.45859 MB
+Peak PM: 568.59141 MB
+Stable PM: 568.59141 MB

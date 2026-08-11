@@ -76,7 +76,7 @@ chinese_to_english = {
     # 注释
     "# 控制台输出保留2位小数（便于阅读），文件保存保留5位小数": "# Console output keeps 2 decimal places (for readability), file saves keep 5 decimal places",
     "# 中间数据保留5位小数，符合核心期刊规范": "# Intermediate data keeps 5 decimal places, conforming to core journal standards",
-    "# 内存采样点 1：Session 创建后、warmup 前（Start RSS）": "# Memory sample point 1: After Session creation, before warmup (Start RSS)",
+    "# 内存采样点 1：Session 创建后、warmup 前（Start PM）": "# Memory sample point 1: After Session creation, before warmup (Start PM)",
     "# 内存采样点 2：Warmup 后": "# Memory sample point 2: After warmup",
     "# 内存采样点 3：Benchmark 后稳定值": "# Memory sample point 3: Stable value after benchmark",
     "# 采样内存，记录峰值": "# Sample memory, record peak",

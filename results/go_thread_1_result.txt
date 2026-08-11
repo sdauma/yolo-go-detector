@@ -10,8 +10,8 @@ P99延迟: 2119.27532 ms
 最大延迟: 2119.27532 ms
 
 ===== 内存使用情况 =====
-Start RSS: 322.47812 MB
-Peak RSS: 587.37891 MB
-Stable RSS: 582.48516 MB
-RSS Drift: 260.00703 MB
+Start PM: 322.47812 MB
+Peak PM: 587.37891 MB
+Stable PM: 582.48516 MB
+PM Drift: 260.00703 MB
 Go Heap: 7.58221 MB

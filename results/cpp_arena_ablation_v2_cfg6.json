@@ -1,0 +1,13 @@
+{
+  "config_index": 6,
+  "arena": "off",
+  "exec_mode": "sequential",
+  "inter_op": 0,
+  "intra_op": 12,
+  "avg_latency_ms": 651.304,
+  "p50_latency_ms": 641.867,
+  "p90_latency_ms": 659.855,
+  "throughput_reqs": 1.53538,
+  "peak_rss_mb": 265.027,
+  "peak_pm_mb": 254.926
+}

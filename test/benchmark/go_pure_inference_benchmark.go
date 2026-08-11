@@ -140,7 +140,7 @@ func runBenchmark(modelName, modelPath, libPath string) BenchmarkResult {
 	fmt.Printf("输入形状: %v\n", inputShape)
 	fmt.Printf("输入数据加载成功: %s\n", inputDataPath)
 
-	// 内存采样点 1：Session 创建后、warmup 前（Start RSS）
+	// 内存采样点 1：Session 创建后、warmup 前（Start PM）
 	startRSS := getProcessRSS()
 
 	// Warmup
@@ -280,10 +280,10 @@ func main() {
 	fmt.Printf("P95延迟: %.5f ms\n", resultX.P95Latency)
 	fmt.Printf("最小延迟: %.5f ms\n", resultX.MinLatency)
 	fmt.Printf("最大延迟: %.5f ms\n", resultX.MaxLatency)
-	fmt.Printf("Start RSS: %.5f MB\n", resultX.StartRSS)
-	fmt.Printf("Peak RSS: %.5f MB\n", resultX.PeakRSS)
-	fmt.Printf("Stable RSS: %.5f MB\n", resultX.StableRSS)
-	fmt.Printf("RSS Drift: %.5f MB\n", resultX.StableRSS-resultX.StartRSS)
+	fmt.Printf("Start PM: %.5f MB\n", resultX.StartRSS)
+	fmt.Printf("Peak PM: %.5f MB\n", resultX.PeakRSS)
+	fmt.Printf("Stable PM: %.5f MB\n", resultX.StableRSS)
+	fmt.Printf("PM Drift: %.5f MB\n", resultX.StableRSS-resultX.StartRSS)
 	fmt.Printf("Go Heap: %.5f MB\n", resultX.GoHeap)
 
 	// 测试YOLO11n
@@ -296,10 +296,10 @@ func main() {
 	fmt.Printf("P95延迟: %.5f ms\n", resultN.P95Latency)
 	fmt.Printf("最小延迟: %.5f ms\n", resultN.MinLatency)
 	fmt.Printf("最大延迟: %.5f ms\n", resultN.MaxLatency)
-	fmt.Printf("Start RSS: %.5f MB\n", resultN.StartRSS)
-	fmt.Printf("Peak RSS: %.5f MB\n", resultN.PeakRSS)
-	fmt.Printf("Stable RSS: %.5f MB\n", resultN.StableRSS)
-	fmt.Printf("RSS Drift: %.5f MB\n", resultN.StableRSS-resultN.StartRSS)
+	fmt.Printf("Start PM: %.5f MB\n", resultN.StartRSS)
+	fmt.Printf("Peak PM: %.5f MB\n", resultN.PeakRSS)
+	fmt.Printf("Stable PM: %.5f MB\n", resultN.StableRSS)
+	fmt.Printf("PM Drift: %.5f MB\n", resultN.StableRSS-resultN.StartRSS)
 	fmt.Printf("Go Heap: %.5f MB\n", resultN.GoHeap)
 
 	// 保存结果
@@ -323,10 +323,10 @@ func main() {
 	fmt.Fprintf(file, "P95延迟: %.5f ms\n", resultX.P95Latency)
 	fmt.Fprintf(file, "最小延迟: %.5f ms\n", resultX.MinLatency)
 	fmt.Fprintf(file, "最大延迟: %.5f ms\n", resultX.MaxLatency)
-	fmt.Fprintf(file, "Start RSS: %.5f MB\n", resultX.StartRSS)
-	fmt.Fprintf(file, "Peak RSS: %.5f MB\n", resultX.PeakRSS)
-	fmt.Fprintf(file, "Stable RSS: %.5f MB\n", resultX.StableRSS)
-	fmt.Fprintf(file, "RSS Drift: %.5f MB\n", resultX.StableRSS-resultX.StartRSS)
+	fmt.Fprintf(file, "Start PM: %.5f MB\n", resultX.StartRSS)
+	fmt.Fprintf(file, "Peak PM: %.5f MB\n", resultX.PeakRSS)
+	fmt.Fprintf(file, "Stable PM: %.5f MB\n", resultX.StableRSS)
+	fmt.Fprintf(file, "PM Drift: %.5f MB\n", resultX.StableRSS-resultX.StartRSS)
 	fmt.Fprintf(file, "Go Heap: %.5f MB\n", resultX.GoHeap)
 
 	fmt.Fprintf(file, "\n===== YOLO11n =====\n")
@@ -337,10 +337,10 @@ func main() {
 	fmt.Fprintf(file, "P95延迟: %.5f ms\n", resultN.P95Latency)
 	fmt.Fprintf(file, "最小延迟: %.5f ms\n", resultN.MinLatency)
 	fmt.Fprintf(file, "最大延迟: %.5f ms\n", resultN.MaxLatency)
-	fmt.Fprintf(file, "Start RSS: %.5f MB\n", resultN.StartRSS)
-	fmt.Fprintf(file, "Peak RSS: %.5f MB\n", resultN.PeakRSS)
-	fmt.Fprintf(file, "Stable RSS: %.5f MB\n", resultN.StableRSS)
-	fmt.Fprintf(file, "RSS Drift: %.5f MB\n", resultN.StableRSS-resultN.StartRSS)
+	fmt.Fprintf(file, "Start PM: %.5f MB\n", resultN.StartRSS)
+	fmt.Fprintf(file, "Peak PM: %.5f MB\n", resultN.PeakRSS)
+	fmt.Fprintf(file, "Stable PM: %.5f MB\n", resultN.StableRSS)
+	fmt.Fprintf(file, "PM Drift: %.5f MB\n", resultN.StableRSS-resultN.StartRSS)
 	fmt.Fprintf(file, "Go Heap: %.5f MB\n", resultN.GoHeap)
 
 	fmt.Printf("\n结果已保存到: %s\n", resultPath)

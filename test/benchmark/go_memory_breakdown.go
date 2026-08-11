@@ -34,7 +34,7 @@ type MemoryBreakdown struct {
 	IntermediateMB    float64 `json:"intermediate_mb"`     // 中间缓冲区
 	SessionOverheadMB float64 `json:"session_overhead_mb"` // Session管理开销
 	TotalMB           float64 `json:"total_mb"`            // 总内存
-	PeakRSSMB         float64 `json:"peak_rss_mb"`         // 峰值RSS
+	PeakRSSMB         float64 `json:"peak_rss_mb"`         // 峰值PM
 }
 
 // TestResult 统一测试结果
@@ -183,7 +183,7 @@ func measureMemoryBreakdown(modelPath string, inputData []byte, inputShape, outp
 	fmt.Printf("  中间缓冲区: %.2f MB\n", breakdown.IntermediateMB)
 	fmt.Printf("  Session开销: %.2f MB\n", breakdown.SessionOverheadMB)
 	fmt.Printf("  总计: %.2f MB\n", breakdown.TotalMB)
-	fmt.Printf("  峰值RSS: %.2f MB\n", breakdown.PeakRSSMB)
+	fmt.Printf("  峰值PM: %.2f MB\n", breakdown.PeakRSSMB)
 
 	return breakdown, nil
 }

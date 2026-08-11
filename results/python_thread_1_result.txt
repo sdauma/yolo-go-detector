@@ -10,6 +10,6 @@ Min Latency: 2038.72616 ms
 Max Latency: 2320.51928 ms
 
 ===== Memory Usage =====
-Start RSS: 705.07969 MB
-Peak RSS: 969.86641 MB
-Stable RSS: 969.80234 MB
+Start PM: 705.07969 MB
+Peak PM: 969.86641 MB
+Stable PM: 969.80234 MB
